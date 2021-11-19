@@ -1,19 +1,40 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    private LevelManager levelManager;
+    public LevelManager levelManager;
+
     //  Devuelve el nivel actual
-    private string CurrLevel;
+    private string currRoute;
+    private int currLevel;
+    public static GameManager instance;
+
+    public void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        DontDestroyOnLoad(this);
+    }
 
     public void SetLevelManager(LevelManager otherLevelManager)
     {
+        //TESTEO
+        currRoute = Directory.GetCurrentDirectory() + @"\Assets\Resources\Txt\levelpack_0.txt";
         levelManager = otherLevelManager;
         if (levelManager != null)
         {
-            levelManager.init(CurrLevel);
+            levelManager.init(currRoute);
         }
+    }
+
+    public int GetCurrentLevel()
+    {
+        return currLevel;
     }
 }

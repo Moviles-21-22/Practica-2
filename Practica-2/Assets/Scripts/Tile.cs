@@ -67,4 +67,14 @@ public class Tile : MonoBehaviour
     {
         bridge.enabled = false;
     }
+
+    public float GetWidth()
+    {
+        return bgColor.size.x;
+    }
+
+    public float GetHeight()
+    {
+        return bgColor.size.y;
+    }
 }

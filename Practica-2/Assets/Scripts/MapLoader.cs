@@ -1,10 +1,90 @@
+using System.IO;
+using System.Collections.Generic;
+
+
+//  struct para cada nivel cargado
+public struct Level
+{
+    //  tamaño del tablero
+    public int numBoardX;
+    public int numBoardY;
+    //  nivel que le corresponede
+    public int lvl;
+    //  numero de jugadas
+    public int numFlow;
+    //  Vector con las soluciones
+    public List<List<int>> solutions;
+    //public Vector<Vector<int>> solutions;
+    public Level(int _numBoardX,int _lvl,int _numFlow,int _numBoardY)
+    {
+        numBoardX = _numBoardX;
+        numBoardY = _numBoardY;
+        lvl = _lvl;
+        numFlow = _numFlow;
+        solutions = new List<List<int>>();
+    }
+}
 
 
 public class Map
 {
+    //  Vector con el nivel pedido
+    private List<Level> levels = new List<Level>();
+
     //  Abre y lee un txt y crea un array bidimensional con la información del tablero
-    public Map(string file)
+    public Map(string route)
     {
-        
+        StreamReader reader = new StreamReader(route);
+        // En orden
+        //  1- ramaño del tablero
+        //  2- reservado
+        //  3- nivel
+        //  4- numero de flujos
+        //  5- soluciones ...
+        string chain;
+        while (!reader.EndOfStream)
+        {
+            //  Una línea es un nivel
+            chain = reader.ReadLine();
+            string[] subs = chain.Split(';');
+            string[] numBoard = subs[0].Split(':');
+            string[] subChain = subs[0].Split(',');
+            int numBoardX, numBoardY;
+            if (numBoard.Length >= 2)   //No es cuadrado
+            {
+                numBoardX = int.Parse(subChain[0].ToString());
+                numBoardY = int.Parse(subChain[1].ToString());
+            }
+            else
+            {
+                numBoardX = int.Parse(subChain[0].ToString());
+                numBoardY = int.Parse(subChain[0].ToString());
+
+            }
+            int lvl = int.Parse(subChain[2].ToString());
+            int numFlow = int.Parse(subChain[3].ToString());
+            Level currLevel = new Level(numBoardX,lvl,numFlow,numBoardY);
+            for (int i = 0; i < currLevel.numFlow; i++)
+            {
+                string[] chars = subs[i + 1].Split(',');
+                List<int> currSolution = new List<int>();
+                for (int j = 0; j < chars.Length; j++)
+                {
+                    currSolution.Add(int.Parse(chars[j]));
+                }
+                currLevel.solutions.Add(currSolution);
+            }
+            levels.Add(currLevel);
+        }
+    }
+
+    public List<Level> GetAllLevels()
+    {
+        return levels;
+    }
+
+    public Level GetLevel(int lvl)
+    {
+        return levels[lvl];
     }
 }
