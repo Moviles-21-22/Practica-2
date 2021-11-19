@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,8 @@ using UnityEngine;
 public class Tile : MonoBehaviour
 {
     private TILE_COLOR tileColor;
+
+    private Color color;
 
     private bool empty = false;
 
@@ -32,7 +35,8 @@ public class Tile : MonoBehaviour
     {
         if (c == -1)
         {
-            tileColor = TILE_COLOR.NONE; 
+            tileColor = TILE_COLOR.NONE;
+            color = Color.white;
             empty = true;
         }
         else
@@ -41,7 +45,11 @@ public class Tile : MonoBehaviour
             circle.enabled = true;
             circle.color = color;
         }
-        tileRect = new Rect(bgColor.sprite.rect);
+    }
+
+    public void SetRect(float x, float y)
+    {
+        tileRect = new Rect(x, y, bgColor.sprite.rect.width, bgColor.sprite.rect.height);
     }
 
     public Rect GetRect()
@@ -91,10 +99,16 @@ public class Tile : MonoBehaviour
         if (empty)
         {
             bgColor.enabled = true;
+            bgColor.color = color;
         }
         else
         {
             //  Activar bridge
         }
+    }
+
+    public void OutTouch()
+    {
+            
     }
 }

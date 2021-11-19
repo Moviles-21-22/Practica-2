@@ -12,6 +12,8 @@ public class BoardManager : MonoBehaviour
     [SerializeField]
     private Tile tilePrefab;
     private Color[] colors = { Color.red, Color.blue, Color.green, Color.cyan, Color.magenta };
+    private bool draging = false;
+    private Tile currTile;
 
     public void Start()
     {
@@ -22,37 +24,116 @@ public class BoardManager : MonoBehaviour
     {
         if (Input.touchCount > 0)
         {
-            //  Toque empieza
-            print("Toque detectado");
+            //  Toque empieza            
             if (Input.GetTouch(0).phase == TouchPhase.Began)
             {
-                Vector2 touch = Input.GetTouch(0).position;
-                float radius = Input.GetTouch(0).radius;
-                Rect touchRect = new Rect(touch.x,touch.y,radius,radius);
-                bool collisionDetected = false;
-                int cont = 0;
-                while (!collisionDetected && cont < circleTiles.Count)
+                if (currTile == null)
                 {
-                    Rect currTileRect = circleTiles[cont].GetRect();
-                    if (currTileRect.x < touchRect.x + touchRect.width
-                        && currTileRect.x + currTileRect.width > touchRect.x
-                        && currTileRect.y < touchRect.y + touchRect.height
-                        && currTileRect.height + currTileRect.y > touchRect.y)
+                    Vector2 touch = Input.GetTouch(0).position;
+                    Rect touchRect = new Rect(touch.x, touch.y, 50, 50);
+                    currTile = GetCircleTileOnCollision(touchRect);
+                    if (currTile != null)
                     {
-                        collisionDetected = true;
-                        circleTiles[cont].touched();
+                        draging = true;
+                        currTile.touched();
                     }
-                    else cont++;
                 }
             }
             //  Toque sale
-            if (Input.GetTouch(0).phase == TouchPhase.Ended)
+            else if (Input.GetTouch(0).phase == TouchPhase.Ended)
             {
-                
+                draging = false;
+                if (currTile != null)
+                {
+                    currTile.OutTouch();
+                    currTile = null;
+                }
+                    
             }
+            //  Arrastrando el dedo por la pantalla
+            else if (Input.GetTouch(0).phase == TouchPhase.Moved)
+            {
+                if (currTile != null)
+                {
+                    Vector2 touch = Input.GetTouch(0).position;
+                    float radius = Input.GetTouch(0).radius;
+                    Rect touchRect = new Rect(touch.x, touch.y, radius, radius);
 
+                    if (!collision(currTile.GetRect(), touchRect))// No sigue en contacto con el mismo tile
+                    {
+                        Tile dragedTile = GetTileOnCollision(touchRect);
+                        if (dragedTile != null)
+                        {
+                            currTile = dragedTile;
+                            currTile.touched();
+                        }
+                    }
+                }
+                //print(Input.GetTouch(0).position);
+            }
         }
     }
+
+    private bool collision(Rect a, Rect b)
+    {
+        if (a.x < (b.x + b.width)
+            && (a.x + a.width) > b.x
+            && a.y < (b.y + b.height)
+            && (a.height + a.y) > b.y)
+        {
+            return true;
+        }
+        else return false;
+    }
+
+    private Tile GetCircleTileOnCollision(Rect touchRect)
+    {
+        bool collisionDetected = false;
+        int cont = 0;
+        Tile tile = null;
+        Rect tileRect;
+        while (!collisionDetected && cont < circleTiles.Count)
+        {
+            tileRect = circleTiles[cont].GetRect();
+            if (collision(tileRect, touchRect))
+            {
+                collisionDetected = true;
+                tile = circleTiles[cont];
+            }
+            else cont++;
+        }
+        return tile;
+    }
+
+    private Tile GetTileOnCollision(Rect touchRect)
+    {
+        bool collisionDetected = false;
+        int x = 0;
+        int y = 0;
+        Tile tile = null;
+        Rect tileRect;
+        while (!collisionDetected && y < tiles.Length)
+        {
+            tileRect = tiles[x, y].GetRect();
+            if (collision(tileRect, touchRect))
+            {
+                collisionDetected = true;
+                tile = tiles[x,y];
+            }
+            else
+            {
+                x++;
+                if (x >= tiles.Length)
+                {
+                    x = 0;
+                    y++;
+                }
+            }
+        }
+        return tile;
+    }
+
+
 
     public void init(Level currLevel)
     {
@@ -67,6 +148,7 @@ public class BoardManager : MonoBehaviour
             for (int j = 0; j < currLevel.numBoardY; j++)
             {
                 tiles[i,j] = Instantiate(tilePrefab, initPos, Quaternion.identity);
+                tiles[i, j].SetRect(initPos.x,initPos.y);
                 initPos.x += w;
             }
             initPos.x = posX;
