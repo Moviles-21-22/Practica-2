@@ -345,10 +345,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 029cd0704bebffd448635456e6cd15c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bridge: {fileID: 0}
-  circle: {fileID: 0}
-  star: {fileID: 0}
-  bgColor: {fileID: 0}
+  bridge: {fileID: 8416465177763804374}
+  circle: {fileID: 8416465179197722545}
+  star: {fileID: 8416465177848995135}
+  bgColor: {fileID: 8644480979772224533}
 --- !u!1 &8416465179197722543
 GameObject:
   m_ObjectHideFlags: 0

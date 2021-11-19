@@ -20,8 +20,10 @@ public class Tile : MonoBehaviour
     [SerializeField]
     private SpriteRenderer bgColor;
 
+    private Rect tileRect;
+
     //TODO : FALTAN MÁS COLORES
-    enum TILE_COLOR : int
+    public enum TILE_COLOR : int
     {
         RED, BLUE, ORANGE, YELLOW, GREEN, NONE
     };
@@ -39,6 +41,12 @@ public class Tile : MonoBehaviour
             circle.enabled = true;
             circle.color = color;
         }
+        tileRect = new Rect(bgColor.sprite.rect);
+    }
+
+    public Rect GetRect()
+    {
+        return tileRect;
     }
 
     public bool EmptyTile()
@@ -76,5 +84,17 @@ public class Tile : MonoBehaviour
     public float GetHeight()
     {
         return bgColor.size.y;
+    }
+
+    public void touched()
+    {
+        if (empty)
+        {
+            bgColor.enabled = true;
+        }
+        else
+        {
+            //  Activar bridge
+        }
     }
 }
