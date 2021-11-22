@@ -36,7 +36,7 @@ public class Map
     {
         StreamReader reader = new StreamReader(route);
         // En orden
-        //  1- ramaño del tablero
+        //  1- tamaño del tablero
         //  2- reservado
         //  3- nivel
         //  4- numero de flujos
