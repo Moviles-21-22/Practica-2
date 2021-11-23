@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
     public void SetLevelManager(LevelManager otherLevelManager)
     {
         //TESTEO
-        currRoute = Directory.GetCurrentDirectory() + @"\Assets\Resources\Txt\levelpack_0.txt";
+        currRoute = Directory.GetCurrentDirectory() + @"\Assets\Resources\Txt\Intro\levelpack_0.txt";
         levelManager = otherLevelManager;
         if (levelManager != null)
         {
