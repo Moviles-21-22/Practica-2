@@ -12,6 +12,8 @@ public class LevelPack : ScriptableObject
     public string levelName;
     [Tooltip("fichero del lote")]
     public TextAsset txt;
+    [Tooltip("Nombre de cada grid de niveles")]
+    public string[] gridNames;
 }
 
 

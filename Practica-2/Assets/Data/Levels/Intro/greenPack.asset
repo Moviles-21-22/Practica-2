@@ -13,5 +13,11 @@ MonoBehaviour:
   m_Name: greenPack
   m_EditorClassIdentifier: 
   totalLevels: 150
-  levelName: Green Pack
+  levelName: Paquete Verde
   txt: {fileID: 4900000, guid: 1efa9ef735d89a448aec64eac68ea4fb, type: 3}
+  gridNames:
+  - "5x5 - f\xE1cil"
+  - 6x6
+  - 7x7 - medio
+  - '8x8 '
+  - "9x9 - dif\xEDcil"

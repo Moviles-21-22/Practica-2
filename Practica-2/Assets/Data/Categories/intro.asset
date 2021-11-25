@@ -19,3 +19,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4a96afb5c23ae4e4f98825ce3d228440, type: 2}
   - {fileID: 11400000, guid: 1979fefd9e105b44eb60ba225c0156d9, type: 2}
   - {fileID: 11400000, guid: 3c93c9465356ae349b6c8bb479d66001, type: 2}
+  gridNames:
+  - "5x5 - f\xE1cil"
+  - 6x6
+  - 7x7 - medio
+  - 8x8
+  - "9x9 - dif\xEDcil"

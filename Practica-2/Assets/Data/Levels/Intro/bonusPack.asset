@@ -13,5 +13,11 @@ MonoBehaviour:
   m_Name: bonusPack
   m_EditorClassIdentifier: 
   totalLevels: 150
-  levelName: Bonus Pack
+  levelName: Paquete Adicional
   txt: {fileID: 4900000, guid: 7033c50408d96fe40b522f7c653846d6, type: 3}
+  gridNames:
+  - "5x5 - f\xE1cil"
+  - 6x6
+  - 7x7 - medio
+  - '8x8 '
+  - "9x9 - dif\xEDcil"

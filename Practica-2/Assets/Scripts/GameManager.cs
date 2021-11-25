@@ -21,8 +21,12 @@ public class GameManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
+            DontDestroyOnLoad(this.gameObject);
         }
-        DontDestroyOnLoad(this);
+        else
+        {
+            Destroy(this.gameObject);
+        }
     }
 
     public void SetLevelManager(LevelManager otherLevelManager)
@@ -50,6 +54,12 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.LoadScene(scene);
     }
+
+    public void LoadScene(int scene)
+    {
+        SceneManager.LoadScene(scene);
+    }
+
 
     public void LoadLevel(LevelPack level, Category cat) 
     {

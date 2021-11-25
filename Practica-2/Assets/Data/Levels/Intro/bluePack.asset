@@ -13,5 +13,11 @@ MonoBehaviour:
   m_Name: bluePack
   m_EditorClassIdentifier: 
   totalLevels: 150
-  levelName: Blue Pack
+  levelName: Paquete Azul
   txt: {fileID: 4900000, guid: ba422063841900d4f8c737bf983eb573, type: 3}
+  gridNames:
+  - "5x5 - f\xE1cil"
+  - 6x6
+  - 7x7 - medio
+  - '8x8 '
+  - "9x9 - dif\xEDcil"

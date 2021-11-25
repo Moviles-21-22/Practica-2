@@ -13,5 +13,11 @@ MonoBehaviour:
   m_Name: clasicPack
   m_EditorClassIdentifier: 
   totalLevels: 150
-  levelName: Classic Pack
+  levelName: "Paquete Cl\xE1sico"
   txt: {fileID: 4900000, guid: 9c5810b305b19a54cac9c1f9c83fbebc, type: 3}
+  gridNames:
+  - "5x5 - f\xE1cil"
+  - 6x6
+  - 7x7 - medio
+  - '8x8 '
+  - "9x9 - dif\xEDcil"
