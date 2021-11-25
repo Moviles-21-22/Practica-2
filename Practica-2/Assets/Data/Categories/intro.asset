@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7e76cb2eeb245c479cf222ccc5f16a5, type: 3}
+  m_Name: intro
+  m_EditorClassIdentifier: 
+  categoryName: Intro
+  color: {r: 0.00965035, g: 1, b: 0, a: 0}
+  levels:
+  - {fileID: 11400000, guid: e91819223a703a349b60c41c9d9ed074, type: 2}
+  - {fileID: 11400000, guid: 4a96afb5c23ae4e4f98825ce3d228440, type: 2}
+  - {fileID: 11400000, guid: 1979fefd9e105b44eb60ba225c0156d9, type: 2}
+  - {fileID: 11400000, guid: 3c93c9465356ae349b6c8bb479d66001, type: 2}

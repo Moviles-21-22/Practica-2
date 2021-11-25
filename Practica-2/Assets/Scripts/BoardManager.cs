@@ -49,7 +49,8 @@ public class BoardManager : MonoBehaviour
                         currTileColor = currTile.GetColor();
                         currTile.Touched();
                         inputTile.GetCircleRender().enabled = true;
-                        inputTile.SetColor(0, new Color(currTileColor.r, currTileColor.g, currTileColor.b, 0.5f));
+                        inputTile.InitTile(0, new Color(currTileColor.r, currTileColor.g, currTileColor.b, 0.5f));
+                        previousDir = new Vector2(-2,-2);
                     }
                 }
             }
@@ -67,41 +68,78 @@ public class BoardManager : MonoBehaviour
             {
                 if (currTile != null)
                 {
+                    //  Creamos un rect en donde se ha tocado la pantalla
                     Vector2 touch = Input.GetTouch(0).position;
                     Rect touchRect = new Rect(touch.x, touch.y, 50, 50);
-
-                    if (!collision(currTile.GetRect(), touchRect))// No sigue en contacto con el mismo tile
+                    
+                    //  Nuevo tile detectado en colisión
+                    if (!touchRect.Overlaps(currTile.GetRect()))
                     {
-                        //  Buscamos el tile
+                        //  Buscamos el tile entre todas las tiles
                         var dragedTile = GetTileOnCollision(touchRect);
-                        if (dragedTile.Key != null)
+                        if (dragedTile.Key != null && dragedTile.Key != currTile)
                         {
-                            Vector2 dir = (dragedTile.Key.GetRect().position - originPoint).normalized;
-                            if (!currTile.EmptyTile())
-                                currTile.LeaveTouchTile(dir, currTileColor);
-                            //  Codo detectado
-                            print(dir);
-                            if (Mathf.Abs(dir.x) < 1.0f && Mathf.Abs(dir.x) > 0.0f || Mathf.Abs(dir.y) < 1.0f && Mathf.Abs(dir.y) > 0.0f)
+                            Vector2 tilePos = currTile.GetRect().position;
+                            Vector2 dir = (dragedTile.Key.GetRect().position - tilePos).normalized;
+                           
+                            //  Hemos llegado al tile que le corresponde (solución)
+                            if (dragedTile.Key.CircleActive() && dragedTile.Key.GetColor() == currTile.GetColor())
                             {
-                                Vector2 currDir = (dragedTile.Key.GetRect().position - currTile.GetRect().position).normalized;
-                                currTile.SetElbow(currTileColor, currDir, previousDir);
-                                currTile = dragedTile.Key;
-                                currTile.LeaveTouchTile(currDir, currTileColor);
+                                print("SOLUCIÓN");
+                                //  TODO : puntos, pistas, yoquese
+                                if (IsElbow(dir))
+                                {
+                                    currTile.ActiveElbow(currTileColor, dir, previousDir);
+                                    dragedTile.Key.ActiveTail(dir * -1, currTileColor);
+                                    currTile = dragedTile.Key;
+                                    previousDir = dir;
+                                }
+                                else if(!currTile.CircleActive())
+                                {
+                                    currTile.ActiveBridge(dir,currTileColor);
+                                    dragedTile.Key.ActiveTail(dir * -1, currTileColor);
+                                    currTile = dragedTile.Key;
+                                    previousDir = dir;
+                                }
                             }
-                            else
+                            // No es un circulo
+                            else if(!dragedTile.Key.CircleActive())    
                             {
-                                //  Activamos el bridge del anterior
-                                currTile.RemoveTail();
-                                currTile = dragedTile.Key;
-                                currTile.LeaveTouchTile(dir, currTileColor);
+                                //print("dir " +dir + " / pre " + previousDir);
+                                //  El anterior es un circulo
+                                if (currTile.CircleActive())
+                                {
+                                    currTile.ActiveTail(dir,currTileColor);
+                                    dragedTile.Key.ActiveTail(dir,currTileColor);
+                                    currTile = dragedTile.Key;
+                                    previousDir = dir;
+                                }
+                                //  El anterior no es un circulo
+                                else if (!currTile.CircleActive())
+                                {
+                                    // Es codo
+                                    if(IsElbow(dir))
+                                    {
+                                        currTile.ActiveElbow(currTileColor,dir,previousDir);
+                                        dragedTile.Key.ActiveTail(dir, currTileColor);
+                                        currTile = dragedTile.Key;
+                                        previousDir = dir;
+                                    }
+                                    else
+                                    {
+                                        currTile.ActiveBridge(dir, currTileColor);
+                                        dragedTile.Key.ActiveTail(dir, currTileColor);
+                                        currTile = dragedTile.Key;
+                                        previousDir = dir;
+                                    }
+                                }
                             }
-                            previousDir = dir;
-
+                            //  Es un circulo de otro color
+                            else if (dragedTile.Key.CircleActive())
+                            {
+                                print("MovIncorrecto");
+                            }
                         }
-                    }
-                    else
-                    {
-
                     }
                 }
             }
@@ -130,6 +168,16 @@ public class BoardManager : MonoBehaviour
             return true;
         }
         else return false;
+    }
+
+    private bool IsElbow(Vector2 dir)
+    {
+        if (Math.Abs(dir.x + previousDir.y) == 2.0f || Math.Abs(dir.y + previousDir.x) == 2.0f
+            || Math.Abs(dir.x - previousDir.y) == 0.0f || Math.Abs(dir.y - previousDir.x) == 0.0f)
+        {
+            return true;
+        }
+        return false;
     }
 
     //  Busca entre los circulos cual ha sido pulsado
@@ -224,7 +272,7 @@ public class BoardManager : MonoBehaviour
                 colA = currLevel.numBoardX - 1;
                 filaA -= 1;
             }
-            tiles[filaA,colA].SetColor(i, colors[i]);
+            tiles[filaA,colA].InitTile(i, colors[i]);
             circleTiles.Add(tiles[filaA,colA]);
 
             float secElement = currLevel.solutions[i][currLevel.solutions[i].Count - 1];
@@ -235,7 +283,7 @@ public class BoardManager : MonoBehaviour
                 colB = currLevel.numBoardY - 1;
                 filaB -= 1;
             }
-            tiles[filaB, colB].SetColor(i, colors[i]);
+            tiles[filaB, colB].InitTile(i, colors[i]);
             circleTiles.Add(tiles[filaB, colB]);
         }
     }

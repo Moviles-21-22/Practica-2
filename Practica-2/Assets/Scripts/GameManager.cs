@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
     private int currLevel;
     public static GameManager instance;
 
+    public Category[] categories;
+
     public void Awake()
     {
         if (instance == null)
@@ -25,8 +27,8 @@ public class GameManager : MonoBehaviour
 
     public void SetLevelManager(LevelManager otherLevelManager)
     {
-        //TESTEO
-        currRoute = Directory.GetCurrentDirectory() + @"\Assets\Resources\Txt\Intro\levelpack_0.txt";
+        //TESTEO Segun peblo habrá que arrastrar los txts al gameManager
+        currRoute = Directory.GetCurrentDirectory() + @"\Assets\Data\Levels\Intro\levelpack_0.txt";
         levelManager = otherLevelManager;
         if (levelManager != null)
         {

@@ -44,3 +44,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelManager: {fileID: 0}
+  levels:
+  - {fileID: 0}
+  colors:
+  - {fileID: 0}

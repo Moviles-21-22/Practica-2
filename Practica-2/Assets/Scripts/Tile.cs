@@ -9,7 +9,7 @@ public class Tile : MonoBehaviour
 
     private Color color;
 
-    private bool empty = false;
+    public bool empty = true;
 
     [SerializeField]
     private SpriteRenderer bridgeTail;
@@ -37,7 +37,7 @@ public class Tile : MonoBehaviour
         RED, BLUE, ORANGE, YELLOW, GREEN, NONE
     };
 
-    public void SetColor(int c, Color _color)
+    public void InitTile(int c, Color _color)
     {
         if (c == -1)
         {
@@ -65,9 +65,9 @@ public class Tile : MonoBehaviour
         return tileRect;
     }
 
-    public bool EmptyTile()
+    public bool CircleActive()
     {
-        return empty;
+        return circle.enabled;
     }
     
     public void ActiveBgColor(bool status)
@@ -80,36 +80,46 @@ public class Tile : MonoBehaviour
         star.enabled = status;
     }
 
-    private void ActiveTail(Vector2 dir)
+    public void ActiveTail(Vector2 _dir, Color _color)
     {
+        color = _color;
         bridgeTail.enabled = true;
         bridgeTail.color = color;
         bgColor.enabled = true;
         bgColor.color = color;
+
         bridgeTail.flipY = false;
         float factor = circle.enabled ? -1.0f : 1.0f;
         bridgeTail.transform.rotation = Quaternion.identity;
 
-        if (dir.x == 1.0f)
+        if (_dir.x == 1.0f)
         {
             bridgeTail.transform.Rotate(Vector3.forward, -90 * factor);
         }
-        else if (dir.x == -1.0f)
+        else if (_dir.x == -1.0f)
         {
             bridgeTail.transform.Rotate(Vector3.forward, 90 * factor);
         }
-        else if (dir.y == 1.0f)
+        else if (_dir.y == 1.0f)
         {
 
             bridgeTail.flipY = true;
         }
     }
 
-    //  Cuando el dedo deja de tocar este tile
-    public void LeaveTouchTile(Vector2 dir, Color _color)
+    public void ActiveBridge(Vector2 _dir, Color _color)
     {
+        bridgeTail.enabled = false;
         color = _color;
-        ActiveTail(dir);
+        bridge.enabled = true;
+        bridge.color = color;
+
+        //bridge.transform.rotation = Quaternion.identity;
+        bridge.transform.rotation = bridgeTail.transform.rotation;
+        //if (_dir.x == 1.0f || _dir.x == 0.0f)
+        //{
+        //    bridge.transform.Rotate(Vector3.forward, 90);
+        //}
     }
 
     public float GetWidth()
@@ -128,7 +138,7 @@ public class Tile : MonoBehaviour
         bgColor.color = color;
     }
 
-    public void SetElbow(Color _color ,Vector2 dir, Vector2 previous)
+    public void ActiveElbow(Color _color ,Vector2 dir, Vector2 previous)
     {
         bridgeTail.enabled = false;
         elbow.enabled = true;
@@ -137,7 +147,6 @@ public class Tile : MonoBehaviour
         elbow.transform.rotation = Quaternion.identity;
         elbow.flipX = false;
         elbow.flipY = false;
-        print(dir + " / " + previous );
 
         if (dir.y < 0.0f) // Va para abajo 
         {
@@ -169,7 +178,7 @@ public class Tile : MonoBehaviour
         {
             if (previous.y < 0.0f)// Viene de abajo
             {
-                print("Para derecha desde abajo");
+                print("Para derecha desde arriba");
                 elbow.flipX = true;
                 elbow.flipY = true;
             }
