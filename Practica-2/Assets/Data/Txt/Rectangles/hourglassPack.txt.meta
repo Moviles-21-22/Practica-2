@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Practica-2/Assets/Data/Txt/Rectangles/hourglassPack.txt.meta
 guid: 0d706d0968d792f4ab8428f7da661a32
+=======
+guid: 7fdd9be6571d16944934451138c87b18
+>>>>>>> main:Practica-2/Assets/Data/Levels/levelpack_24_rectangle.txt.meta
 TextScriptImporter:
   externalObjects: {}
   userData: 

@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Practica-2/Assets/Data/Txt/Intro/bluePackIntro.txt.meta
 guid: ba422063841900d4f8c737bf983eb573
+=======
+guid: 87529e7d2df6ece478d2f7244db64f07
+>>>>>>> main:Practica-2/Assets/Data/Levels/Intro/levelpack_1.txt.meta
 TextScriptImporter:
   externalObjects: {}
   userData: 

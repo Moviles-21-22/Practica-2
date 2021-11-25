@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Practica-2/Assets/Data/Txt/Manías/8x8Manias.txt.meta
 guid: cdff88df8266d85449e3bc305c37aa27
+=======
+guid: 8267a7e2cd9beab409addc4daf40cd8a
+>>>>>>> main:Practica-2/Assets/Data/Levels/Intro/levelpack_7.txt.meta
 TextScriptImporter:
   externalObjects: {}
   userData: 

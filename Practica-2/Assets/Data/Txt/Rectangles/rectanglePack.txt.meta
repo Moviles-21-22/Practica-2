@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Practica-2/Assets/Data/Txt/Rectangles/rectanglePack.txt.meta
 guid: d732bbc7c2474cd45813647d9f808091
+=======
+guid: f526591dfda9ac74389cffabd4aba3d8
+>>>>>>> main:Practica-2/Assets/Data/Levels/levelpack_30_tower.txt.meta
 TextScriptImporter:
   externalObjects: {}
   userData: 
