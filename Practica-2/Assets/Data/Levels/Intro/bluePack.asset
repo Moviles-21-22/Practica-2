@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7bf3a848a5c16a4e82753d07d0c1327, type: 3}
   m_Name: bluePack
   m_EditorClassIdentifier: 
-  level: 4
+  totalLevels: 150
+  levelName: Blue Pack
   txt: {fileID: 4900000, guid: ba422063841900d4f8c737bf983eb573, type: 3}

@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7bf3a848a5c16a4e82753d07d0c1327, type: 3}
   m_Name: rectangle
   m_EditorClassIdentifier: 
+  totalLevels: 150
+  levelName: Rectangle Pack
   txt: {fileID: 4900000, guid: d732bbc7c2474cd45813647d9f808091, type: 3}

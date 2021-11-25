@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7bf3a848a5c16a4e82753d07d0c1327, type: 3}
   m_Name: bonusPack
   m_EditorClassIdentifier: 
-  level: 2
+  totalLevels: 150
+  levelName: Bonus Pack
   txt: {fileID: 4900000, guid: 7033c50408d96fe40b522f7c653846d6, type: 3}

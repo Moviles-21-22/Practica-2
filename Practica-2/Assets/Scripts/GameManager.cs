@@ -10,8 +10,8 @@ public class GameManager : MonoBehaviour
     public LevelManager levelManager;
 
     //  Devuelve el nivel actual
-    private string currRoute;
-    private int currLevel;
+    private Category currCategory;
+    private LevelPack currLevel;
     public static GameManager instance;
 
     public Category[] categories;
@@ -28,15 +28,15 @@ public class GameManager : MonoBehaviour
     public void SetLevelManager(LevelManager otherLevelManager)
     {
         //TESTEO Segun peblo habrá que arrastrar los txts al gameManager
-        currRoute = Directory.GetCurrentDirectory() + @"\Assets\Data\Levels\Intro\levelpack_0.txt";
-        levelManager = otherLevelManager;
-        if (levelManager != null)
-        {
-            levelManager.init(currRoute);
-        }
+        //currRoute = Directory.GetCurrentDirectory() + @"\Assets\Data\Levels\Intro\levelpack_0.txt";
+        //levelManager = otherLevelManager;
+        //if (levelManager != null)
+        //{
+        //    levelManager.init(currRoute);
+        //}
     }
 
-    public int GetCurrentLevel()
+    public LevelPack GetCurrentLevel()
     {
         return currLevel;
     }
@@ -44,5 +44,10 @@ public class GameManager : MonoBehaviour
     public void LoadScene(string scene)
     {
         SceneManager.LoadScene(scene);
+    }
+
+    public void LoadLevel(LevelPack level) 
+    {
+        currLevel = level;
     }
 }

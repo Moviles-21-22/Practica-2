@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7bf3a848a5c16a4e82753d07d0c1327, type: 3}
   m_Name: 7x7
   m_EditorClassIdentifier: 
+  totalLevels: 150
+  levelName: 7x7
   txt: {fileID: 4900000, guid: ca0b468de3392904c9fbed1f3627c79e, type: 3}

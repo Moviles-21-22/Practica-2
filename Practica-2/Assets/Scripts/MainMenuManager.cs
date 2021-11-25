@@ -11,8 +11,7 @@ public class MainMenuManager : MonoBehaviour
     [System.Serializable]
     class Paquete 
     {
-        public Color color;
-        public string routePaquete;
+        public Category categoria;
         public Image titleSprite;
         public Text titleText;
         public List<LevelProperties> levels;
@@ -21,24 +20,31 @@ public class MainMenuManager : MonoBehaviour
     [System.Serializable]
     struct LevelProperties 
     {
+        public Button button;
         public Text name;
         public Text levels;
+
+        public void LoadLevelCallback(Category categoria, int j) 
+        {
+            button.onClick.AddListener(() => GameManager.instance.LoadLevel(categoria.levels[j]));
+        }
     }
 
     private void Start()
     {
-        //TODO: Hacerlo por datos del fichero de texto
-
-        for (int i = 0; i < paquetes.Count; i++) 
+        for (int i = 0; i < paquetes.Count; i++)
         {
-            paquetes[i].titleText.text = "Intro";
-            paquetes[i].titleSprite.color = paquetes[i].color;
-            for (int j = 0; j < paquetes[i].levels.Count; j++) 
+            paquetes[i].titleText.text = paquetes[i].categoria.categoryName;
+            paquetes[i].titleSprite.color = paquetes[i].categoria.color;
+            for (int j = 0; j < paquetes[i].categoria.levels.Length; j++)
             {
-                paquetes[i].levels[j].name.color = paquetes[i].color;
-                paquetes[i].levels[j].name.text = "Nombre";
-                paquetes[i].levels[j].levels.text= "0/150";
+                paquetes[i].levels[j].name.color = paquetes[i].categoria.color;
+                paquetes[i].levels[j].name.text = paquetes[i].categoria.levels[j].levelName;
+                // TODO: El 0 se sustituye por los niveles completos, que deberían estar guardados en GameManager
+                paquetes[i].levels[j].levels.text = "0 / " + paquetes[i].categoria.levels[j].totalLevels;
+                paquetes[i].levels[j].LoadLevelCallback(paquetes[i].categoria, j);
             }
         }
     }
+
 }

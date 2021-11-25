@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7bf3a848a5c16a4e82753d07d0c1327, type: 3}
   m_Name: hourglass
   m_EditorClassIdentifier: 
+  totalLevels: 150
+  levelName: Hourglass Pack
   txt: {fileID: 4900000, guid: 0d706d0968d792f4ab8428f7da661a32, type: 3}

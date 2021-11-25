@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7bf3a848a5c16a4e82753d07d0c1327, type: 3}
   m_Name: clasicPack
   m_EditorClassIdentifier: 
-  level: 1
+  totalLevels: 150
+  levelName: Classic Pack
   txt: {fileID: 4900000, guid: 9c5810b305b19a54cac9c1f9c83fbebc, type: 3}

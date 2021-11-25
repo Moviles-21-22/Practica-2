@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7bf3a848a5c16a4e82753d07d0c1327, type: 3}
   m_Name: greenPack
   m_EditorClassIdentifier: 
-  level: 3
+  totalLevels: 150
+  levelName: Green Pack
   txt: {fileID: 4900000, guid: 1efa9ef735d89a448aec64eac68ea4fb, type: 3}

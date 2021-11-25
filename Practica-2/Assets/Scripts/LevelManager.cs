@@ -29,7 +29,7 @@ public class LevelManager : MonoBehaviour
         try
         {
             map = new Map(file);
-            currLevel = map.GetLevel(GameManager.instance.GetCurrentLevel());
+            //currLevel = map.GetLevel(GameManager.instance.GetCurrentLevel());
         }
         catch (Exception e) {
             Debug.LogError(e.Message);

@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7bf3a848a5c16a4e82753d07d0c1327, type: 3}
   m_Name: 10x10
   m_EditorClassIdentifier: 
+  totalLevels: 150
+  levelName: 10x10
   txt: {fileID: 4900000, guid: 3ed795751654f8f45b9576de5ab29056, type: 3}

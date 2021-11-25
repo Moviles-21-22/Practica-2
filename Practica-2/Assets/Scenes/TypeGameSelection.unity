@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 10337538}
   - component: {fileID: 10337537}
   m_Layer: 5
-  m_Name: Levels
+  m_Name: 7x7Levels
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -214,7 +214,7 @@ GameObject:
   - component: {fileID: 25376325}
   - component: {fileID: 25376324}
   m_Layer: 5
-  m_Name: Levels
+  m_Name: 10x10Levels
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -372,25 +372,9 @@ PrefabInstance:
       value: GameManager
       objectReference: {fileID: 0}
     - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
-      propertyPath: colors.Array.data[0]
+      propertyPath: mainMenu
       value: 
-      objectReference: {fileID: 11400000, guid: e0654b64e5519d54b902550dc30109f9, type: 2}
-    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
-      propertyPath: categories.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
-      propertyPath: categories.Array.data[0]
-      value: 
-      objectReference: {fileID: 11400000, guid: e0654b64e5519d54b902550dc30109f9, type: 2}
-    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
-      propertyPath: categories.Array.data[1]
-      value: 
-      objectReference: {fileID: 11400000, guid: 14e41d866031a2749b450e0ccabb96af, type: 2}
-    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
-      propertyPath: categories.Array.data[2]
-      value: 
-      objectReference: {fileID: 11400000, guid: ad1975f958b7ef64893a9c5647145511, type: 2}
+      objectReference: {fileID: 1712218500}
     - target: {fileID: 4075807167624887494, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -528,7 +512,7 @@ GameObject:
   - component: {fileID: 151091354}
   - component: {fileID: 151091353}
   m_Layer: 5
-  m_Name: Levels
+  m_Name: 6x6Levels
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -607,7 +591,7 @@ GameObject:
   - component: {fileID: 279292398}
   - component: {fileID: 279292397}
   m_Layer: 5
-  m_Name: PaqueteText
+  m_Name: 10x10Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -707,10 +691,10 @@ RectTransform:
   m_Father: {fileID: 546198783}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.9494065}
+  m_AnchorMax: {x: 0.119611114, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 85, y: 85}
+  m_SizeDelta: {x: -0.0000076294, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &308802720
 MonoBehaviour:
@@ -806,7 +790,7 @@ GameObject:
   - component: {fileID: 388904181}
   - component: {fileID: 388904180}
   m_Layer: 5
-  m_Name: PaqueteText
+  m_Name: 8x8Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1590,7 +1574,7 @@ GameObject:
   - component: {fileID: 850127696}
   - component: {fileID: 850127695}
   m_Layer: 5
-  m_Name: Levels
+  m_Name: TowerLevels
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1669,7 +1653,7 @@ GameObject:
   - component: {fileID: 864549415}
   - component: {fileID: 864549414}
   m_Layer: 5
-  m_Name: Levels
+  m_Name: 9x9Levels
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1820,7 +1804,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 929207015}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1864916465}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &929207015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2055,7 +2051,7 @@ GameObject:
   - component: {fileID: 1000829554}
   - component: {fileID: 1000829553}
   m_Layer: 5
-  m_Name: PaqueteText
+  m_Name: HourglassText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2576,7 +2572,7 @@ GameObject:
   - component: {fileID: 1148713252}
   - component: {fileID: 1148713251}
   m_Layer: 5
-  m_Name: Levels
+  m_Name: RectanglesLevels
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2885,7 +2881,7 @@ GameObject:
   - component: {fileID: 1281644612}
   - component: {fileID: 1281644611}
   m_Layer: 5
-  m_Name: Clasic
+  m_Name: 6x6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3112,7 +3108,7 @@ GameObject:
   - component: {fileID: 1327610890}
   - component: {fileID: 1327610889}
   m_Layer: 5
-  m_Name: Levels
+  m_Name: 8x8Levels
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3329,7 +3325,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Remove ads
+  m_Text: Quitar anuncios
 --- !u!222 &1373086508
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3543,7 +3539,7 @@ GameObject:
   - component: {fileID: 1395199094}
   - component: {fileID: 1395199093}
   m_Layer: 5
-  m_Name: PaqueteText
+  m_Name: RectanglesText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3701,7 +3697,7 @@ GameObject:
   - component: {fileID: 1483361386}
   - component: {fileID: 1483361385}
   m_Layer: 5
-  m_Name: PaqueteText
+  m_Name: 7x7Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3859,7 +3855,7 @@ GameObject:
   - component: {fileID: 1507574726}
   - component: {fileID: 1507574725}
   m_Layer: 5
-  m_Name: Levels
+  m_Name: HourglassLevels
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3973,7 +3969,7 @@ GameObject:
   - component: {fileID: 1562236707}
   - component: {fileID: 1562236706}
   m_Layer: 5
-  m_Name: PaqueteText
+  m_Name: 6x6Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4131,7 +4127,7 @@ GameObject:
   - component: {fileID: 1674104979}
   - component: {fileID: 1674104978}
   m_Layer: 5
-  m_Name: PaqueteText
+  m_Name: TowerText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4210,7 +4206,7 @@ GameObject:
   - component: {fileID: 1677021165}
   - component: {fileID: 1677021164}
   m_Layer: 5
-  m_Name: PaqueteText
+  m_Name: 9x9Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4392,19 +4388,54 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   paquetes:
-  - color: {r: 0, g: 0.5529412, b: 0, a: 1}
-    routePaquete: Intro
+  - categoria: {fileID: 11400000, guid: e0654b64e5519d54b902550dc30109f9, type: 2}
     titleSprite: {fileID: 1035091190}
     titleText: {fileID: 1239568260}
     levels:
-    - name: {fileID: 97158329}
+    - button: {fileID: 929207014}
+      name: {fileID: 97158329}
       levels: {fileID: 984044861}
-    - name: {fileID: 1487855213}
+    - button: {fileID: 1975832433}
+      name: {fileID: 1487855213}
       levels: {fileID: 677158466}
-    - name: {fileID: 75552285}
+    - button: {fileID: 2077733775}
+      name: {fileID: 75552285}
       levels: {fileID: 473004286}
-    - name: {fileID: 1774748133}
+    - button: {fileID: 1376607602}
+      name: {fileID: 1774748133}
       levels: {fileID: 1428158576}
+  - categoria: {fileID: 11400000, guid: 14e41d866031a2749b450e0ccabb96af, type: 2}
+    titleSprite: {fileID: 757794992}
+    titleText: {fileID: 397587890}
+    levels:
+    - button: {fileID: 1281644612}
+      name: {fileID: 1562236706}
+      levels: {fileID: 151091353}
+    - button: {fileID: 1201033430}
+      name: {fileID: 1483361385}
+      levels: {fileID: 10337537}
+    - button: {fileID: 1116799332}
+      name: {fileID: 388904180}
+      levels: {fileID: 1327610889}
+    - button: {fileID: 1718732190}
+      name: {fileID: 1677021164}
+      levels: {fileID: 864549414}
+    - button: {fileID: 681131054}
+      name: {fileID: 279292397}
+      levels: {fileID: 25376324}
+  - categoria: {fileID: 11400000, guid: ad1975f958b7ef64893a9c5647145511, type: 2}
+    titleSprite: {fileID: 585702381}
+    titleText: {fileID: 1341123985}
+    levels:
+    - button: {fileID: 1993497542}
+      name: {fileID: 1674104978}
+      levels: {fileID: 850127695}
+    - button: {fileID: 1913379471}
+      name: {fileID: 1395199093}
+      levels: {fileID: 1148713251}
+    - button: {fileID: 2091935492}
+      name: {fileID: 1000829553}
+      levels: {fileID: 1507574725}
 --- !u!114 &1712218501
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4764,6 +4795,11 @@ RectTransform:
   m_AnchoredPosition: {x: 360, y: -1115.877}
   m_SizeDelta: {x: 720, y: 54.94583}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1864916465 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4075807167624887492, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+  m_PrefabInstance: {fileID: 86911984}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1913379468
 GameObject:
   m_ObjectHideFlags: 0
@@ -4778,7 +4814,7 @@ GameObject:
   - component: {fileID: 1913379471}
   - component: {fileID: 1913379470}
   m_Layer: 5
-  m_Name: 10x10 (2)
+  m_Name: Rectangles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5076,7 +5112,7 @@ GameObject:
   - component: {fileID: 1993497542}
   - component: {fileID: 1993497541}
   m_Layer: 5
-  m_Name: 10x10 (1)
+  m_Name: Tower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5409,7 +5445,7 @@ GameObject:
   - component: {fileID: 2091935492}
   - component: {fileID: 2091935491}
   m_Layer: 5
-  m_Name: 10x10 (3)
+  m_Name: Hourglass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
