@@ -41,13 +41,20 @@ public class GameManager : MonoBehaviour
         return currLevel;
     }
 
+    public Category GetCurrentCategory()
+    {
+        return currCategory;
+    }
+
     public void LoadScene(string scene)
     {
         SceneManager.LoadScene(scene);
     }
 
-    public void LoadLevel(LevelPack level) 
+    public void LoadLevel(LevelPack level, Category cat) 
     {
+        currCategory = cat;
         currLevel = level;
+        LoadScene("GridGameSlelection");
     }
 }

@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/TypeGameSelection.unity
     guid: 9d7746796d92c31489cb7dfcf4a578fd
   - enabled: 1
+    path: Assets/Scenes/GridGameSlelection.unity
+    guid: 1f950d45c58c05c4dba2ac3ed2187576
+  - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   m_configObjects: {}

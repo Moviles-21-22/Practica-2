@@ -26,7 +26,7 @@ public class MainMenuManager : MonoBehaviour
 
         public void LoadLevelCallback(Category categoria, int j) 
         {
-            button.onClick.AddListener(() => GameManager.instance.LoadLevel(categoria.levels[j]));
+            button.onClick.AddListener(() => GameManager.instance.LoadLevel(categoria.levels[j],categoria));
         }
     }
 
