@@ -170,6 +170,12 @@ public class BoardManager : MonoBehaviour
         else return false;
     }
 
+    public void GiveHint()
+    {
+        //Todo pistas iniciales
+        
+    }
+
     private bool IsElbow(Vector2 dir)
     {
         if (Math.Abs(dir.x + previousDir.y) == 2.0f || Math.Abs(dir.y + previousDir.x) == 2.0f

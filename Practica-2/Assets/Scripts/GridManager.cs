@@ -12,7 +12,7 @@ public class GridManager : MonoBehaviour
     private RectTransform content;
 
     [SerializeField]
-    private GameObject packPrefab;
+    private GridPack packPrefab;
 
     //  Numero de casillas en x
     private const int numX = 30;
@@ -29,36 +29,34 @@ public class GridManager : MonoBehaviour
 
     void Start()
     {
-        LevelPack currLevelPack = GameManager.instance.GetCurrentLevel();
+        LevelPack currLevelPack = GameManager.instance.GetCurrentPack();
         categoryTitle.color = GameManager.instance.GetCurrentCategory().color;
         categoryTitle.text = currLevelPack.levelName;
-        //Map map = new Map(currLevelPack.txt.ToString());
-        //levels = map.GetAllLevels();
         int numPacks = currLevelPack.gridNames.Length;
         originalW = content.rect.width;
         float rect = content.rect.xMax;
         for (int i = 0; i < numPacks; i++)
         {
-            CreateGrid();
+            CreateGrid(currLevelPack,i,colors[i]);
             if (i < numPacks - 1)
             {
                 rect += originalW;
                 content.offsetMax = new Vector2(rect,content.offsetMax.y);
             }
         }
-        //content.offsetMin = new Vector2(0,content.offsetMax.y);
     }
 
-    private void CreateGrid()
+    private void CreateGrid(LevelPack pack,int index,Color color)
     {
-        var currPack = Instantiate(packPrefab,content.transform);
-        Vector2 pos = new Vector2(1, 1);
-        for (int i = 0; i < numX; i++)
+        GridPack currPack = Instantiate<GridPack>(packPrefab,content.transform);
+        currPack.SetText(pack.gridNames[index]);
+        Box[] boxes = currPack.GetAllBoxes();
+
+        for (int i = 0; i < boxes.Length; i++)
         {
-            for (int j = 0; j < numY; j++)
-            {
-                    
-            }
+            boxes[i].SetCallBack(i);
+            boxes[i].SetLevelNum(i + 1);
+            boxes[i].initBox(color);
         }
     }
 }

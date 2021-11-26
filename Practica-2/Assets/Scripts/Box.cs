@@ -6,6 +6,9 @@ using UnityEngine.UI;
 public class Box : MonoBehaviour
 {
     [SerializeField]
+    private Button button;
+
+    [SerializeField]
     private Text numText;
 
     private Color color;
@@ -46,4 +49,8 @@ public class Box : MonoBehaviour
         frame.color = color;
     }
 
+    public void SetCallBack(int level)
+    {
+        button.onClick.AddListener(() => GameManager.instance.LoadPackLevel(level));
+    }
 }

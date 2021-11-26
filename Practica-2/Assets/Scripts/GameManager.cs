@@ -11,10 +11,11 @@ public class GameManager : MonoBehaviour
 
     //  Devuelve el nivel actual
     private Category currCategory;
-    private LevelPack currLevel;
+    private LevelPack currPack;
+    private Level currLevel;
     public static GameManager instance;
-
     public Category[] categories;
+    public Map currMap;
 
     public void Awake()
     {
@@ -31,18 +32,21 @@ public class GameManager : MonoBehaviour
 
     public void SetLevelManager(LevelManager otherLevelManager)
     {
-        //TESTEO Segun peblo habrá que arrastrar los txts al gameManager
-        //currRoute = Directory.GetCurrentDirectory() + @"\Assets\Data\Levels\Intro\levelpack_0.txt";
-        //levelManager = otherLevelManager;
-        //if (levelManager != null)
-        //{
-        //    levelManager.init(currRoute);
-        //}
+        levelManager = otherLevelManager;
+        if (levelManager != null)
+        {
+            levelManager.init(currMap,currLevel);
+        }
     }
 
-    public LevelPack GetCurrentLevel()
+    public LevelPack GetCurrentPack()
     {
-        return currLevel;
+        return currPack;
+    }
+
+    public int GetCurrLevel()
+    {
+        return currLevel.lvl;
     }
 
     public Category GetCurrentCategory()
@@ -60,11 +64,18 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(scene);
     }
 
+    public void LoadPackLevel(int lvl)
+    {
+        currMap = new Map(currPack.txt.ToString(),1);
+        currLevel = currMap.GetLevel(lvl);
+        LoadScene(3);
+    }
+
 
     public void LoadLevel(LevelPack level, Category cat) 
     {
         currCategory = cat;
-        currLevel = level;
+        currPack = level;
         LoadScene("GridGameSlelection");
     }
 }
