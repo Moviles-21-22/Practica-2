@@ -207,8 +207,6 @@ public class Tile : MonoBehaviour
         return color;
     }
 
-
-
     public void RemoveTail()
     {
         if (bridgeTail.enabled && !circle.enabled)

@@ -37,7 +37,6 @@ public class Map
     //  Vector con el nivel pedido
     private List<Level> levels = new List<Level>();
 
-
     public Map(string text, int a)
     {
         //  Todos los niveles por separado
@@ -58,8 +57,8 @@ public class Map
         int numBoardX, numBoardY;
         if (numBoard.Length >= 2)   //No es cuadrado
         {
-            numBoardX = int.Parse(subChain[0].ToString());
-            numBoardY = int.Parse(subChain[1].ToString());
+            numBoardX = int.Parse(numBoard[0].ToString());
+            numBoardY = int.Parse(numBoard[1].ToString());
         }
         else
         {
@@ -99,13 +98,13 @@ public class Map
             //  Una línea es un nivel
             chain = reader.ReadLine();
             string[] subs = chain.Split(';');
-            string[] numBoard = subs[0].Split(':');
             string[] subChain = subs[0].Split(',');
+            string[] numBoard = subChain[0].Split(':');
             int numBoardX, numBoardY;
             if (numBoard.Length >= 2)   //No es cuadrado
             {
-                numBoardX = int.Parse(subChain[0].ToString());
-                numBoardY = int.Parse(subChain[1].ToString());
+                numBoardX = int.Parse(numBoard[0].ToString());
+                numBoardY = int.Parse(numBoard[1].ToString());
             }
             else
             {

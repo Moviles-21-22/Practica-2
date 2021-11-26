@@ -12,7 +12,13 @@ public class BoardManager : MonoBehaviour
     private List<Tile> circleTiles = new List<Tile>();
     [SerializeField]
     private Tile tilePrefab;
-    private Color[] colors = { Color.red, Color.blue, Color.green, Color.cyan, Color.magenta };
+    private Color[] colors = { Color.red, Color.blue, Color.green,
+                               Color.magenta, Color.cyan, Color.yellow,
+                               Color.grey, Color.white,
+                               new Color(251.0f, 112.0f, 0.0f),
+                               new Color(115.0f, 7.0f, 155.0f),
+                               new Color(171.0f, 40.0f, 40.0f),
+                               new Color(147.0f, 120.0f, 55.0f) };
     private Tile currTile;
     private Color currTileColor;
     private Vector2 originPoint;
@@ -249,13 +255,13 @@ public class BoardManager : MonoBehaviour
         float w = 1;
         float h = 1;
         Vector2 initPos = new Vector2(posX,posY);
-        tiles = new Tile[currLevel.numBoardX, currLevel.numBoardY];
-        for (int i = 0; i < currLevel.numBoardX; i++)
+        tiles = new Tile[currLevel.numBoardY, currLevel.numBoardX];
+        for (int i = 0; i < currLevel.numBoardY; i++)
         {
-            for (int j = 0; j < currLevel.numBoardY; j++)
+            for (int j = 0; j < currLevel.numBoardX; j++)
             {
                 tiles[i,j] = Instantiate(tilePrefab, initPos, Quaternion.identity);
-                tiles[i, j].SetRect(initPos.x,initPos.y);
+                tiles[i,j].SetRect(initPos.x,initPos.y);
                 initPos.x += w;
             }
             initPos.x = posX;
@@ -269,24 +275,26 @@ public class BoardManager : MonoBehaviour
     {
         for (int i = 0; i < currLevel.solutions.Count; i++)
         {
+            //Cabeza de la tuberia
             float firstElemt = currLevel.solutions[i][0];
             int filaA = (int)((firstElemt + 1) / currLevel.numBoardX);
             int colA = (int)((firstElemt + 1) % currLevel.numBoardX) - 1;
-
             if (colA < 0)
             {
                 colA = currLevel.numBoardX - 1;
                 filaA -= 1;
             }
+            print("colA: " + colA + " filaA: " + filaA);
             tiles[filaA,colA].InitTile(i, colors[i]);
             circleTiles.Add(tiles[filaA,colA]);
 
+            //Final de la tuberia
             float secElement = currLevel.solutions[i][currLevel.solutions[i].Count - 1];
             int filaB = (int)((secElement + 1) / currLevel.numBoardX);
             int colB = (int)((secElement + 1) % currLevel.numBoardX) - 1;
             if (colB < 0)
             {
-                colB = currLevel.numBoardY - 1;
+                colB = currLevel.numBoardX - 1;
                 filaB -= 1;
             }
             tiles[filaB, colB].InitTile(i, colors[i]);
