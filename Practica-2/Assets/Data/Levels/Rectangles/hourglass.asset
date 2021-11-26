@@ -15,3 +15,9 @@ MonoBehaviour:
   totalLevels: 150
   levelName: Hourglass Pack
   txt: {fileID: 4900000, guid: 0d706d0968d792f4ab8428f7da661a32, type: 3}
+  gridNames:
+  - 5x6 - 5x11
+  - 6x7 - 6x12
+  - 7x8 - 7x13
+  - 8x9 - 8x14
+  - 9x10 - 9x15

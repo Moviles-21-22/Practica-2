@@ -15,3 +15,9 @@ MonoBehaviour:
   totalLevels: 150
   levelName: Tower Pack
   txt: {fileID: 4900000, guid: 0dfb523e2d49cd04dbd820f5be9d6dc3, type: 3}
+  gridNames:
+  - 9x11
+  - 9x12
+  - 11x13
+  - 11x14
+  - 13x15

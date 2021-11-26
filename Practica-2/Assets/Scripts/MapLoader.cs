@@ -15,6 +15,10 @@ public struct Level
     //  Vector con las soluciones
     public List<List<int>> solutions;
     //public Vector<Vector<int>> solutions;
+    //  Vector con casillas con muros
+    public List<List<int>> walls;
+    //  Vector con huecos
+    public List<int> gaps;
     public Level(int _numBoardX,int _lvl,int _numFlow,int _numBoardY)
     {
         numBoardX = _numBoardX;
@@ -22,6 +26,8 @@ public struct Level
         lvl = _lvl;
         numFlow = _numFlow;
         solutions = new List<List<int>>();
+        walls = new List<List<int>>();
+        gaps = new List<int>();
     }
 }
 
@@ -47,8 +53,8 @@ public class Map
     {
         //  Separamos por segmentos
         string[] seg = level.Split(';');
-        string[] numBoard = seg[0].Split(':');
         string[] subChain = seg[0].Split(',');
+        string[] numBoard = subChain[0].Split(':');
         int numBoardX, numBoardY;
         if (numBoard.Length >= 2)   //No es cuadrado
         {

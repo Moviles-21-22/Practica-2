@@ -15,3 +15,9 @@ MonoBehaviour:
   totalLevels: 150
   levelName: 10x10
   txt: {fileID: 4900000, guid: 3ed795751654f8f45b9576de5ab29056, type: 3}
+  gridNames:
+  - 1 - 30
+  - 31 - 60
+  - 61 - 90
+  - 91 - 120
+  - 121 - 150

@@ -15,3 +15,9 @@ MonoBehaviour:
   totalLevels: 150
   levelName: 7x7
   txt: {fileID: 4900000, guid: ca0b468de3392904c9fbed1f3627c79e, type: 3}
+  gridNames:
+  - 1 - 30
+  - 31 - 60
+  - 61 - 90
+  - 91 - 120
+  - 121 - 150

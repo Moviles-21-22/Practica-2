@@ -15,3 +15,9 @@ MonoBehaviour:
   totalLevels: 150
   levelName: Rectangle Pack
   txt: {fileID: 4900000, guid: d732bbc7c2474cd45813647d9f808091, type: 3}
+  gridNames:
+  - 9x8
+  - 9x11
+  - 10x12
+  - 11x13
+  - 12x14
