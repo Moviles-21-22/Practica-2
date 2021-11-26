@@ -284,7 +284,7 @@ public class BoardManager : MonoBehaviour
                 colA = currLevel.numBoardX - 1;
                 filaA -= 1;
             }
-            print("colA: " + colA + " filaA: " + filaA);
+            //print("colA: " + colA + " filaA: " + filaA);
             tiles[filaA,colA].InitTile(i, colors[i]);
             circleTiles.Add(tiles[filaA,colA]);
 

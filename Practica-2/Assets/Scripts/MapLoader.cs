@@ -1,11 +1,11 @@
-using System.IO;
+﻿using System.IO;
 using System.Collections.Generic;
 
 
 //  struct para cada nivel cargado
 public struct Level
 {
-    //  tama�o del tablero
+    //  tamaño del tablero
     public int numBoardX;
     public int numBoardY;
     //  nivel que le corresponede
@@ -15,7 +15,7 @@ public struct Level
     //  Vector con las soluciones
     public List<List<int>> solutions;
     //public Vector<Vector<int>> solutions;
-    //  Vector con casillas con muros
+    //  Vector con casillas con muros -- cada muro es una lista de dos elementos (casillas adyacentes al muro)
     public List<List<int>> walls;
     //  Vector con huecos
     public List<int> gaps;
@@ -58,17 +58,45 @@ public class Map
         if (numBoard.Length >= 2)   //No es cuadrado
         {
             numBoardX = int.Parse(numBoard[0].ToString());
-            numBoardY = int.Parse(numBoard[1].ToString());
+            string[] plusB = numBoard[1].Split('+');    //Para los ficheros que tienen "+B" (a esos tableros los rodearemos de muros)
+            numBoardY = int.Parse(plusB[0].ToString());
         }
         else
         {
             numBoardX = int.Parse(subChain[0].ToString());
             numBoardY = int.Parse(subChain[0].ToString());
-
         }
+
         int lvl = int.Parse(subChain[2].ToString());
         int numFlow = int.Parse(subChain[3].ToString());
         Level currLevel = new Level(numBoardX, lvl, numFlow, numBoardY);
+
+        //Miramos a ver si hay muros o huecos
+        //i == 4 → puentes (no hay que implementarlos)
+        //i == 5 → huecos
+        //i == 6 → muros
+        if (subChain.Length > 5 && subChain[5] != "")    //Hay huecos
+        {
+            string[] numGaps = subChain[5].Split(':');
+            for (int i = 0; i < numGaps.Length; i++)
+            {
+                currLevel.gaps.Add(int.Parse(numGaps[i]));
+            }
+        }
+
+        if (subChain.Length > 6 && subChain[6] != "")    //Hay muros
+        {
+            string[] numWalls = subChain[6].Split(':');
+            List<int> currWall = new List<int>();
+            for (int i = 0; i < numWalls.Length; i++)
+            {
+                currWall.Add(int.Parse(numWalls[i].Split('|')[0]));
+                currWall.Add(int.Parse(numWalls[i].Split('|')[1]));
+                currLevel.walls.Add(currWall);
+            }
+        }
+
+        //Guarda las tuberias solucion del tablero
         for (int i = 0; i < currLevel.numFlow; i++)
         {
             string[] chars = seg[i + 1].Split(',');
@@ -82,12 +110,12 @@ public class Map
         return currLevel;
     }
 
-    //  Abre y lee un txt y crea un array bidimensional con la informaci�n del tablero
+    //  Abre y lee un txt y crea un array bidimensional con la información del tablero
     public Map(string route)
     {
         StreamReader reader = new StreamReader(route);
         // En orden
-        //  1- tama�o del tablero
+        //  1- tamaño del tablero
         //  2- reservado
         //  3- nivel
         //  4- numero de flujos
@@ -95,7 +123,7 @@ public class Map
         string chain;
         while (!reader.EndOfStream)
         {
-            //  Una l�nea es un nivel
+            //  Una línea es un nivel
             chain = reader.ReadLine();
             string[] subs = chain.Split(';');
             string[] subChain = subs[0].Split(',');
