@@ -87,9 +87,9 @@ public class Map
         if (subChain.Length > 6 && subChain[6] != "")    //Hay muros
         {
             string[] numWalls = subChain[6].Split(':');
-            List<int> currWall = new List<int>();
             for (int i = 0; i < numWalls.Length; i++)
             {
+                List<int> currWall = new List<int>();
                 currWall.Add(int.Parse(numWalls[i].Split('|')[0]));
                 currWall.Add(int.Parse(numWalls[i].Split('|')[1]));
                 currLevel.walls.Add(currWall);
