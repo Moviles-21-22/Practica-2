@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,11 +27,20 @@ public class Tile : MonoBehaviour
     private SpriteRenderer star;
 
     [SerializeField]
+    private SpriteRenderer wallUp;
+    [SerializeField]
+    private SpriteRenderer wallRight;
+    [SerializeField]
+    private SpriteRenderer wallDown;
+    [SerializeField]
+    private SpriteRenderer wallLeft;
+
+    [SerializeField]
     private SpriteRenderer bgColor;
 
     private Rect tileRect;
 
-    //TODO : FALTAN M�S COLORES
+    //TODO : FALTAN MÁS COLORES
     public enum TILE_COLOR : int
     {
         RED, BLUE, ORANGE, YELLOW, GREEN, NONE
@@ -78,6 +87,22 @@ public class Tile : MonoBehaviour
     public void ActiveStar(bool status)
     {
         star.enabled = status;
+    }
+
+    //dir == 0 → muro encima
+    //dir == 1 → muro a la derecha
+    //dir == 2 → muro debajo
+    //dir == 3 → muro a la izquierda
+    public void ActiveWall(int dir)
+    {
+        if (dir == 0)
+            wallUp.enabled = true;
+        else if (dir == 1)
+            wallRight.enabled = true;
+        else if (dir == 2)
+            wallDown.enabled = true;
+        else if (dir == 3)
+            wallLeft.enabled = true;
     }
 
     public void ActiveTail(Vector2 _dir, Color _color)

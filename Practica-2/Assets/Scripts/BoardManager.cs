@@ -10,6 +10,7 @@ public class BoardManager : MonoBehaviour
     private Tile[,] tiles;
     private Vector2Int size;
     private List<Tile> circleTiles = new List<Tile>();
+    private List<Tile> wallTiles = new List<Tile>();
     [SerializeField]
     private Tile tilePrefab;
     private Color[] colors = { Color.red, Color.blue, Color.green,
@@ -268,6 +269,7 @@ public class BoardManager : MonoBehaviour
             initPos.y -= h;
         }
         initCircles(currLevel);
+        initWalls(currLevel);
     }
 
     //  Inicializa los circulos del nivel
@@ -299,6 +301,36 @@ public class BoardManager : MonoBehaviour
             }
             tiles[filaB, colB].InitTile(i, colors[i]);
             circleTiles.Add(tiles[filaB, colB]);
+        }
+    }
+
+    //Pone los muros del nivel
+    private void initWalls(Level currLevel)
+    {
+        for (int i = 0; i < currLevel.walls.Count; i++)
+        {
+            //Cogemos los dos tiles adyacentes al muro
+            int firstElemt = currLevel.walls[i][0];
+            int secElemt = currLevel.walls[i][1];
+
+            int fila = (int)((firstElemt + 1) / currLevel.numBoardX);
+            int colm = (int)((firstElemt + 1) % currLevel.numBoardX) - 1;
+            if (colm < 0)
+            {
+                colm = currLevel.numBoardX - 1;
+                fila -= 1;
+            }
+            //Encontramos en que direccion se encuentra el muro respecto a firstElemt
+            if (firstElemt > secElemt + 1)          //Muro encima
+                tiles[fila, colm].ActiveWall(0);
+            else if (firstElemt == secElemt + 1)    //Muro a la derecha
+                tiles[fila, colm].ActiveWall(1);
+            else if (firstElemt < secElemt - 1)     //Muro debajo
+                tiles[fila, colm].ActiveWall(2);
+            else if (firstElemt == secElemt - 1)    //Muro a la izquierda
+                tiles[fila, colm].ActiveWall(3);
+
+            wallTiles.Add(tiles[fila, colm]);
         }
     }
 }

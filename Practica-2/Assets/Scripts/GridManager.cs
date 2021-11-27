@@ -26,7 +26,6 @@ public class GridManager : MonoBehaviour
     //  Tamaño del contentScroll en w
     private float originalW;
 
-
     void Start()
     {
         LevelPack currLevelPack = GameManager.instance.GetCurrentPack();
@@ -54,7 +53,7 @@ public class GridManager : MonoBehaviour
 
         for (int i = 0; i < boxes.Length; i++)
         {
-            boxes[i].SetCallBack(i);
+            boxes[i].SetCallBack((index * boxes.Length) + i);
             boxes[i].SetLevelNum(i + 1);
             boxes[i].initBox(color);
         }

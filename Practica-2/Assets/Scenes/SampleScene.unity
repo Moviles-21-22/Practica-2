@@ -243,6 +243,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 118711455}
   m_CullTransparentMesh: 1
+--- !u!212 &136831700 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 3262076663944835413, guid: af408311a33ac2349adfaf91fbbf8700, type: 3}
+  m_PrefabInstance: {fileID: 5294792989649974723}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &378209297
 GameObject:
   m_ObjectHideFlags: 0
@@ -405,6 +410,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &564855536 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 4351358252847994983, guid: af408311a33ac2349adfaf91fbbf8700, type: 3}
+  m_PrefabInstance: {fileID: 5294792989649974723}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &903085131 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8370638751146021702, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
@@ -555,6 +565,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1063351233}
   m_CullTransparentMesh: 1
+--- !u!212 &1193382929 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 3423575103774567498, guid: af408311a33ac2349adfaf91fbbf8700, type: 3}
+  m_PrefabInstance: {fileID: 5294792989649974723}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1458372275
 GameObject:
   m_ObjectHideFlags: 0
@@ -634,6 +649,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1458372275}
   m_CullTransparentMesh: 1
+--- !u!212 &1470502735 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 2307748774059445524, guid: af408311a33ac2349adfaf91fbbf8700, type: 3}
+  m_PrefabInstance: {fileID: 5294792989649974723}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1876180412
 GameObject:
   m_ObjectHideFlags: 0
@@ -1543,6 +1563,22 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4345917367933865461, guid: af408311a33ac2349adfaf91fbbf8700, type: 3}
+      propertyPath: wallUp
+      value: 
+      objectReference: {fileID: 136831700}
+    - target: {fileID: 4345917367933865461, guid: af408311a33ac2349adfaf91fbbf8700, type: 3}
+      propertyPath: wallDown
+      value: 
+      objectReference: {fileID: 564855536}
+    - target: {fileID: 4345917367933865461, guid: af408311a33ac2349adfaf91fbbf8700, type: 3}
+      propertyPath: wallLeft
+      value: 
+      objectReference: {fileID: 1470502735}
+    - target: {fileID: 4345917367933865461, guid: af408311a33ac2349adfaf91fbbf8700, type: 3}
+      propertyPath: wallRight
+      value: 
+      objectReference: {fileID: 1193382929}
     - target: {fileID: 8416465177763804373, guid: af408311a33ac2349adfaf91fbbf8700, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
