@@ -54,17 +54,12 @@ public class GameManager : MonoBehaviour
         return currCategory;
     }
 
-    public void LoadScene(string scene)
-    {
-        SceneManager.LoadScene(scene);
-    }
-
     public void LoadScene(int scene)
     {
         SceneManager.LoadScene(scene);
     }
 
-    public void LoadPackLevel(int lvl)
+    public void LoadLevel(int lvl)
     {
         currMap = new Map(currPack.txt.ToString(),1);
         currLevel = currMap.GetLevel(lvl);
@@ -72,10 +67,10 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public void LoadLevel(LevelPack level, Category cat) 
+    public void LoadPackage(LevelPack level, Category cat) 
     {
         currCategory = cat;
         currPack = level;
-        LoadScene("GridGameSlelection");
+        LoadScene(2);
     }
 }

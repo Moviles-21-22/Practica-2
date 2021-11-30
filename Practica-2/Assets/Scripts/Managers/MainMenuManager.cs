@@ -14,7 +14,7 @@ public class MainMenuManager : MonoBehaviour
     {
         [Tooltip("Inserte la categoria empaquetada")]
         public Category categoria;
-        [Tooltip("Referencia al sprite colorigo de la categoria")]
+        [Tooltip("Referencia al sprite colorido de la categoria")]
         public Image titleSprite;
         [Tooltip("Referencia al texto que indica el nombre de la categoria")]
         public Text titleText;
@@ -43,7 +43,7 @@ public class MainMenuManager : MonoBehaviour
         /// </param>
         public void LoadLevelCallback(Category categoria, int level) 
         {
-            button.onClick.AddListener(() => GameManager.instance.LoadLevel(categoria.levels[level],categoria));
+            button.onClick.AddListener(() => GameManager.instance.LoadPackage(categoria.levels[level],categoria));
         }
     }
 

@@ -5,49 +5,48 @@ using UnityEngine.UI;
 
 public class GridManager : MonoBehaviour
 {
+    [Tooltip("Referencia al título del paquete")]
     [SerializeField]
-    private Text categoryTitle;
+    private Text packTitle;
 
+    [Tooltip("Referencia al contenido del scroll")]
     [SerializeField]
-    private RectTransform content;
+    private RectTransform contentScroll;
 
+    [Tooltip("Paquete que contiene el grid de los niveles")]
     [SerializeField]
     private GridPack packPrefab;
 
-    //  Numero de casillas en x
-    private const int numX = 30;
-    //  Numero de casillas en y
-    private const int numY = 30;
-
     private Color[] colors = { Color.red, Color.blue, Color.green, Color.cyan, Color.magenta };
 
-    private List<Level> levels;
-
-    //  Tamaño del contentScroll en w
-    private float originalW;
-
-    void Start()
+    private void Start()
     {
+        // Paquete de niveles que se va a cargar
         LevelPack currLevelPack = GameManager.instance.GetCurrentPack();
-        categoryTitle.color = GameManager.instance.GetCurrentCategory().color;
-        categoryTitle.text = currLevelPack.levelName;
+        packTitle.color = GameManager.instance.GetCurrentCategory().color;
+        packTitle.text = currLevelPack.levelName;
+
+        // Número de niveles dentro del paquete
         int numPacks = currLevelPack.gridNames.Length;
-        originalW = content.rect.width;
-        float rect = content.rect.xMax;
+
+        // Ancho original del contentScroll
+        var originalW = contentScroll.rect.width;
+        Vector2 offset = contentScroll.offsetMax;
+
         for (int i = 0; i < numPacks; i++)
         {
-            CreateGrid(currLevelPack,i,colors[i]);
+            CreateGrid(currLevelPack, i, colors[i]);
             if (i < numPacks - 1)
             {
-                rect += originalW;
-                content.offsetMax = new Vector2(rect,content.offsetMax.y);
+                offset.x += originalW;
+                contentScroll.offsetMax = offset;
             }
         }
     }
 
     private void CreateGrid(LevelPack pack,int index,Color color)
     {
-        GridPack currPack = Instantiate<GridPack>(packPrefab,content.transform);
+        GridPack currPack = Instantiate<GridPack>(packPrefab,contentScroll.transform);
         currPack.SetText(pack.gridNames[index]);
         Box[] boxes = currPack.GetAllBoxes();
 

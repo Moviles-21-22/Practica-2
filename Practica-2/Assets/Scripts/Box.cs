@@ -51,6 +51,6 @@ public class Box : MonoBehaviour
 
     public void SetCallBack(int level)
     {
-        button.onClick.AddListener(() => GameManager.instance.LoadPackLevel(level));
+        button.onClick.AddListener(() => GameManager.instance.LoadLevel(level));
     }
 }
