@@ -79,11 +79,15 @@ public class Tile : MonoBehaviour
         return circle.enabled;
     }
     
-    public void ActiveBgColor(bool status)
+    //  Activa el color de fondo del tile
+    public void ActiveBgColor(bool status,Color _color)
     {
+        color = _color;
+        bgColor.color = color;
         bgColor.enabled = status;
     }
 
+    //  Activa la estrella de un tile
     public void ActiveStar(bool status)
     {
         star.enabled = status;
@@ -110,9 +114,6 @@ public class Tile : MonoBehaviour
         color = _color;
         bridgeTail.enabled = true;
         bridgeTail.color = color;
-        bgColor.enabled = true;
-        bgColor.color = color;
-
         bridgeTail.flipY = false;
         float factor = circle.enabled ? -1.0f : 1.0f;
         bridgeTail.transform.rotation = Quaternion.identity;

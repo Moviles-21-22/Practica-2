@@ -6,9 +6,12 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
+    //  Pool para los tiles creados
+    public Transform pool;
     //  Tiles del tablero
     private Tile[,] tiles;
     private Vector2Int size;
+    //  Circulos instanciados en el tablero
     private List<Tile> circleTiles = new List<Tile>();
     private List<Tile> wallTiles = new List<Tile>();
     [SerializeField]
@@ -20,12 +23,19 @@ public class BoardManager : MonoBehaviour
                                new Color(115.0f, 7.0f, 155.0f),
                                new Color(171.0f, 40.0f, 40.0f),
                                new Color(147.0f, 120.0f, 55.0f) };
+    //  Ultimo tile que han tocado, hasta que el dedo se levante
     private Tile currTile;
+    //  Color del tile tocado
     private Color currTileColor;
     private Vector2 originPoint;
+    //  Dirección del movimiento anterior
     private Vector2 previousDir;
+    //  Tile del puntero 
     private Tile inputTile;
 
+    private List<Tile> currMovement = new List<Tile>();
+
+    //  Setea al board y activa el puntero
     public void Start()
     {
         GameManager.instance.levelManager.setBoardManager(this);
@@ -47,17 +57,20 @@ public class BoardManager : MonoBehaviour
                 {
                     Vector2 touch = Input.GetTouch(0).position;
                     Rect touchRect = new Rect(touch.x, touch.y, 50, 50);
-                    var pair = GetCircleTileOnCollision(touchRect);
+                    var pair = GetTileOnCollision(touchRect);
                     if (pair.Key != null)
                     {
                         currTile = pair.Key;
-                        int index = pair.Value;
-                        originPoint = circleTiles[index].GetRect().position;
+                        Vector2Int index = pair.Value;
+                        originPoint = tiles[index.x,index.y].GetRect().position;
                         currTileColor = currTile.GetColor();
                         currTile.Touched();
+                        currMovement.Add(currTile);
+                        //  Para el puntero en pantalla
                         inputTile.GetCircleRender().enabled = true;
                         inputTile.InitTile(0, new Color(currTileColor.r, currTileColor.g, currTileColor.b, 0.5f));
-                        previousDir = new Vector2(-2,-2);
+                        previousDir = new Vector2(-2, -2);
+                        
                     }
                 }
             }
@@ -67,6 +80,7 @@ public class BoardManager : MonoBehaviour
                 if (currTile != null)
                 {
                     currTile = null;
+                    SolveMovement();
                 }
 
             }
@@ -79,26 +93,27 @@ public class BoardManager : MonoBehaviour
                     Vector2 touch = Input.GetTouch(0).position;
                     Rect touchRect = new Rect(touch.x, touch.y, 50, 50);
                     
-                    //  Nuevo tile detectado en colisión
+                    //  El nuevo touch no está colisionando con el actual tile (Es nuevo)
                     if (!touchRect.Overlaps(currTile.GetRect()))
                     {
                         //  Buscamos el tile entre todas las tiles
                         var dragedTile = GetTileOnCollision(touchRect);
                         if (dragedTile.Key != null && dragedTile.Key != currTile)
                         {
-                            Vector2 tilePos = currTile.GetRect().position;
-                            Vector2 dir = (dragedTile.Key.GetRect().position - tilePos).normalized;
+                            //  Dirección entre el nuevo tile y el anterior
+                            Vector2 dir = (dragedTile.Key.GetRect().position - currTile.GetRect().position).normalized;
                            
                             //  Hemos llegado al tile que le corresponde (solución)
                             if (dragedTile.Key.CircleActive() && dragedTile.Key.GetColor() == currTile.GetColor())
                             {
                                 print("SOLUCIÓN");
-                                //  TODO : puntos, pistas, yoquese
+                                //  Es un codo
                                 if (IsElbow(dir))
                                 {
                                     currTile.ActiveElbow(currTileColor, dir, previousDir);
                                     dragedTile.Key.ActiveTail(dir * -1, currTileColor);
                                     currTile = dragedTile.Key;
+                                    currMovement.Add(currTile);
                                     previousDir = dir;
                                 }
                                 else if(!currTile.CircleActive())
@@ -106,6 +121,7 @@ public class BoardManager : MonoBehaviour
                                     currTile.ActiveBridge(dir,currTileColor);
                                     dragedTile.Key.ActiveTail(dir * -1, currTileColor);
                                     currTile = dragedTile.Key;
+                                    currMovement.Add(currTile);
                                     previousDir = dir;
                                 }
                             }
@@ -119,6 +135,7 @@ public class BoardManager : MonoBehaviour
                                     currTile.ActiveTail(dir,currTileColor);
                                     dragedTile.Key.ActiveTail(dir,currTileColor);
                                     currTile = dragedTile.Key;
+                                    currMovement.Add(currTile);
                                     previousDir = dir;
                                 }
                                 //  El anterior no es un circulo
@@ -130,6 +147,7 @@ public class BoardManager : MonoBehaviour
                                         currTile.ActiveElbow(currTileColor,dir,previousDir);
                                         dragedTile.Key.ActiveTail(dir, currTileColor);
                                         currTile = dragedTile.Key;
+                                        currMovement.Add(currTile);
                                         previousDir = dir;
                                     }
                                     else
@@ -137,6 +155,7 @@ public class BoardManager : MonoBehaviour
                                         currTile.ActiveBridge(dir, currTileColor);
                                         dragedTile.Key.ActiveTail(dir, currTileColor);
                                         currTile = dragedTile.Key;
+                                        currMovement.Add(currTile);
                                         previousDir = dir;
                                     }
                                 }
@@ -165,7 +184,7 @@ public class BoardManager : MonoBehaviour
     }
 
     //  Determina si dos rects colisionan
-    private bool collision(Rect a, Rect b)
+    private bool Collision(Rect a, Rect b)
     {
         if (a.x < (b.x + b.width)
             && (a.x + a.width) > b.x
@@ -177,12 +196,22 @@ public class BoardManager : MonoBehaviour
         else return false;
     }
 
+    private void SolveMovement()
+    {
+        foreach (Tile tile in currMovement)
+        {
+            tile.ActiveBgColor(true,currTileColor);
+        }
+        currMovement.Clear();
+    }
+
     public void GiveHint()
     {
         //Todo pistas iniciales
         
     }
 
+    //  Determina si el tile anterior es un codo
     private bool IsElbow(Vector2 dir)
     {
         if (Math.Abs(dir.x + previousDir.y) == 2.0f || Math.Abs(dir.y + previousDir.x) == 2.0f
@@ -203,7 +232,7 @@ public class BoardManager : MonoBehaviour
         while (!collisionDetected && cont < circleTiles.Count)
         {
             tileRect = circleTiles[cont].GetRect();
-            if (collision(tileRect, touchRect))
+            if (Collision(tileRect, touchRect))
             {
                 collisionDetected = true;
                 tile = circleTiles[cont];
@@ -213,23 +242,23 @@ public class BoardManager : MonoBehaviour
         return new KeyValuePair<Tile, int>(tile, cont);
     }
 
-    //  Busca entre todas las tiles cual ha sido pulsada y si es un tile en un limite
-    private KeyValuePair<Tile, bool> GetTileOnCollision(Rect touchRect)
+    //  Busca entre todas las tiles cual ha sido pulsada y la devuelve con su indice
+    private KeyValuePair<Tile, Vector2Int> GetTileOnCollision(Rect touchRect)
     {
         bool collisionDetected = false;
         int x = 0;
         int y = 0;
         Tile tile = null;
         Rect tileRect;
-        bool limit = false;
+        //bool limit = false;
         while (!collisionDetected && y < size.y)
         {
             tileRect = tiles[x, y].GetRect();
-            if (collision(tileRect, touchRect))
+            if (Collision(tileRect, touchRect))
             {
                 collisionDetected = true;
                 tile = tiles[x,y];
-                limit = ((x == size.x - 1 || x == 0) && (y == size.y - 1 || y == 0));
+                //limit = ((x == size.x - 1 || x == 0) && (y == size.y - 1 || y == 0));
             }
             else
             {
@@ -241,9 +270,7 @@ public class BoardManager : MonoBehaviour
                 }
             }
         }
-        
-
-        return new KeyValuePair<Tile, bool>(tile, limit);
+        return new KeyValuePair<Tile, Vector2Int>(tile, !collisionDetected ? new Vector2Int(-1, -1) : new Vector2Int(x, y));
     }
 
     //  Inicializa el nivel actual
@@ -261,7 +288,7 @@ public class BoardManager : MonoBehaviour
         {
             for (int j = 0; j < currLevel.numBoardX; j++)
             {
-                tiles[i,j] = Instantiate(tilePrefab, initPos, Quaternion.identity);
+                tiles[i,j] = Instantiate(tilePrefab, initPos, Quaternion.identity,pool);
                 tiles[i,j].SetRect(initPos.x,initPos.y);
                 initPos.x += w;
             }
