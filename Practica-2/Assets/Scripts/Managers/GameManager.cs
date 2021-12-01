@@ -17,6 +17,11 @@ public class GameManager : MonoBehaviour
     public Category[] categories;
     public Map currMap;
 
+    [SerializeField]
+    DataManager dataManager;
+
+    private int numHints = 3;
+
     public void Awake()
     {
         if (instance == null)
@@ -30,6 +35,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void SetDataManager(DataManager _dataManager)
+    {
+        dataManager = _dataManager;
+        if (dataManager != null)
+        {
+            //  TESTEO
+            //dataManager.Save();
+            dataManager.Load();
+        }
+    }
+
     public void SetLevelManager(LevelManager otherLevelManager)
     {
         levelManager = otherLevelManager;
@@ -37,6 +53,11 @@ public class GameManager : MonoBehaviour
         {
             levelManager.init(currMap,currLevel);
         }
+    }
+
+    public int GetNumHints()
+    {
+        return numHints;
     }
 
     public LevelPack GetCurrentPack()
