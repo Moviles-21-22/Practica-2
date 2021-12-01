@@ -12,6 +12,8 @@ public struct Level
     public int lvl;
     //  numero de jugadas
     public int numFlow;
+    //  Determina si hay que poner o no muros rodeando el tablero
+    public bool closed;
     //  Vector con las soluciones
     public List<List<int>> solutions;
     //public Vector<Vector<int>> solutions;
@@ -19,12 +21,13 @@ public struct Level
     public List<List<int>> walls;
     //  Vector con huecos
     public List<int> gaps;
-    public Level(int _numBoardX,int _lvl,int _numFlow,int _numBoardY)
+    public Level(int _numBoardX,int _lvl,int _numFlow,int _numBoardY, bool _closed = false)
     {
         numBoardX = _numBoardX;
         numBoardY = _numBoardY;
         lvl = _lvl;
         numFlow = _numFlow;
+        closed = _closed;
         solutions = new List<List<int>>();
         walls = new List<List<int>>();
         gaps = new List<int>();
@@ -54,11 +57,14 @@ public class Map
         string[] seg = level.Split(';');
         string[] subChain = seg[0].Split(',');
         string[] numBoard = subChain[0].Split(':');
+        bool closed = false;
         int numBoardX, numBoardY;
         if (numBoard.Length >= 2)   //No es cuadrado
         {
             numBoardX = int.Parse(numBoard[0].ToString());
-            string[] plusB = numBoard[1].Split('+');    //Para los ficheros que tienen "+B" (a esos tableros los rodearemos de muros)
+            string[] plusB = numBoard[1].Split('+');    //Para los ficheros que tienen "+B"
+            if (plusB.Length > 1)                       //A esos tableros los rodearemos de muros
+                closed = true;
             numBoardY = int.Parse(plusB[0].ToString());
         }
         else
@@ -69,7 +75,7 @@ public class Map
 
         int lvl = int.Parse(subChain[2].ToString());
         int numFlow = int.Parse(subChain[3].ToString());
-        Level currLevel = new Level(numBoardX, lvl, numFlow, numBoardY);
+        Level currLevel = new Level(numBoardX, lvl, numFlow, numBoardY, closed);
 
         //Miramos a ver si hay muros o huecos
         //i == 4 → puentes (no hay que implementarlos)

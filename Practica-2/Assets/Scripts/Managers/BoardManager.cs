@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,7 +27,7 @@ public class BoardManager : MonoBehaviour
     //  Color del tile tocado
     private Color currTileColor;
     private Vector2 originPoint;
-    //  DirecciÛn del movimiento anterior
+    //  Direcci√≥n del movimiento anterior
     private Vector2 previousDir;
     //  Tile del puntero 
     private Tile inputTile;
@@ -51,20 +51,20 @@ public class BoardManager : MonoBehaviour
     public void Update()
     {
 #if UNITY_EDITOR
-        //  RatÛn se pulsa
+        //  Rat√≥n se pulsa
         if (Input.GetMouseButtonDown(0))
         {
             inputDown = true;
             initPosInput = Input.mousePosition;
             InputDown(Input.mousePosition);
         }
-        //  El ratÛn se ha levantado
+        //  El rat√≥n se ha levantado
         else if (Input.GetMouseButtonUp(0))
         {
             inputDown = false;
             InputUp();
         }
-        //  El ratÛn se est· moviendo
+        //  El rat√≥n se est√° moviendo
         else if (inputDown && initPosInput != Input.mousePosition) 
         {
             InputMoving(Input.mousePosition);
@@ -116,20 +116,20 @@ public class BoardManager : MonoBehaviour
             //  Creamos un rect en donde se ha tocado la pantalla
             Rect touchRect = new Rect(inputPos.x, inputPos.y, 50, 50);
 
-            //  El nuevo touch no est· colisionando con el actual tile (Es nuevo)
+            //  El nuevo touch no est√° colisionando con el actual tile (Es nuevo)
             if (!touchRect.Overlaps(currTile.GetRect()))
             {
                 //  Buscamos el tile entre todas las tiles
                 var dragedTile = GetTileOnCollision(touchRect);
                 if (dragedTile.Key != null && dragedTile.Key != currTile)
                 {
-                    //  DirecciÛn entre el nuevo tile y el anterior
+                    //  Direcci√≥n entre el nuevo tile y el anterior
                     Vector2 dir = (dragedTile.Key.GetRect().position - currTile.GetRect().position).normalized;
 
-                    //  Hemos llegado al tile que le corresponde (soluciÛn)
+                    //  Hemos llegado al tile que le corresponde (soluci√≥n)
                     if (dragedTile.Key.CircleActive() && dragedTile.Key.GetColor() == currTile.GetColor())
                     {
-                        print("SOLUCI”N");
+                        print("SOLUCI√ìN");
                         //  Es un codo
                         if (IsElbow(dir))
                         {
@@ -296,11 +296,11 @@ public class BoardManager : MonoBehaviour
         //bool limit = false;
         while (!collisionDetected && y < size.y)
         {
-            tileRect = tiles[x, y].GetRect();
+            tileRect = tiles[y, x].GetRect();
             if (Collision(tileRect, touchRect))
             {
                 collisionDetected = true;
-                tile = tiles[x,y];
+                tile = tiles[y,x];
                 //limit = ((x == size.x - 1 || x == 0) && (y == size.y - 1 || y == 0));
             }
             else
@@ -401,6 +401,32 @@ public class BoardManager : MonoBehaviour
                 tiles[fila, colm].ActiveWall(3);
 
             wallTiles.Add(tiles[fila, colm]);
+        }
+
+        //Ponemos los muros que rodean el tablero, si es que lo pide el nivel
+        if (currLevel.closed)
+        {
+            //Para ello recorremos todo el contorno del tablero
+            //Primera fila del tablero ‚Üí muro por encima
+            for (int i = 0; i < currLevel.numBoardX; ++i)
+            {
+                tiles[0, i].ActiveWall(0);
+            }
+            //Ultima columna del tablero ‚Üí muro por la derecha
+            for (int i = 0; i < currLevel.numBoardY; ++i)
+            {
+                tiles[i, currLevel.numBoardX - 1].ActiveWall(1);
+            }
+            //Ultima fila del tablero ‚Üí muro por debajo
+            for (int i = 0; i < currLevel.numBoardX; ++i)
+            {
+                tiles[currLevel.numBoardY - 1, i].ActiveWall(2);
+            }
+            //Primera columna del tablero ‚Üí muro por la izquierda
+            for (int i = 0; i < currLevel.numBoardY; ++i)
+            {
+                tiles[i, 0].ActiveWall(3);
+            }
         }
     }
 }
