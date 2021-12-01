@@ -9,7 +9,8 @@ public class Tile : MonoBehaviour
 
     private Color color;
 
-    public bool empty = true;
+    //Variable que define si el tile es hueco o no
+    private bool empty = false;
 
     [SerializeField]
     private SpriteRenderer bridgeTail;
@@ -38,6 +39,9 @@ public class Tile : MonoBehaviour
     [SerializeField]
     private SpriteRenderer bgColor;
 
+    [SerializeField]
+    private SpriteRenderer lines;
+
     private Rect tileRect;
 
     //TODO : FALTAN MÁS COLORES
@@ -50,9 +54,7 @@ public class Tile : MonoBehaviour
     {
         if (c == -1)
         {
-            tileColor = TILE_COLOR.NONE;
-            color = Color.white;
-            empty = true;
+            InitEmptyTile();
         }
         else
         {
@@ -63,15 +65,12 @@ public class Tile : MonoBehaviour
         }
     }
 
-    public void SetRect(float x, float y)
+    public void InitEmptyTile()
     {
-        Vector2 worldPos = Camera.main.WorldToScreenPoint(new Vector2(x, y));
-        tileRect = new Rect(worldPos.x,worldPos.y, bgColor.sprite.rect.width, bgColor.sprite.rect.height);
-    }
-
-    public Rect GetRect()
-    {
-        return tileRect;
+        tileColor = TILE_COLOR.NONE;
+        color = Color.white;
+        empty = true;
+        lines.enabled = false;
     }
 
     public bool CircleActive()
@@ -148,22 +147,6 @@ public class Tile : MonoBehaviour
         //}
     }
 
-    public float GetWidth()
-    {
-        return bgColor.size.x;
-    }
-
-    public float GetHeight()
-    {
-        return bgColor.size.y;
-    }
-
-    public void Touched()
-    {
-        bgColor.enabled = true;
-        bgColor.color = color;
-    }
-
     public void ActiveElbow(Color _color ,Vector2 dir, Vector2 previous)
     {
         bridgeTail.enabled = false;
@@ -228,9 +211,46 @@ public class Tile : MonoBehaviour
         }
     }
 
+    public void SetRect(float x, float y)
+    {
+        Vector2 worldPos = Camera.main.WorldToScreenPoint(new Vector2(x, y));
+        tileRect = new Rect(worldPos.x,worldPos.y, bgColor.sprite.rect.width, bgColor.sprite.rect.height);
+    }
+
+    public Rect GetRect()
+    {
+        return tileRect;
+    }
+
+    public float GetWidth()
+    {
+        return bgColor.size.x;
+    }
+
+    public float GetHeight()
+    {
+        return bgColor.size.y;
+    }
+
+    public bool GetEmpty()
+    {
+        return empty;
+    }
+
     public Color GetColor()
     {
         return color;
+    }
+
+    public SpriteRenderer GetCircleRender()
+    {
+        return circle;
+    }
+
+    public void Touched()
+    {
+        bgColor.enabled = true;
+        bgColor.color = color;
     }
 
     public void RemoveTail()
@@ -242,10 +262,5 @@ public class Tile : MonoBehaviour
             bridge.color = bridgeTail.color;
             bridge.transform.rotation = bridgeTail.transform.rotation;
         }
-    }
-
-    public SpriteRenderer GetCircleRender()
-    {
-        return circle;
     }
 }
