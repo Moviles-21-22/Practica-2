@@ -2,25 +2,25 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager instance;
     public LevelManager levelManager;
-
-    //  Devuelve el nivel actual
     private Category currCategory;
     private LevelPack currPack;
     private Level currLevel;
-    public static GameManager instance;
     public Category[] categories;
     public Map currMap;
 
-    [SerializeField]
-    DataManager dataManager;
+    private DataManager dataManager;
 
-    private int numHints = 3;
+    private int numHints = 0;
+
+    private bool isPremium = false;
 
     public void Awake()
     {
@@ -44,6 +44,11 @@ public class GameManager : MonoBehaviour
             //dataManager.Save();
             dataManager.Load();
         }
+    }
+
+    public bool IsPremium()
+    {
+        return isPremium;
     }
 
     public void SetLevelManager(LevelManager otherLevelManager)
@@ -75,6 +80,11 @@ public class GameManager : MonoBehaviour
         return currCategory;
     }
 
+    public Category [] GetCategories()
+    {
+        return categories;
+    }
+
     public void LoadScene(int scene)
     {
         SceneManager.LoadScene(scene);
@@ -87,6 +97,12 @@ public class GameManager : MonoBehaviour
         LoadScene(3);
     }
 
+    public void InitDataLoaded(DataToSave objToLoad)
+    {
+        categories = objToLoad.GetCategories();
+        numHints = objToLoad.GetNumHints();
+        isPremium = objToLoad.GetPremiumStatus();
+    }
 
     public void LoadPackage(LevelPack level, Category cat) 
     {
