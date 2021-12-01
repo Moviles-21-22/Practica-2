@@ -874,7 +874,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 029cd0704bebffd448635456e6cd15c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  empty: 1
   bridgeTail: {fileID: 8416465177763804374}
   bridge: {fileID: 1546744828}
   elbow: {fileID: 463571731}
@@ -885,6 +884,7 @@ MonoBehaviour:
   wallDown: {fileID: 4351358252847994983}
   wallLeft: {fileID: 2307748774059445524}
   bgColor: {fileID: 8644480979772224533}
+  lines: {fileID: 8416465178771526826}
 --- !u!1 &8416465179197722543
 GameObject:
   m_ObjectHideFlags: 0

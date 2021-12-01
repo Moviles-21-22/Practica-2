@@ -339,6 +339,7 @@ public class BoardManager : MonoBehaviour
             initPos.y -= h;
         }
         initCircles(currLevel);
+        initGaps(currLevel);
         initWalls(currLevel);
     }
 
@@ -410,23 +411,71 @@ public class BoardManager : MonoBehaviour
             //Primera fila del tablero → muro por encima
             for (int i = 0; i < currLevel.numBoardX; ++i)
             {
-                tiles[0, i].ActiveWall(0);
+                if (!tiles[0, i].GetEmpty())
+                    tiles[0, i].ActiveWall(0);
             }
             //Ultima columna del tablero → muro por la derecha
             for (int i = 0; i < currLevel.numBoardY; ++i)
             {
-                tiles[i, currLevel.numBoardX - 1].ActiveWall(1);
+                if (!tiles[i, currLevel.numBoardX - 1].GetEmpty())
+                    tiles[i, currLevel.numBoardX - 1].ActiveWall(1);
             }
             //Ultima fila del tablero → muro por debajo
             for (int i = 0; i < currLevel.numBoardX; ++i)
             {
-                tiles[currLevel.numBoardY - 1, i].ActiveWall(2);
+                if (!tiles[currLevel.numBoardY - 1, i].GetEmpty())
+                    tiles[currLevel.numBoardY - 1, i].ActiveWall(2);
             }
             //Primera columna del tablero → muro por la izquierda
             for (int i = 0; i < currLevel.numBoardY; ++i)
             {
-                tiles[i, 0].ActiveWall(3);
+                if (!tiles[i, 0].GetEmpty())
+                    tiles[i, 0].ActiveWall(3);
             }
+        }
+    }
+
+    //Pone los muros del nivel
+    private void initGaps(Level currLevel)
+    {
+        //Cambiamos la var empty de cada tile si es hueco
+        for (int i = 0; i < currLevel.gaps.Count; i++)
+        {
+            //Cogemos el tile hueco
+            int elem = currLevel.gaps[i];
+
+            int fila = (int)((elem + 1) / currLevel.numBoardX);
+            int colm = (int)((elem + 1) % currLevel.numBoardX) - 1;
+            if (colm < 0)
+            {
+                colm = currLevel.numBoardX - 1;
+                fila -= 1;
+            }
+            tiles[fila, colm].InitEmptyTile();
+        }
+
+        //Recorremos de nuevo los huecos para ponerles los muros necesarios
+        for (int i = 0; i < currLevel.gaps.Count; i++)
+        {
+            //Cogemos el tile hueco
+            int elem = currLevel.gaps[i];
+
+            int fila = (int)((elem + 1) / currLevel.numBoardX);
+            int colm = (int)((elem + 1) % currLevel.numBoardX) - 1;
+            if (colm < 0)
+            {
+                colm = currLevel.numBoardX - 1;
+                fila -= 1;
+            }
+
+            if (fila > 0 && !tiles[fila - 1, colm].GetEmpty())          //Muro encima
+                tiles[fila, colm].ActiveWall(0);
+            if (colm < currLevel.numBoardX - 1 && !tiles[fila, colm + 1].GetEmpty())    //Muro a la derecha
+                tiles[fila, colm].ActiveWall(1);
+            if (fila < currLevel.numBoardY - 1 && !tiles[fila + 1, colm].GetEmpty())     //Muro debajo
+                tiles[fila, colm].ActiveWall(2);
+            if (colm > 0 && !tiles[fila, colm - 1].GetEmpty())    //Muro a la izquierda
+                tiles[fila, colm].ActiveWall(3);
         }
     }
 }
