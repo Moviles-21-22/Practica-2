@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;        //  Para leer un txt
 using UnityEngine;
 
 public class BoardManager : MonoBehaviour
@@ -35,6 +34,9 @@ public class BoardManager : MonoBehaviour
 
     private List<Tile> currMovement = new List<Tile>();
 
+    private bool inputDown = false;
+    private Vector3 initPosInput = new Vector2(-1,-1);
+
     //  Setea al board y activa el puntero
     public void Start()
     {
@@ -48,139 +50,50 @@ public class BoardManager : MonoBehaviour
 
     public void Update()
     {
-        if (Input.touchCount > 0)
+#if UNITY_EDITOR
+        //  Ratón se pulsa
+        if (Input.GetMouseButtonDown(0))
+        {
+            inputDown = true;
+            initPosInput = Input.mousePosition;
+            InputDown(Input.mousePosition);
+        }
+        //  El ratón se ha levantado
+        else if (Input.GetMouseButtonUp(0))
+        {
+            inputDown = false;
+            InputUp();
+        }
+        //  El ratón se está moviendo
+        else if (inputDown && initPosInput != Input.mousePosition) 
+        {
+            InputMoving(Input.mousePosition);
+            ProcessPointer(Input.mousePosition);
+        }
+#endif
+
+#if UNITY_ANDROID
+
+        for (int i = 0; i < Input.touchCount; i++)
         {
             //  Toque empieza            
-            if (Input.GetTouch(0).phase == TouchPhase.Began)
+            if (Input.GetTouch(i).phase == TouchPhase.Began)
             {
-                if (currTile == null)
-                {
-                    Vector2 touch = Input.GetTouch(0).position;
-                    Rect touchRect = new Rect(touch.x, touch.y, 50, 50);
-                    var pair = GetTileOnCollision(touchRect);
-                    if (pair.Key != null)
-                    {
-                        currTile = pair.Key;
-                        Vector2Int index = pair.Value;
-                        originPoint = tiles[index.x,index.y].GetRect().position;
-                        currTileColor = currTile.GetColor();
-                        currTile.Touched();
-                        currMovement.Add(currTile);
-                        //  Para el puntero en pantalla
-                        inputTile.GetCircleRender().enabled = true;
-                        inputTile.InitTile(0, new Color(currTileColor.r, currTileColor.g, currTileColor.b, 0.5f));
-                        previousDir = new Vector2(-2, -2);
-                        
-                    }
-                }
+                InputDown(Input.GetTouch(i).position);
             }
             //  Toque sale
-            else if (Input.GetTouch(0).phase == TouchPhase.Ended)
+            else if (Input.GetTouch(i).phase == TouchPhase.Ended)
             {
-                if (currTile != null)
-                {
-                    currTile = null;
-                    SolveMovement();
-                }
-
+                InputUp();
             }
             //  Arrastrando el dedo por la pantalla
-            else if (Input.GetTouch(0).phase == TouchPhase.Moved)
+            else if (Input.GetTouch(i).phase == TouchPhase.Moved)
             {
-                if (currTile != null)
-                {
-                    //  Creamos un rect en donde se ha tocado la pantalla
-                    Vector2 touch = Input.GetTouch(0).position;
-                    Rect touchRect = new Rect(touch.x, touch.y, 50, 50);
-                    
-                    //  El nuevo touch no está colisionando con el actual tile (Es nuevo)
-                    if (!touchRect.Overlaps(currTile.GetRect()))
-                    {
-                        //  Buscamos el tile entre todas las tiles
-                        var dragedTile = GetTileOnCollision(touchRect);
-                        if (dragedTile.Key != null && dragedTile.Key != currTile)
-                        {
-                            //  Dirección entre el nuevo tile y el anterior
-                            Vector2 dir = (dragedTile.Key.GetRect().position - currTile.GetRect().position).normalized;
-                           
-                            //  Hemos llegado al tile que le corresponde (solución)
-                            if (dragedTile.Key.CircleActive() && dragedTile.Key.GetColor() == currTile.GetColor())
-                            {
-                                print("SOLUCIÓN");
-                                //  Es un codo
-                                if (IsElbow(dir))
-                                {
-                                    currTile.ActiveElbow(currTileColor, dir, previousDir);
-                                    dragedTile.Key.ActiveTail(dir * -1, currTileColor);
-                                    currTile = dragedTile.Key;
-                                    currMovement.Add(currTile);
-                                    previousDir = dir;
-                                }
-                                else if(!currTile.CircleActive())
-                                {
-                                    currTile.ActiveBridge(dir,currTileColor);
-                                    dragedTile.Key.ActiveTail(dir * -1, currTileColor);
-                                    currTile = dragedTile.Key;
-                                    currMovement.Add(currTile);
-                                    previousDir = dir;
-                                }
-                            }
-                            // No es un circulo
-                            else if(!dragedTile.Key.CircleActive())    
-                            {
-                                //print("dir " +dir + " / pre " + previousDir);
-                                //  El anterior es un circulo
-                                if (currTile.CircleActive())
-                                {
-                                    currTile.ActiveTail(dir,currTileColor);
-                                    dragedTile.Key.ActiveTail(dir,currTileColor);
-                                    currTile = dragedTile.Key;
-                                    currMovement.Add(currTile);
-                                    previousDir = dir;
-                                }
-                                //  El anterior no es un circulo
-                                else if (!currTile.CircleActive())
-                                {
-                                    // Es codo
-                                    if(IsElbow(dir))
-                                    {
-                                        currTile.ActiveElbow(currTileColor,dir,previousDir);
-                                        dragedTile.Key.ActiveTail(dir, currTileColor);
-                                        currTile = dragedTile.Key;
-                                        currMovement.Add(currTile);
-                                        previousDir = dir;
-                                    }
-                                    else
-                                    {
-                                        currTile.ActiveBridge(dir, currTileColor);
-                                        dragedTile.Key.ActiveTail(dir, currTileColor);
-                                        currTile = dragedTile.Key;
-                                        currMovement.Add(currTile);
-                                        previousDir = dir;
-                                    }
-                                }
-                            }
-                            //  Es un circulo de otro color
-                            else if (dragedTile.Key.CircleActive())
-                            {
-                                print("MovIncorrecto");
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (currTile != null)
-            {
-                inputTile.GetCircleRender().enabled = true;
-                Vector2 pos = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
-                inputTile.transform.position = pos;
-            }
-            else
-            {
-                inputTile.GetCircleRender().enabled = false;
+                InputMoving(Input.GetTouch(i).position);
+                ProcessPointer(Input.GetTouch(i).position);
             }
         }
+#endif
     }
 
     //  Determina si dos rects colisionan
@@ -194,6 +107,136 @@ public class BoardManager : MonoBehaviour
             return true;
         }
         else return false;
+    }
+
+    private void InputMoving(Vector2 inputPos)
+    {
+        if (currTile != null)
+        {
+            //  Creamos un rect en donde se ha tocado la pantalla
+            Rect touchRect = new Rect(inputPos.x, inputPos.y, 50, 50);
+
+            //  El nuevo touch no está colisionando con el actual tile (Es nuevo)
+            if (!touchRect.Overlaps(currTile.GetRect()))
+            {
+                //  Buscamos el tile entre todas las tiles
+                var dragedTile = GetTileOnCollision(touchRect);
+                if (dragedTile.Key != null && dragedTile.Key != currTile)
+                {
+                    //  Dirección entre el nuevo tile y el anterior
+                    Vector2 dir = (dragedTile.Key.GetRect().position - currTile.GetRect().position).normalized;
+
+                    //  Hemos llegado al tile que le corresponde (solución)
+                    if (dragedTile.Key.CircleActive() && dragedTile.Key.GetColor() == currTile.GetColor())
+                    {
+                        print("SOLUCIÓN");
+                        //  Es un codo
+                        if (IsElbow(dir))
+                        {
+                            currTile.ActiveElbow(currTileColor, dir, previousDir);
+                            dragedTile.Key.ActiveTail(dir * -1, currTileColor);
+                            currTile = dragedTile.Key;
+                            currMovement.Add(currTile);
+                            previousDir = dir;
+                        }
+                        else if (!currTile.CircleActive())
+                        {
+                            currTile.ActiveBridge(dir, currTileColor);
+                            dragedTile.Key.ActiveTail(dir * -1, currTileColor);
+                            currTile = dragedTile.Key;
+                            currMovement.Add(currTile);
+                            previousDir = dir;
+                        }
+                    }
+                    // No es un circulo
+                    else if (!dragedTile.Key.CircleActive())
+                    {
+                        //print("dir " +dir + " / pre " + previousDir);
+                        //  El anterior es un circulo
+                        if (currTile.CircleActive())
+                        {
+                            currTile.ActiveTail(dir, currTileColor);
+                            dragedTile.Key.ActiveTail(dir, currTileColor);
+                            currTile = dragedTile.Key;
+                            currMovement.Add(currTile);
+                            previousDir = dir;
+                        }
+                        //  El anterior no es un circulo
+                        else if (!currTile.CircleActive())
+                        {
+                            // Es codo
+                            if (IsElbow(dir))
+                            {
+                                currTile.ActiveElbow(currTileColor, dir, previousDir);
+                                dragedTile.Key.ActiveTail(dir, currTileColor);
+                                currTile = dragedTile.Key;
+                                currMovement.Add(currTile);
+                                previousDir = dir;
+                            }
+                            else
+                            {
+                                currTile.ActiveBridge(dir, currTileColor);
+                                dragedTile.Key.ActiveTail(dir, currTileColor);
+                                currTile = dragedTile.Key;
+                                currMovement.Add(currTile);
+                                previousDir = dir;
+                            }
+                        }
+                    }
+                    //  Es un circulo de otro color
+                    else if (dragedTile.Key.CircleActive())
+                    {
+                        print("MovIncorrecto");
+                    }
+                }
+            }
+        }
+    }
+
+    private void ProcessPointer(Vector2 inputPos)
+    {
+        if (currTile != null)
+        {
+            inputTile.GetCircleRender().enabled = true;
+            Vector2 pos = Camera.main.ScreenToWorldPoint(inputPos);
+            inputTile.transform.position = pos;
+        }
+        else
+        {
+            inputTile.GetCircleRender().enabled = false;
+        }
+    }
+
+    private void InputUp()
+    {
+        if (currTile != null)
+        {
+            currTile = null;
+            SolveMovement();
+        }
+    }
+
+    private void InputDown(Vector2 inputPos)
+    {
+        if (currTile == null)
+        {
+            Rect touchRect = new Rect(inputPos.x, inputPos.y, 50, 50);
+            var pair = GetTileOnCollision(touchRect);
+            if (pair.Key != null)
+            {
+                currTile = pair.Key;
+                Vector2Int index = pair.Value;
+                originPoint = tiles[index.x, index.y].GetRect().position;
+                currTileColor = currTile.GetColor();
+                currTile.Touched();
+                currMovement.Add(currTile);
+                //  Para el puntero en pantalla
+                inputTile.GetCircleRender().enabled = true;
+                inputTile.InitTile(0, new Color(currTileColor.r, currTileColor.g, currTileColor.b, 0.5f));
+                previousDir = new Vector2(-2, -2);
+
+            }
+        }
     }
 
     private void SolveMovement()
