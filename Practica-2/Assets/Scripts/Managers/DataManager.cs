@@ -121,8 +121,6 @@ public class DataManager : MonoBehaviour
                 serializado += hashGenerated[i] + ",";
             }
             serializado +="\"hash\":\"\"}";
-            print(serializado);
-            print(SecureManager.Hash(serializado));
             //  Ambos hash coinciden
             if (SecureManager.Hash(serializado).Equals(objToLoad.GetHash()))
             {

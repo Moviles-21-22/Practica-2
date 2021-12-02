@@ -215,6 +215,7 @@ public class BoardManager : MonoBehaviour
         {
             currTile = null;
             SolveMovement();
+            inputTile.GetCircleRender().enabled = false;
         }
     }
 

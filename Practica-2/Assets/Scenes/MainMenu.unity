@@ -3223,6 +3223,8 @@ GameObject:
   - component: {fileID: 1373086508}
   - component: {fileID: 1373086507}
   - component: {fileID: 1373086509}
+  - component: {fileID: 1373086510}
+  - component: {fileID: 1373086511}
   m_Layer: 5
   m_Name: Ad
   m_TagString: Untagged
@@ -3335,6 +3337,33 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1373086510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1373086505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1d0634421ede1d4c970eb8270cb02af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1373086511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1373086505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69e032a330e00a34287ff993a35ad173, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _androidGameId: 4484895
+  _testMode: 1
+  _enablePerPlacementMode: 1
 --- !u!1 &1376607599
 GameObject:
   m_ObjectHideFlags: 0
