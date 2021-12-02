@@ -35,7 +35,7 @@ public class BoardManager : MonoBehaviour
     private List<Tile> currMovement = new List<Tile>();
 
     private bool inputDown = false;
-    private Vector3 initPosInput = new Vector2(-1,-1);
+    private Vector3 initPosInput = new Vector2(-1, -1);
     private Level currLevel;
 
     //  Setea al board y activa el puntero
@@ -43,7 +43,7 @@ public class BoardManager : MonoBehaviour
     {
         currLevel = GameManager.instance.GetCurrLevel();
         Init();
-        inputTile = Instantiate(tilePrefab,transform);
+        inputTile = Instantiate(tilePrefab, transform);
         Vector3 scale = inputTile.transform.localScale;
         scale.x = 2;
         scale.y = 2;
@@ -67,7 +67,7 @@ public class BoardManager : MonoBehaviour
             InputUp();
         }
         //  El ratón se está moviendo
-        else if (inputDown && initPosInput != Input.mousePosition) 
+        else if (inputDown && initPosInput != Input.mousePosition)
         {
             InputMoving(Input.mousePosition);
             ProcessPointer(Input.mousePosition);
@@ -136,19 +136,16 @@ public class BoardManager : MonoBehaviour
                         if (IsElbow(dir))
                         {
                             currTile.ActiveElbow(currTileColor, dir, previousDir);
-                            dragedTile.Key.ActiveTail(dir * -1, currTileColor);
-                            currTile = dragedTile.Key;
-                            currMovement.Add(currTile);
-                            previousDir = dir;
                         }
                         else if (!currTile.CircleActive())
                         {
                             currTile.ActiveBridge(dir, currTileColor);
-                            dragedTile.Key.ActiveTail(dir * -1, currTileColor);
-                            currTile = dragedTile.Key;
-                            currMovement.Add(currTile);
-                            previousDir = dir;
                         }
+
+                        dragedTile.Key.ActiveTail(dir * -1, currTileColor);
+                        currTile = dragedTile.Key;
+                        currMovement.Add(currTile);
+                        previousDir = dir;
                     }
                     // No es un circulo
                     else if (!dragedTile.Key.CircleActive())
@@ -246,7 +243,7 @@ public class BoardManager : MonoBehaviour
     {
         foreach (Tile tile in currMovement)
         {
-            tile.ActiveBgColor(true,currTileColor);
+            tile.ActiveBgColor(true, currTileColor);
         }
         currMovement.Clear();
     }
@@ -254,7 +251,7 @@ public class BoardManager : MonoBehaviour
     public void GiveHint()
     {
         //Todo pistas iniciales
-        
+
     }
 
     //  Determina si el tile anterior es un codo
@@ -269,7 +266,7 @@ public class BoardManager : MonoBehaviour
     }
 
     //  Busca entre los circulos cual ha sido pulsado
-    private KeyValuePair<Tile,int> GetCircleTileOnCollision(Rect touchRect)
+    private KeyValuePair<Tile, int> GetCircleTileOnCollision(Rect touchRect)
     {
         bool collisionDetected = false;
         int cont = 0;
@@ -303,7 +300,7 @@ public class BoardManager : MonoBehaviour
             if (Collision(tileRect, touchRect))
             {
                 collisionDetected = true;
-                tile = tiles[y,x];
+                tile = tiles[y, x];
                 //limit = ((x == size.x - 1 || x == 0) && (y == size.y - 1 || y == 0));
             }
             else
@@ -328,14 +325,14 @@ public class BoardManager : MonoBehaviour
         float posY = -2;
         float w = 1;
         float h = 1;
-        Vector2 initPos = new Vector2(posX,posY);
+        Vector2 initPos = new Vector2(posX, posY);
         tiles = new Tile[currLevel.numBoardY, currLevel.numBoardX];
         for (int i = 0; i < currLevel.numBoardY; i++)
         {
             for (int j = 0; j < currLevel.numBoardX; j++)
             {
-                tiles[i,j] = Instantiate(tilePrefab, initPos, Quaternion.identity,pool);
-                tiles[i,j].SetRect(initPos.x,initPos.y);
+                tiles[i, j] = Instantiate(tilePrefab, initPos, Quaternion.identity, pool);
+                tiles[i, j].SetRect(initPos.x, initPos.y);
                 initPos.x += w;
             }
             initPos.x = posX;
@@ -361,8 +358,8 @@ public class BoardManager : MonoBehaviour
                 filaA -= 1;
             }
             //print("colA: " + colA + " filaA: " + filaA);
-            tiles[filaA,colA].InitTile(i, colors[i]);
-            circleTiles.Add(tiles[filaA,colA]);
+            tiles[filaA, colA].InitTile(i, colors[i]);
+            circleTiles.Add(tiles[filaA, colA]);
 
             //Final de la tuberia
             float secElement = currLevel.solutions[i][currLevel.solutions[i].Count - 1];
