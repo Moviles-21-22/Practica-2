@@ -14,8 +14,12 @@ public class LevelPack : ScriptableObject
     public TextAsset txt;
     [Tooltip("Nombre de cada grid de niveles")]
     public string[] gridNames;
-    [Tooltip("Niveles activos por defaul")]
+    [Tooltip("Niveles superados")]
     public bool[] activeLevels;
+    [Tooltip("Pack bloqueado")]
+    public bool lockPack;
+    [Tooltip("Record de cada nivel")]
+    public int[] records;
 }
 
 
