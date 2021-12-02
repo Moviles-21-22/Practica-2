@@ -36,11 +36,13 @@ public class BoardManager : MonoBehaviour
 
     private bool inputDown = false;
     private Vector3 initPosInput = new Vector2(-1,-1);
+    private Level currLevel;
 
     //  Setea al board y activa el puntero
     public void Start()
     {
-        GameManager.instance.levelManager.setBoardManager(this);
+        currLevel = GameManager.instance.GetCurrLevel();
+        Init();
         inputTile = Instantiate(tilePrefab,transform);
         Vector3 scale = inputTile.transform.localScale;
         scale.x = 2;
@@ -317,7 +319,7 @@ public class BoardManager : MonoBehaviour
     }
 
     //  Inicializa el nivel actual
-    public void init(Level currLevel)
+    public void Init()
     {
         size.x = currLevel.numBoardX;
         size.y = currLevel.numBoardY;

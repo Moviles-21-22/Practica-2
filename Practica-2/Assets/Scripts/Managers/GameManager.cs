@@ -8,23 +8,20 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    //  Instancia estática del gameManager
+    //  Instancia estï¿½tica del gameManager
     public static GameManager instance;
-    //  Referencia al manager del nivel
-    public LevelManager levelManager;
-    //  Actual categoría usada
     private Category currCategory;
-    //  Actual pack dentro de la categoría usada
+    //  Actual pack dentro de la categorï¿½a usada
     private LevelPack currPack;
     //  Actual nivel en juego
     private Level currLevel;
-    //  Array con todas las categorías disponibles
+    //  Array con todas las categorï¿½as disponibles
     public Category[] categories;
     //  Actual pack cargado
     public Map currMap;
     //  Referencia al dataManager
     private DataManager dataManager;
-    //  Número de pistas disponibles
+    //  Nï¿½mero de pistas disponibles
     private int numHints = 0;
     //  Tiene premium el jugador
     private bool isPremium = false;
@@ -41,30 +38,12 @@ public class GameManager : MonoBehaviour
             Destroy(this.gameObject);
         }
     }
-    //  Para cargar el estado del juego
-    public void SetDataManager(DataManager _dataManager)
-    {
-        dataManager = _dataManager;
-        if (dataManager != null)
-        {
-            dataManager.Load();
-        }
-    }
-    //  El jugador cuenta con premium?
+
     public bool IsPremium()
     {
         return isPremium;
     }
-    //  Set up del nivel actual
-    public void SetLevelManager(LevelManager otherLevelManager)
-    {
-        levelManager = otherLevelManager;
-        if (levelManager != null)
-        {
-            levelManager.init(currMap,currLevel);
-        }
-    }
-    //  Devuelve el numero de pistas disponibles
+
     public int GetNumHints()
     {
         return numHints;
@@ -74,17 +53,17 @@ public class GameManager : MonoBehaviour
     {
         return currPack;
     }
-    //  Devuelve el nivel actual
-    public int GetCurrLevel()
+
+    public Level GetCurrLevel()
     {
-        return currLevel.lvl;
+        return currLevel;
     }
-    //  Devuelve la categoría usada
+    //  Devuelve la categorï¿½a usada
     public Category GetCurrentCategory()
     {
         return currCategory;
     }
-    //  Devuelve todas las categorías disponibles
+    //  Devuelve todas las categorï¿½as disponibles
     public Category [] GetCategories()
     {
         return categories;
@@ -94,14 +73,14 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.LoadScene(scene);
     }
-    //  Carga un nivel en concreto de la categoría y pack cargadoss
+    //  Carga un nivel en concreto de la categorï¿½a y pack cargadoss
     public void LoadLevel(int lvl)
     {
         currMap = new Map(currPack.txt.ToString(),1);
         currLevel = currMap.GetLevel(lvl);
         LoadScene(3);
     }
-    //  Carga el estado del juego en función del json
+    //  Carga el estado del juego en funciï¿½n del json
     public void InitDataLoaded(DataToSave objToLoad)
     {
         categories = objToLoad.GetCategories();
@@ -113,7 +92,7 @@ public class GameManager : MonoBehaviour
     {
         dataManager.Save();
     }
-    //  Carga un pack especifico de una categoría
+    //  Carga un pack especifico de una categorï¿½a
     public void LoadPackage(LevelPack level, Category cat) 
     {
         currCategory = cat;
