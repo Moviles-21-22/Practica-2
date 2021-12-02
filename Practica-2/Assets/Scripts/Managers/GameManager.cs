@@ -9,7 +9,6 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-    public LevelManager levelManager;
     private Category currCategory;
     private LevelPack currPack;
     private Level currLevel;
@@ -35,29 +34,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void SetDataManager(DataManager _dataManager)
-    {
-        dataManager = _dataManager;
-        if (dataManager != null)
-        {
-            //  TESTEO
-            //dataManager.Save();
-            dataManager.Load();
-        }
-    }
-
     public bool IsPremium()
     {
         return isPremium;
-    }
-
-    public void SetLevelManager(LevelManager otherLevelManager)
-    {
-        levelManager = otherLevelManager;
-        if (levelManager != null)
-        {
-            levelManager.init(currMap,currLevel);
-        }
     }
 
     public int GetNumHints()
@@ -70,9 +49,9 @@ public class GameManager : MonoBehaviour
         return currPack;
     }
 
-    public int GetCurrLevel()
+    public Level GetCurrLevel()
     {
-        return currLevel.lvl;
+        return currLevel;
     }
 
     public Category GetCurrentCategory()

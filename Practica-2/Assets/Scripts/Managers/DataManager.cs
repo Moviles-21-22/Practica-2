@@ -65,7 +65,7 @@ public class DataManager : MonoBehaviour
     private const int numHintsDefault = 2;
     public void Start()
     {
-        GameManager.instance.SetDataManager(this);
+        Load();
         secureManager = new SecureManager();
         //  TODO revisar donde guardar los archivos
         routeToSave = Directory.GetCurrentDirectory();

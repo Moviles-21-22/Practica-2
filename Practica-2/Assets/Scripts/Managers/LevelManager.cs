@@ -6,9 +6,6 @@ using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
-    [SerializeField]
-    private BoardManager boardManager;
-
     private Map map;
     private Level currLevel;
 
@@ -16,33 +13,24 @@ public class LevelManager : MonoBehaviour
     private Text numLevel;
 
     [SerializeField]
-    private Text packName;
+    private Text gridName;
 
 
-    public void Awake()
+    private void Start()
     {
-        GameManager.instance.SetLevelManager(this);
+        Init(GameManager.instance.currMap, GameManager.instance.GetCurrLevel());
     }
 
-    public void setBoardManager(BoardManager otherBoard)
-    {
-        boardManager = otherBoard;
-        if (boardManager != null)
-        {
-            boardManager.init(currLevel);
-        }
-    }
-
-    public void init(Map mp, Level level)
+    private void Init(Map mp, Level level)
     {
         //  TODO : revisar esto
         try
         {
             map = mp;
             currLevel = level;
-            numLevel.text = "Nivel " + GameManager.instance.GetCurrLevel();
-            int currPack = GameManager.instance.GetCurrLevel() / 30;
-            packName.text = GameManager.instance.GetCurrentPack().gridNames[currPack];
+            numLevel.text = "Nivel " +level.lvl;
+            int currPack = level.lvl / 30;
+            gridName.text = GameManager.instance.GetCurrentPack().gridNames[currPack];
         }
         catch (Exception e) {
             Debug.LogError(e.Message);
