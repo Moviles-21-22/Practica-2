@@ -44,10 +44,19 @@ public class Tile : MonoBehaviour
 
     private Rect tileRect;
 
-    //TODO : FALTAN MÁS COLORES
+    //Tienen que tener los mismos colores y en el mismo orden que colors de BoardMngr
+    /*
+     Color.red, Color.blue, Color.green,
+                               Color.magenta, Color.cyan, Color.yellow,
+                               Color.grey, Color.white,
+                               new Color(251.0f, 112.0f, 0.0f),
+                               new Color(115.0f, 7.0f, 155.0f),
+                               new Color(171.0f, 40.0f, 40.0f),
+                               new Color(147.0f, 120.0f, 55.0f)
+     */
     public enum TILE_COLOR : int
     {
-        RED, BLUE, ORANGE, YELLOW, GREEN, NONE
+        RED, BLUE, GREEN, MAGENTA, CYAN, YELLOW, GREY, WHITE, ORANGE, PURPLE, BROWN, NONE   //Este enum no es necesario, se puede cambiar tileColor por un int
     };
 
     public void InitTile(int c, Color _color)
@@ -241,7 +250,10 @@ public class Tile : MonoBehaviour
     {
         return color;
     }
-
+    public int GetTileColor()
+    {
+        return (int)tileColor;
+    }
     public SpriteRenderer GetCircleRender()
     {
         return circle;

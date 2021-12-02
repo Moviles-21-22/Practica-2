@@ -15,6 +15,7 @@ public class BoardManager : MonoBehaviour
     private List<Tile> wallTiles = new List<Tile>();
     [SerializeField]
     private Tile tilePrefab;
+    //  Deben tener el mismo orden que los tilesColor de Tile
     private Color[] colors = { Color.red, Color.blue, Color.green,
                                Color.magenta, Color.cyan, Color.yellow,
                                Color.grey, Color.white,
@@ -33,6 +34,23 @@ public class BoardManager : MonoBehaviour
     private Tile inputTile;
 
     private List<Tile> currMovement = new List<Tile>();
+    //private List<List<Tile>> movements = new List<List<Tile>>();
+
+    //No hace falta hacerlo así, se puede hacer con una lista de listas ordenada por color
+    private struct colorMovements
+    {
+        //Tile tiene los colores asociados a su numero
+        int color;
+        List<Tile> movements;
+
+        public colorMovements(int c)
+        {
+            color = c;
+            movements = new List<Tile>();
+        }
+    }
+
+    private List<colorMovements> cMovements = new List<colorMovements>();
 
     private bool inputDown = false;
     private Vector3 initPosInput = new Vector2(-1, -1);
@@ -300,7 +318,9 @@ public class BoardManager : MonoBehaviour
             if (Collision(tileRect, touchRect))
             {
                 collisionDetected = true;
-                tile = tiles[y, x];
+
+                if (!tiles[y, x].GetEmpty())
+                    tile = tiles[y, x];
                 //limit = ((x == size.x - 1 || x == 0) && (y == size.y - 1 || y == 0));
             }
             else
@@ -360,6 +380,12 @@ public class BoardManager : MonoBehaviour
             //print("colA: " + colA + " filaA: " + filaA);
             tiles[filaA, colA].InitTile(i, colors[i]);
             circleTiles.Add(tiles[filaA, colA]);
+
+            //Inicializamos la lista de movimientos de este color
+            colorMovements c = new colorMovements(i);
+            cMovements.Add(c);
+            //List<Tile> t = new List<Tile>();
+            //movements.Add(t);
 
             //Final de la tuberia
             float secElement = currLevel.solutions[i][currLevel.solutions[i].Count - 1];
@@ -435,7 +461,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    //Pone los muros del nivel
+    //Pone los huecos del nivel
     private void initGaps(Level currLevel)
     {
         //Cambiamos la var empty de cada tile si es hueco
