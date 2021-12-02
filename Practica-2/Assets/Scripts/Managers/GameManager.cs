@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
     //  Array con todas las categor�as disponibles
     public Category[] categories;
     //  Actual pack cargado
-    public Map currMap;
+    private Map currMap;
     //  Referencia al dataManager
     private DataManager dataManager;
     //  N�mero de pistas disponibles
@@ -68,6 +68,15 @@ public class GameManager : MonoBehaviour
     {
         return categories;
     }
+
+    /// <summary>
+    /// Devuelve el mapa actual cargado
+    /// </summary>
+    public Map GetMap() 
+    {
+        return currMap;
+    }
+
     //  Carga una escena
     public void LoadScene(int scene)
     {
@@ -80,6 +89,13 @@ public class GameManager : MonoBehaviour
         currLevel = currMap.GetLevel(lvl);
         LoadScene(3);
     }
+
+    public void ChangeLevel(int lvl) 
+    {
+        currLevel = currMap.GetLevel(lvl);
+        LoadScene(3);
+    }
+
     //  Carga el estado del juego en funci�n del json
     public void InitDataLoaded(DataToSave objToLoad)
     {
@@ -87,11 +103,13 @@ public class GameManager : MonoBehaviour
         numHints = objToLoad.GetNumHints();
         isPremium = objToLoad.GetPremiumStatus();
     }
+
     //  Guarda el estado del juego
     public void SaveGame()
     {
         dataManager.Save();
     }
+
     //  Carga un pack especifico de una categor�a
     public void LoadPackage(LevelPack level, Category cat) 
     {
