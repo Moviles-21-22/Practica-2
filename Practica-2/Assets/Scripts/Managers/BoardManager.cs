@@ -169,6 +169,8 @@ public class BoardManager : MonoBehaviour
             {
                 //  Buscamos el tile entre todas las tiles
                 var dragedTile = GetTileOnCollision(touchRect);
+                //print("draged: " + dragedTile.Value.x + " drY: " + dragedTile.Value.y);
+
                 int c = dragedTile.Key.GetTileColor();
 
                 if (cMovements[c].GetMovements().Count > 0)
@@ -176,7 +178,7 @@ public class BoardManager : MonoBehaviour
                     int countX = cMovements[c].GetMovements()[cMovements[c].GetMovements().Count - 1].GetX();
                     int countY = cMovements[c].GetMovements()[cMovements[c].GetMovements().Count - 1].GetY();
 
-                    print("countX: " + countX + "countY: " + countY);
+                    //print("countX: " + countX + " countY: " + countY);
 
                     if (!AreNeighbour(dragedTile.Value.x, dragedTile.Value.y, countY, countX))
                         return;
