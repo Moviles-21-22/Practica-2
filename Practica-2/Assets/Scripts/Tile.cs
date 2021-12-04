@@ -9,6 +9,9 @@ public class Tile : MonoBehaviour
 
     private Color color;
 
+    private int x;
+    private int y;
+
     //Variable que define si el tile es hueco o no
     private bool empty = false;
 
@@ -59,8 +62,10 @@ public class Tile : MonoBehaviour
         RED, BLUE, GREEN, MAGENTA, CYAN, YELLOW, GREY, WHITE, ORANGE, PURPLE, BROWN, NONE   //Este enum no es necesario, se puede cambiar tileColor por un int
     };
 
-    public void InitTile(int c, Color _color)
+    public void InitTile(int c, Color _color, int _x = 0, int _y = 0)
     {
+        x = _x;
+        y = _y;
         if (c == -1)
         {
             InitEmptyTile();
@@ -226,6 +231,26 @@ public class Tile : MonoBehaviour
         tileRect = new Rect(worldPos.x,worldPos.y, bgColor.sprite.rect.width, bgColor.sprite.rect.height);
     }
 
+    public void SetX(int _x)
+    {
+        x = _x;
+    }
+
+    public void SetY(int _y)
+    {
+        y = _y;
+    }
+
+    public int GetX()
+    {
+        return x;
+    }
+
+    public int GetY()
+    {
+        return y;
+    }
+
     public Rect GetRect()
     {
         return tileRect;
@@ -250,10 +275,12 @@ public class Tile : MonoBehaviour
     {
         return color;
     }
+
     public int GetTileColor()
     {
         return (int)tileColor;
     }
+
     public SpriteRenderer GetCircleRender()
     {
         return circle;

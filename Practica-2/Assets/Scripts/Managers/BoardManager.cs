@@ -33,24 +33,52 @@ public class BoardManager : MonoBehaviour
     //  Tile del puntero 
     private Tile inputTile;
 
-    private List<Tile> currMovement = new List<Tile>();
+    //private List<Tile> currMovement = new List<Tile>();
     //private List<List<Tile>> movements = new List<List<Tile>>();
 
     //No hace falta hacerlo así, se puede hacer con una lista de listas ordenada por color
-    private struct colorMovements
+    private struct ColorMovements
     {
         //Tile tiene los colores asociados a su numero
         int color;
         List<Tile> movements;
 
-        public colorMovements(int c)
+        public ColorMovements(int c)
         {
             color = c;
             movements = new List<Tile>();
         }
+
+        public void AddMov(Tile t)
+        {
+            movements.Add(t);
+        }
+
+        public List<Tile> GetMovements()
+        {
+            return movements;
+        }
+
+        public void ClearUntilTile(Tile t)
+        {
+            bool rem = true;
+            while (rem && movements.Count > 0)
+            {
+                Tile ultTile = movements[movements.Count - 1];
+                if (ultTile == t)
+                {
+                    //Hemos encontrado el tile desde el que queremos mantener el camino
+                    rem = false;
+                }
+                else
+                {
+                    movements.Remove(ultTile);
+                }
+            }
+        }
     }
 
-    private List<colorMovements> cMovements = new List<colorMovements>();
+    private List<ColorMovements> cMovements = new List<ColorMovements>();
 
     private bool inputDown = false;
     private Vector3 initPosInput = new Vector2(-1, -1);
@@ -141,6 +169,19 @@ public class BoardManager : MonoBehaviour
             {
                 //  Buscamos el tile entre todas las tiles
                 var dragedTile = GetTileOnCollision(touchRect);
+                int c = dragedTile.Key.GetTileColor();
+
+                if (cMovements[c].GetMovements().Count > 0)
+                {
+                    int countX = cMovements[c].GetMovements()[cMovements[c].GetMovements().Count - 1].GetX();
+                    int countY = cMovements[c].GetMovements()[cMovements[c].GetMovements().Count - 1].GetY();
+
+                    print("countX: " + countX + "countY: " + countY);
+
+                    if (!AreNeighbour(dragedTile.Value.x, dragedTile.Value.y, countY, countX))
+                        return;
+                }
+
                 if (dragedTile.Key != null && dragedTile.Key != currTile)
                 {
                     //  Dirección entre el nuevo tile y el anterior
@@ -162,10 +203,11 @@ public class BoardManager : MonoBehaviour
 
                         dragedTile.Key.ActiveTail(dir * -1, currTileColor);
                         currTile = dragedTile.Key;
-                        currMovement.Add(currTile);
+                        //currMovement.Add(currTile);
+                        cMovements[c].AddMov(dragedTile.Key);
                         previousDir = dir;
                     }
-                    // No es un circulo
+                    //  No es un circulo
                     else if (!dragedTile.Key.CircleActive())
                     {
                         //print("dir " +dir + " / pre " + previousDir);
@@ -175,7 +217,8 @@ public class BoardManager : MonoBehaviour
                             currTile.ActiveTail(dir, currTileColor);
                             dragedTile.Key.ActiveTail(dir, currTileColor);
                             currTile = dragedTile.Key;
-                            currMovement.Add(currTile);
+                            //currMovement.Add(currTile);
+                            cMovements[c].AddMov(dragedTile.Key);
                             previousDir = dir;
                         }
                         //  El anterior no es un circulo
@@ -187,7 +230,8 @@ public class BoardManager : MonoBehaviour
                                 currTile.ActiveElbow(currTileColor, dir, previousDir);
                                 dragedTile.Key.ActiveTail(dir, currTileColor);
                                 currTile = dragedTile.Key;
-                                currMovement.Add(currTile);
+                                //currMovement.Add(currTile);
+                                cMovements[c].AddMov(dragedTile.Key);
                                 previousDir = dir;
                             }
                             else
@@ -195,7 +239,8 @@ public class BoardManager : MonoBehaviour
                                 currTile.ActiveBridge(dir, currTileColor);
                                 dragedTile.Key.ActiveTail(dir, currTileColor);
                                 currTile = dragedTile.Key;
-                                currMovement.Add(currTile);
+                                //currMovement.Add(currTile);
+                                cMovements[c].AddMov(dragedTile.Key);
                                 previousDir = dir;
                             }
                         }
@@ -208,6 +253,15 @@ public class BoardManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    private bool AreNeighbour(int x1, int y1, int x2, int y2)
+    {
+        if ((x1 == x2 && (y1 == y2 - 1 || y1 == y2 + 1)) ||
+            (y1 == y2 && (x1 == x2 - 1 || x1 == x2 + 1)))
+            return true;
+        else
+            return false;
     }
 
     private void ProcessPointer(Vector2 inputPos)
@@ -228,8 +282,9 @@ public class BoardManager : MonoBehaviour
     {
         if (currTile != null)
         {
+            int c = currTile.GetTileColor();
             currTile = null;
-            SolveMovement();
+            SolveMovement(c);
             inputTile.GetCircleRender().enabled = false;
         }
     }
@@ -247,23 +302,24 @@ public class BoardManager : MonoBehaviour
                 originPoint = tiles[index.x, index.y].GetRect().position;
                 currTileColor = currTile.GetColor();
                 currTile.Touched();
-                currMovement.Add(currTile);
+                //currMovement.Add(currTile);
+                int c = currTile.GetTileColor();
+                cMovements[c].AddMov(currTile);
                 //  Para el puntero en pantalla
                 inputTile.GetCircleRender().enabled = true;
                 inputTile.InitTile(0, new Color(currTileColor.r, currTileColor.g, currTileColor.b, 0.5f));
                 previousDir = new Vector2(-2, -2);
-
             }
         }
     }
 
-    private void SolveMovement()
+    private void SolveMovement(int c)
     {
-        foreach (Tile tile in currMovement)
+        foreach (Tile tile in cMovements[c].GetMovements())
         {
             tile.ActiveBgColor(true, currTileColor);
         }
-        currMovement.Clear();
+        cMovements[c].GetMovements().Clear();
     }
 
     public void GiveHint()
@@ -353,6 +409,8 @@ public class BoardManager : MonoBehaviour
             {
                 tiles[i, j] = Instantiate(tilePrefab, initPos, Quaternion.identity, pool);
                 tiles[i, j].SetRect(initPos.x, initPos.y);
+                tiles[i, j].SetX(i);
+                tiles[i, j].SetY(j);
                 initPos.x += w;
             }
             initPos.x = posX;
@@ -378,11 +436,11 @@ public class BoardManager : MonoBehaviour
                 filaA -= 1;
             }
             //print("colA: " + colA + " filaA: " + filaA);
-            tiles[filaA, colA].InitTile(i, colors[i]);
+            tiles[filaA, colA].InitTile(i, colors[i], filaA, colA);
             circleTiles.Add(tiles[filaA, colA]);
 
             //Inicializamos la lista de movimientos de este color
-            colorMovements c = new colorMovements(i);
+            ColorMovements c = new ColorMovements(i);
             cMovements.Add(c);
             //List<Tile> t = new List<Tile>();
             //movements.Add(t);
@@ -396,7 +454,7 @@ public class BoardManager : MonoBehaviour
                 colB = currLevel.numBoardX - 1;
                 filaB -= 1;
             }
-            tiles[filaB, colB].InitTile(i, colors[i]);
+            tiles[filaB, colB].InitTile(i, colors[i], filaB, colB);
             circleTiles.Add(tiles[filaB, colB]);
         }
     }
