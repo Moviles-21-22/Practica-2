@@ -216,7 +216,7 @@ public class BoardManager : MonoBehaviour
                         //  El anterior es un circulo
                         if (currTile.CircleActive())
                         {
-                            currTile.ActiveTail(dir, currTileColor);
+                            currTile.ActiveTail(new Vector2(dir.x, -dir.y), currTileColor);
                             dragedTile.Key.ActiveTail(dir, currTileColor);
                             currTile = dragedTile.Key;
                             //currMovement.Add(currTile);

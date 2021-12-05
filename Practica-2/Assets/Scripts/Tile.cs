@@ -139,9 +139,8 @@ public class Tile : MonoBehaviour
         {
             bridgeTail.transform.Rotate(Vector3.forward, 90 * factor);
         }
-        else if (_dir.y == 1.0f)
+        else if (_dir.y == -1.0f)
         {
-
             bridgeTail.flipY = true;
         }
     }
