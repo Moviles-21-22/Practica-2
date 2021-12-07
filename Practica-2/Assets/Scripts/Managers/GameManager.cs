@@ -44,6 +44,16 @@ public class GameManager : MonoBehaviour
         return isPremium;
     }
 
+    public void UnLockPremium()
+    {
+        isPremium = true;
+    }
+
+    public void AddHints(int numOfHints)
+    {
+        numHints += numOfHints;
+    }
+
     public int GetNumHints()
     {
         return numHints;
