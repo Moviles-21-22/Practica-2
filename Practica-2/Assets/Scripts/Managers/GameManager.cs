@@ -10,6 +10,9 @@ public class GameManager : MonoBehaviour
 {
     //  Instancia est�tica del gameManager
     public static GameManager instance;
+    //  Referencia al dataManager
+    public DataManager dataManager;
+    //  Categoría acutal escogida
     private Category currCategory;
     //  Actual pack dentro de la categor�a usada
     private LevelPack currPack;
@@ -19,8 +22,6 @@ public class GameManager : MonoBehaviour
     public Category[] categories;
     //  Actual pack cargado
     private Map currMap;
-    //  Referencia al dataManager
-    private DataManager dataManager;
     //  N�mero de pistas disponibles
     private int numHints = 0;
     //  Tiene premium el jugador
@@ -48,6 +49,7 @@ public class GameManager : MonoBehaviour
     {
         return numHints;
     }
+
     //  Devuelve el actual pack en juego
     public LevelPack GetCurrentPack()
     {
@@ -62,11 +64,6 @@ public class GameManager : MonoBehaviour
     public Category GetCurrentCategory()
     {
         return currCategory;
-    }
-    //  Devuelve todas las categor�as disponibles
-    public Category [] GetCategories()
-    {
-        return categories;
     }
 
     /// <summary>
@@ -107,6 +104,11 @@ public class GameManager : MonoBehaviour
     //  Guarda el estado del juego
     public void SaveGame()
     {
+        int index = categories[0].levels[0].completedLevels;
+         
+        categories[0].levels[0].levelsInfo[index].completed = true;
+        categories[0].levels[0].completedLevels++;
+
         dataManager.Save();
     }
 

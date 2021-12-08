@@ -109,7 +109,7 @@ public class HUDManager : MonoBehaviour
             prevLevel.elementButton.onClick.AddListener(() => gm.ChangeLevel(currLevel.lvl - 2));
         }
 
-        if (currLevel.lvl == levelPack.totalLevels)
+        if (currLevel.lvl == levelPack.levelsInfo.Count)
         {
             nextLevel.elementImage.sprite = nextLevel.elementSprites[0];
         }

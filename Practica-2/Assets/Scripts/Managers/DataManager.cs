@@ -65,10 +65,9 @@ public class DataManager : MonoBehaviour
     private const int numHintsDefault = 2;
     public void Start()
     {
-        Load();
+        routeToSave = Directory.GetCurrentDirectory() + "/Assets/save/";
         secureManager = new SecureManager();
-        //  TODO revisar donde guardar los archivos
-        routeToSave = Directory.GetCurrentDirectory();
+        Load();
     }
 
     public void Save()
@@ -76,7 +75,7 @@ public class DataManager : MonoBehaviour
         //  Guardamos los datos
         int numHints = GameManager.instance.GetNumHints();
         bool premium = GameManager.instance.IsPremium();
-        Category[] cat = GameManager.instance.GetCategories();
+        Category[] cat = GameManager.instance.categories;
 
         DataToSave objToSave = new DataToSave(numHints, premium, cat);
         print(JsonUtility.ToJson(objToSave));
@@ -84,6 +83,12 @@ public class DataManager : MonoBehaviour
         objToSave.SetHash(SecureManager.Hash(JsonUtility.ToJson(objToSave)));
         print(objToSave.GetHash());
         string json = JsonUtility.ToJson(objToSave);
+
+        if (!Directory.Exists(routeToSave)) 
+        {
+            Directory.CreateDirectory(routeToSave);
+            Debug.Log("El directorio " + routeToSave + " se ha creado correctamente");
+        }
 
         if (System.IO.File.Exists(routeToSave + fileName))
         {
@@ -102,7 +107,7 @@ public class DataManager : MonoBehaviour
         if (System.IO.File.Exists(routeToSave + fileName))
         {
             string json = string.Empty;
-            DataToSave objToLoad = null;
+            DataToSave objToLoad;
             try
             {
                 json = System.IO.File.ReadAllText(routeToSave + fileName);
@@ -145,7 +150,7 @@ public class DataManager : MonoBehaviour
     private DataToSave CreateDefaultJson()
     {
         print("Props por defecto");
-        DataToSave currData = new DataToSave(numHintsDefault, false, GameManager.instance.GetCategories());
+        DataToSave currData = new DataToSave(numHintsDefault, false, GameManager.instance.categories);
         currData.SetHash(SecureManager.Hash(JsonUtility.ToJson(currData)));
         string json = JsonUtility.ToJson(currData);
         System.IO.File.WriteAllText(routeToSave + fileName, json);

@@ -5,38 +5,37 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
-    //  Pool para los tiles creados
-    public RectTransform pool;
-    //  Tiles del tablero
-    private Tile[,] tiles;
-    private Vector2Int size;
-    //  Circulos instanciados en el tablero
-    private List<Tile> circleTiles = new List<Tile>();
-    private List<Tile> wallTiles = new List<Tile>();
+    [Tooltip("Referencia al objeto padre donde se van a instanciar los tiles")]
+    [SerializeField]
+    private RectTransform pool;
+    [Tooltip("Referencia al prefab de los tiles que se van a crear")]
     [SerializeField]
     private Tile tilePrefab;
-    //  Deben tener el mismo orden que los tilesColor de Tile
-    private Color[] colors = { Color.red, Color.blue, Color.green,
-                               Color.magenta, Color.cyan, Color.yellow,
-                               Color.grey, Color.white,
-                               new Color(251.0f, 112.0f, 0.0f),
-                               new Color(115.0f, 7.0f, 155.0f),
-                               new Color(171.0f, 40.0f, 40.0f),
-                               new Color(147.0f, 120.0f, 55.0f) };
-    //  Ultimo tile que han tocado, hasta que el dedo se levante
+    [Tooltip("Colores de los diferentes flujos que haya en el juego")]
+    [SerializeField]
+    private Color[] colors;
+
+    // Tiles del tablero
+    private Tile[,] tiles;
+    // Dimensiones del tablero
+    private Vector2Int tabSize;
+    // Circulos instanciados en el tablero
+    private List<Tile> circleTiles = new List<Tile>();
+    // Muros instanciados en el tablero
+    private List<Tile> wallTiles = new List<Tile>();
+    // Ultimo tile que han tocado, hasta que el dedo se levante
     private Tile currTile;
-    //  Color del tile tocado
+    // Color del tile tocado
     private Color currTileColor;
-    private Vector2 originPoint;
-    //  Dirección del movimiento anterior
+    // Dirección del movimiento anterior
     private Vector2 previousDir;
-    //  Tile del puntero 
+    // Tile del puntero 
     private Tile inputTile;
 
-    //private List<Tile> currMovement = new List<Tile>();
-    //private List<List<Tile>> movements = new List<List<Tile>>();
-
     //No hace falta hacerlo así, se puede hacer con una lista de listas ordenada por color
+    /// <summary>
+    /// Struct auxiliar para controlar el color del tile en función de los movimientos
+    /// </summary>
     private struct ColorMovements
     {
         //Tile tiene los colores asociados a su numero
@@ -314,7 +313,7 @@ public class BoardManager : MonoBehaviour
             {
                 currTile = pair.Key;
                 Vector2Int index = pair.Value;
-                originPoint = tiles[index.x, index.y].GetLogicRect().position;
+                //originPoint = tiles[index.x, index.y].GetLogicRect().position;
                 currTileColor = currTile.GetColor();
                 currTile.Touched();
                 //currMovement.Add(currTile);
@@ -383,7 +382,7 @@ public class BoardManager : MonoBehaviour
         Tile tile = null;
         Rect tileRect;
         //bool limit = false;
-        while (!collisionDetected && y < size.y)
+        while (!collisionDetected && y < tabSize.y)
         {
             tileRect = tiles[y, x].GetLogicRect();
             if (Collision(tileRect, touchRect))
@@ -397,7 +396,7 @@ public class BoardManager : MonoBehaviour
             else
             {
                 x++;
-                if (x >= size.x)
+                if (x >= tabSize.x)
                 {
                     x = 0;
                     y++;
@@ -413,12 +412,12 @@ public class BoardManager : MonoBehaviour
         float poolW = pool.rect.width;
         float poolH = pool.rect.height;
 
-        size.x = currLevel.numBoardX;
-        size.y = currLevel.numBoardY;
+        tabSize.x = currLevel.numBoardX;
+        tabSize.y = currLevel.numBoardY;
         float posX = 0;
         float posY = 0;
-        float tileW = poolW / size.x;
-        float tileH = poolH / size.y;
+        float tileW = poolW / tabSize.x;
+        float tileH = poolH / tabSize.y;
 
         Vector2 initPos = new Vector2(posX, posY);
         tiles = new Tile[currLevel.numBoardY, currLevel.numBoardX];

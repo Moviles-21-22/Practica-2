@@ -49,6 +49,8 @@ public class MainMenuManager : MonoBehaviour
 
     private void Start()
     {
+        GameManager gm = GameManager.instance;
+
         // Inicializa toda la informaci�n correspondiente a cada paquete y a cada nivel para mostrarla en el Canvas
         for (int i = 0; i < paquetes.Count; i++)
         {
@@ -62,9 +64,8 @@ public class MainMenuManager : MonoBehaviour
                 paquetes[i].levels[j].name.color = paquetes[i].categoria.color;
                 // Nombre del nivel
                 paquetes[i].levels[j].name.text = paquetes[i].categoria.levels[j].levelName;
-                // TODO: El 0 se sustituye por los niveles completos, que deber�an estar guardados en GameManager
                 // Niveles completados
-                paquetes[i].levels[j].levels.text = "0 / " + paquetes[i].categoria.levels[j].totalLevels;
+                paquetes[i].levels[j].levels.text = paquetes[i].categoria.levels[j].completedLevels + "/" + paquetes[i].categoria.levels[j].levelsInfo.Count;
                 // Logica del bot�n
                 paquetes[i].levels[j].LoadLevelCallback(paquetes[i].categoria, j);
             }
