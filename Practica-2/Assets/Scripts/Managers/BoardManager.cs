@@ -6,7 +6,7 @@ using UnityEngine;
 public class BoardManager : MonoBehaviour
 {
     //  Pool para los tiles creados
-    public Transform pool;
+    public RectTransform pool;
     //  Tiles del tablero
     private Tile[,] tiles;
     private Vector2Int size;
@@ -104,6 +104,7 @@ public class BoardManager : MonoBehaviour
         {
             inputDown = true;
             initPosInput = Input.mousePosition;
+
             InputDown(Input.mousePosition);
         }
         //  El ratón se ha levantado
@@ -147,6 +148,18 @@ public class BoardManager : MonoBehaviour
     //  Determina si dos rects colisionan
     private bool Collision(Rect a, Rect b)
     {
+        // AABB
+        // return (b.xMin <= a.xMax && b.xMin >= a.xMin && b.yMax >= a.yMin && b.yMax <= a.yMax)   // Esquina superior izquierda de b
+        //     || (b.xMax <= a.xMax && b.xMax >= a.xMin && b.yMax >= a.yMin && b.yMax <= a.yMax)   // Esquina superior derecha de b
+        //     || (b.xMin <= a.xMax && b.xMin >= a.xMin && b.yMin >= a.yMin && b.yMin <= a.yMax)   // Esquina inferior izquierda de b
+        //     || (b.xMax <= a.xMax && b.xMax >= a.xMin && b.yMin >= a.yMin && b.yMin<= a.yMax)
+        //
+        //     || (a.xMin <= b.xMax && b.xMin >= b.xMin && a.yMax >= b.yMin && a.yMax <= b.yMax)   // Esquina superior izquierda de a
+        //     || (a.xMax <= b.xMax && b.xMax >= b.xMin && a.yMax >= b.yMin && a.yMax <= b.yMax)   // Esquina superior derecha de a
+        //     || (a.xMin <= b.xMax && b.xMin >= b.xMin && a.yMin >= b.yMin && a.yMin <= b.yMax)   // Esquina inferior izquierda de a
+        //     || (a.xMax <= b.xMax && b.xMax >= b.xMin && a.yMin >= b.yMin && a.yMin <= b.yMax);  // Esquina inferior derecha de a
+        //
+
         if (a.x < (b.x + b.width)
             && (a.x + a.width) > b.x
             && a.y < (b.y + b.height)
@@ -165,7 +178,7 @@ public class BoardManager : MonoBehaviour
             Rect touchRect = new Rect(inputPos.x, inputPos.y, 50, 50);
 
             //  El nuevo touch no está colisionando con el actual tile (Es nuevo)
-            if (!touchRect.Overlaps(currTile.GetRect()))
+            if (!touchRect.Overlaps(currTile.GetLogicRect()))
             {
                 //  Buscamos el tile entre todas las tiles
                 var dragedTile = GetTileOnCollision(touchRect);
@@ -187,7 +200,7 @@ public class BoardManager : MonoBehaviour
                 if (dragedTile.Key != null && dragedTile.Key != currTile)
                 {
                     //  Dirección entre el nuevo tile y el anterior
-                    Vector2 dir = (dragedTile.Key.GetRect().position - currTile.GetRect().position).normalized;
+                    Vector2 dir = (dragedTile.Key.GetLogicRect().position - currTile.GetLogicRect().position).normalized;
 
                     //  Hemos llegado al tile que le corresponde (solución)
                     if (dragedTile.Key.CircleActive() && dragedTile.Key.GetColor() == currTile.GetColor())
@@ -301,7 +314,7 @@ public class BoardManager : MonoBehaviour
             {
                 currTile = pair.Key;
                 Vector2Int index = pair.Value;
-                originPoint = tiles[index.x, index.y].GetRect().position;
+                originPoint = tiles[index.x, index.y].GetLogicRect().position;
                 currTileColor = currTile.GetColor();
                 currTile.Touched();
                 //currMovement.Add(currTile);
@@ -350,7 +363,7 @@ public class BoardManager : MonoBehaviour
         Rect tileRect;
         while (!collisionDetected && cont < circleTiles.Count)
         {
-            tileRect = circleTiles[cont].GetRect();
+            tileRect = circleTiles[cont].GetLogicRect();
             if (Collision(tileRect, touchRect))
             {
                 collisionDetected = true;
@@ -372,7 +385,7 @@ public class BoardManager : MonoBehaviour
         //bool limit = false;
         while (!collisionDetected && y < size.y)
         {
-            tileRect = tiles[y, x].GetRect();
+            tileRect = tiles[y, x].GetLogicRect();
             if (Collision(tileRect, touchRect))
             {
                 collisionDetected = true;
@@ -397,12 +410,16 @@ public class BoardManager : MonoBehaviour
     //  Inicializa el nivel actual
     public void Init()
     {
+        float poolW = pool.rect.width;
+        float poolH = pool.rect.height;
+
         size.x = currLevel.numBoardX;
         size.y = currLevel.numBoardY;
-        float posX = -2;
-        float posY = -2;
-        float w = 1;
-        float h = 1;
+        float posX = 0;
+        float posY = 0;
+        float tileW = poolW / size.x;
+        float tileH = poolH / size.y;
+
         Vector2 initPos = new Vector2(posX, posY);
         tiles = new Tile[currLevel.numBoardY, currLevel.numBoardX];
         for (int i = 0; i < currLevel.numBoardY; i++)
@@ -410,13 +427,15 @@ public class BoardManager : MonoBehaviour
             for (int j = 0; j < currLevel.numBoardX; j++)
             {
                 tiles[i, j] = Instantiate(tilePrefab, initPos, Quaternion.identity, pool);
-                tiles[i, j].SetRect(initPos.x, initPos.y);
+                tiles[i, j].SetSize(tileW, tileH);
+                tiles[i, j].SetLocalGraphicPos(initPos.x, initPos.y);
+                tiles[i, j].InitLogicalRect();
                 tiles[i, j].SetX(i);
                 tiles[i, j].SetY(j);
-                initPos.x += w;
+                initPos.x += tileW;
             }
             initPos.x = posX;
-            initPos.y -= h;
+            initPos.y -= tileH;
         }
         initCircles(currLevel);
         initGaps(currLevel);

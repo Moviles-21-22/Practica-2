@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Tile : MonoBehaviour
 {
@@ -12,40 +13,58 @@ public class Tile : MonoBehaviour
     private int x;
     private int y;
 
+    [Tooltip("Valor del alpha del color del fondo del tile")]
+    [SerializeField]
+    private float backgroundAlpha = 0.5f;
+
     //Variable que define si el tile es hueco o no
     private bool empty = false;
 
     [SerializeField]
-    private SpriteRenderer bridgeTail;
+    private RectTransform graphicRect;
 
     [SerializeField]
-    private SpriteRenderer bridge;
+    private RawImage bridgeTail;
 
     [SerializeField]
-    private SpriteRenderer elbow;
+    private RawImage bridge;
 
     [SerializeField]
-    private SpriteRenderer circle;
+    private RawImage elbow;
 
     [SerializeField]
-    private SpriteRenderer star;
+    private RawImage circle;
 
     [SerializeField]
-    private SpriteRenderer wallUp;
-    [SerializeField]
-    private SpriteRenderer wallRight;
-    [SerializeField]
-    private SpriteRenderer wallDown;
-    [SerializeField]
-    private SpriteRenderer wallLeft;
+    private RawImage star;
 
     [SerializeField]
-    private SpriteRenderer bgColor;
+    private RawImage wallUp;
+    [SerializeField]
+    private RawImage wallRight;
+    [SerializeField]
+    private RawImage wallDown;
+    [SerializeField]
+    private RawImage wallLeft;
 
     [SerializeField]
-    private SpriteRenderer lines;
+    private RawImage bgColor;
 
-    private Rect tileRect;
+    [SerializeField]
+    private RawImage lines;
+
+    private Rect logicRect;
+    private Vector3 worldPos;
+
+    private void OnEnable()
+    {
+        var a = graphicRect;
+        var b = graphicRect.position;
+        var c = graphicRect.localPosition;
+        var d = graphicRect.rect.position;
+        worldPos = transform.TransformPoint(graphicRect.rect.position);
+        logicRect = new Rect(worldPos.x, worldPos.y, graphicRect.rect.width, graphicRect.rect.height);
+    }
 
     //Tienen que tener los mismos colores y en el mismo orden que colors de BoardMngr
     /*
@@ -93,10 +112,10 @@ public class Tile : MonoBehaviour
     }
     
     //  Activa el color de fondo del tile
-    public void ActiveBgColor(bool status,Color _color)
+    public void ActiveBgColor(bool status, Color _color)
     {
         color = _color;
-        bgColor.color = color;
+        bgColor.color = new Color(color.r, color.g, color.b, backgroundAlpha);
         bgColor.enabled = status;
     }
 
@@ -127,21 +146,23 @@ public class Tile : MonoBehaviour
         color = _color;
         bridgeTail.enabled = true;
         bridgeTail.color = color;
-        bridgeTail.flipY = false;
         float factor = circle.enabled ? -1.0f : 1.0f;
         bridgeTail.transform.rotation = Quaternion.identity;
 
+        //izq->der
         if (_dir.x == 1.0f)
         {
             bridgeTail.transform.Rotate(Vector3.forward, -90 * factor);
         }
+        // der->izq
         else if (_dir.x == -1.0f)
         {
             bridgeTail.transform.Rotate(Vector3.forward, 90 * factor);
         }
+        // bot->top
         else if (_dir.y == -1.0f)
         {
-            bridgeTail.flipY = true;
+            bridgeTail.transform.Rotate(Vector3.forward, 180);
         }
     }
 
@@ -151,13 +172,6 @@ public class Tile : MonoBehaviour
         color = _color;
         bridge.enabled = true;
         bridge.color = color;
-
-        //bridge.transform.rotation = Quaternion.identity;
-        bridge.transform.rotation = bridgeTail.transform.rotation;
-        //if (_dir.x == 1.0f || _dir.x == 0.0f)
-        //{
-        //    bridge.transform.Rotate(Vector3.forward, 90);
-        //}
     }
 
     public void ActiveElbow(Color _color ,Vector2 dir, Vector2 previous)
@@ -167,67 +181,73 @@ public class Tile : MonoBehaviour
         elbow.color = _color;
         color = _color;
         elbow.transform.rotation = Quaternion.identity;
-        elbow.flipX = false;
-        elbow.flipY = false;
 
         if (dir.y < 0.0f) // Va para abajo 
         {
-            if (previous.x > 1.0f) // Viene de un movimiento a la derecha
-            {
-                print("Para abajo desde la derecha");
-            }
-            else if (previous.x < 0.0f)// Viene de un movimiento de la izquierda
+            if (previous.x > 1.0f) // izq->abajo
             {
                 print("Para abajo desde la izquierda");
-                elbow.flipX = true;
+            }
+            else if (previous.x < 0.0f) // der->abajo
+            {
+                print("Para abajo desde la derecha");
+                elbow.transform.Rotate(Vector3.forward, 90);
             }
         }
         else if (dir.y > 0.0f) // Va para arriba
         {
-            if (previous.x == -1.0f) // Viene de un movimiento a la izquierda
+            if (previous.x == -1.0f) // der->arriba
             {
-                print("Para arriba desde la izquierda");
-                elbow.flipX = true;
-                elbow.flipY = true;
-            }
-            else if (previous.x > 0.0f)// Viene de un movimiento a la derecha
-            {
-                elbow.flipY = true;
                 print("Para arriba desde la derecha");
+                elbow.transform.Rotate(Vector3.forward, 180);
+            }
+            else if (previous.x > 0.0f)// izq->arriba
+            {
+                elbow.transform.Rotate(Vector3.forward, -90);
+                print("Para arriba desde la izquierda");
             }
         }
         else if (dir.x > 0.0f) //Va a la derecha
         {
-            if (previous.y < 0.0f)// Viene de abajo
-            {
-                print("Para derecha desde arriba");
-                elbow.flipX = true;
-                elbow.flipY = true;
-            }
-            else if (previous.y > 0.0f)// Viene de arriba
+            if (previous.y < 0.0f)// arriba->derecha
             {
                 print("Para derecha desde abajo");
-                elbow.flipX = true;
+                elbow.transform.Rotate(Vector3.forward, 180);
+            }
+            else if (previous.y > 0.0f)// abajo->derecha
+            {
+                print("Para derecha desde abajo");
+                elbow.transform.Rotate(Vector3.forward, 90);
             }
         }
         else if (dir.x < 0.0f) //Va a la izquierda
         {
-            if (previous.y > 0.0f)// Viene de abajo
+            if (previous.y > 0.0f)// abajo->izquierda
             {
                 print("Para izquierda desde abajo");
             }
-            else if (previous.y < 0.0f)// Viene de arriba
+            else if (previous.y < 0.0f)// arriba->izquierda
             {
                 print("Para izquierda desde arriba");
-                elbow.flipY = true;
+                elbow.transform.Rotate(Vector3.forward, -90);
             }
         }
     }
 
-    public void SetRect(float x, float y)
+    public void SetLocalGraphicPos(float x, float y) 
     {
-        Vector2 worldPos = Camera.main.WorldToScreenPoint(new Vector2(x, y));
-        tileRect = new Rect(worldPos.x,worldPos.y, bgColor.sprite.rect.width, bgColor.sprite.rect.height);
+        graphicRect.anchoredPosition = new Vector2(x, y);    
+    }
+
+    public void SetSize(float width, float height) 
+    {
+        graphicRect.sizeDelta = new Vector2(width, height);
+    }
+
+    public void InitLogicalRect()
+    {
+        worldPos = transform.TransformPoint(graphicRect.rect.position);
+        logicRect = new Rect(worldPos.x, worldPos.y, graphicRect.rect.width, graphicRect.rect.height);
     }
 
     public void SetX(int _x)
@@ -250,19 +270,9 @@ public class Tile : MonoBehaviour
         return y;
     }
 
-    public Rect GetRect()
+    public Rect GetLogicRect()
     {
-        return tileRect;
-    }
-
-    public float GetWidth()
-    {
-        return bgColor.size.x;
-    }
-
-    public float GetHeight()
-    {
-        return bgColor.size.y;
+        return logicRect;
     }
 
     public bool GetEmpty()
@@ -280,7 +290,7 @@ public class Tile : MonoBehaviour
         return (int)tileColor;
     }
 
-    public SpriteRenderer GetCircleRender()
+    public RawImage GetCircleRender()
     {
         return circle;
     }
@@ -288,7 +298,7 @@ public class Tile : MonoBehaviour
     public void Touched()
     {
         bgColor.enabled = true;
-        bgColor.color = color;
+        bgColor.color = new Color(color.r, color.g, color.b, backgroundAlpha);
     }
 
     public void RemoveTail()
