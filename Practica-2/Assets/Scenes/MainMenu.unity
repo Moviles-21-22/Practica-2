@@ -450,14 +450,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
-    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
-      propertyPath: mainMenu
-      value: 
-      objectReference: {fileID: 1712218500}
-    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
-      propertyPath: dataManager
-      value: 
-      objectReference: {fileID: 1573623521}
     - target: {fileID: 4075807167624887494, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -1694,7 +1686,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &721266340
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1712,8 +1704,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -129}
-  m_SizeDelta: {x: -489.9078, y: -1714.3818}
+  m_AnchoredPosition: {x: 9.124023, y: 192.16418}
+  m_SizeDelta: {x: -471.6599, y: -1072.0535}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &721266341
 MonoBehaviour:
@@ -5965,6 +5957,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: DataSystem
       objectReference: {fileID: 0}
+    - target: {fileID: 3665923234473658841, guid: 91357429db7db2142826cab5d2502d22, type: 3}
+      propertyPath: categories.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3665923234473658841, guid: 91357429db7db2142826cab5d2502d22, type: 3}
+      propertyPath: categories.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: e0654b64e5519d54b902550dc30109f9, type: 2}
+    - target: {fileID: 3665923234473658841, guid: 91357429db7db2142826cab5d2502d22, type: 3}
+      propertyPath: categories.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 14e41d866031a2749b450e0ccabb96af, type: 2}
+    - target: {fileID: 3665923234473658841, guid: 91357429db7db2142826cab5d2502d22, type: 3}
+      propertyPath: categories.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: ad1975f958b7ef64893a9c5647145511, type: 2}
     - target: {fileID: 3665923234473658842, guid: 91357429db7db2142826cab5d2502d22, type: 3}
       propertyPath: m_RootOrder
       value: 3

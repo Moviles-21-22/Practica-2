@@ -14,17 +14,21 @@ public class DataToSave
     private bool premium;
 
     [SerializeField]
-    private Category [] categories;
+    public List<Category> categories;
+    
+    [SerializeField]
+    public string data;
 
     [SerializeField]
     private string hash;
 
     [SerializeField]
-    public DataToSave(int _numHints, bool _premium, Category[] _category)
+    public DataToSave(int _numHints, bool _premium, List<Category> _category)
     {
         numHints = _numHints;
         premium = _premium;
         categories = _category;
+        data = _category.ToString();
     }
 
     public void SetHash(string _hash)
@@ -37,7 +41,7 @@ public class DataToSave
         return hash;
     }
 
-    public Category[] GetCategories()
+    public List<Category> GetCategories()
     {
         return categories;
     }
@@ -61,9 +65,11 @@ public class DataManager : MonoBehaviour
     private string key = "asdladawdajdw";
     private string fileName = "props.json";
     private string routeToSave;
+    private string routeToPaste;
 
     private const int numHintsDefault = 2;
-
+    [Tooltip("Lista de categorias por defecto")]
+    [SerializeField] List<Category> categories;
     public static DataManager instance;
 
     private void Awake()
@@ -91,7 +97,7 @@ public class DataManager : MonoBehaviour
         //  Guardamos los datos
         int numHints = GameManager.instance.GetNumHints();
         bool premium = GameManager.instance.IsPremium();
-        Category[] cat = GameManager.instance.categories;
+        List<Category> cat = GameManager.instance.GetCategories();
 
         DataToSave objToSave = new DataToSave(numHints, premium, cat);
         print(JsonUtility.ToJson(objToSave));
@@ -166,7 +172,43 @@ public class DataManager : MonoBehaviour
     private DataToSave CreateDefaultJson()
     {
         print("Props por defecto");
-        DataToSave currData = new DataToSave(numHintsDefault, false, GameManager.instance.categories);
+        List<Category> categoriesCopy = new List<Category>();
+        try
+        {
+            UnityEditor.AssetDatabase.CreateFolder("Assets/save","Intro");
+            UnityEditor.AssetDatabase.CreateFolder("Assets/save","Mania");
+            UnityEditor.AssetDatabase.CreateFolder("Assets/save","Rectangle");
+
+            UnityEditor.AssetDatabase.CopyAsset("Assets/Data/Categories/intro.asset", "Assets/save/Intro/introCopy.asset");
+            Category c = (Category)UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/save/Intro/introCopy.asset", typeof(Category));
+            categoriesCopy.Add(c);
+            UnityEditor.AssetDatabase.CopyAsset("Assets/Data/Categories/Mania.asset", "Assets/save/Mania/maniaCopy.asset");
+            c  = (Category)UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/save/Mania/maniaCopy.asset", typeof(Category));
+            categoriesCopy.Add(c);
+            UnityEditor.AssetDatabase.CopyAsset("Assets/Data/Categories/rectangles.asset", "Assets/save/Rectangle/rectanglesCopy.asset");
+            c = (Category)UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/save/Rectangle/rectanglesCopy.asset", typeof(Category));
+            categoriesCopy.Add(c);
+
+            LevelPack[] currPack = new LevelPack[4];
+            UnityEditor.AssetDatabase.CopyAsset("Assets/Data/Levels/Intro/clasicPack.asset", "Assets/save/Intro/clasicPackCopy.asset");
+            currPack[0] = (LevelPack)UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/save/Intro/clasicPackCopy.asset", typeof(LevelPack));
+
+            UnityEditor.AssetDatabase.CopyAsset("Assets/Data/Levels/Intro/bonusPack.asset", "Assets/save/Intro/bonusPackCopy.asset");
+            currPack[1] = (LevelPack)UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/save/Intro/bonusPackCopy.asset", typeof(LevelPack));
+
+            UnityEditor.AssetDatabase.CopyAsset("Assets/Data/Levels/Intro/greenPack.asset", "Assets/save/Intro/greenPackCopy.asset");
+            currPack[2] = (LevelPack)UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/save/Intro/greenPackCopy.asset", typeof(LevelPack));
+
+            UnityEditor.AssetDatabase.CopyAsset("Assets/Data/Levels/Intro/bluePack.asset", "Assets/save/Intro/bluePackCopy.asset");
+            currPack[3] = (LevelPack)UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/save/Intro/bluePackCopy.asset", typeof(LevelPack));
+
+            categoriesCopy[0].levels = currPack;
+        }
+        catch (Exception e)
+        {
+            print(e.Message);
+        }
+        DataToSave currData = new DataToSave(numHintsDefault, false, categoriesCopy);
         currData.SetHash(SecureManager.Hash(JsonUtility.ToJson(currData)));
         string json = JsonUtility.ToJson(currData);
         System.IO.File.WriteAllText(routeToSave + fileName, json);

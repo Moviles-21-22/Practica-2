@@ -10,8 +10,6 @@ public class GameManager : MonoBehaviour
 {
     //  Instancia est�tica del gameManager
     public static GameManager instance;
-    //  Referencia al dataManager
-    public DataManager dataManager;
     //  Categoría acutal escogida
     private Category currCategory;
     //  Actual pack dentro de la categor�a usada
@@ -19,7 +17,7 @@ public class GameManager : MonoBehaviour
     //  Actual nivel en juego
     private Level currLevel;
     //  Array con todas las categor�as disponibles
-    public Category[] categories;
+    private List<Category> categories;
     //  Actual pack cargado
     private Map currMap;
     //  N�mero de pistas disponibles
@@ -105,6 +103,11 @@ public class GameManager : MonoBehaviour
         LoadScene(3);
     }
 
+    public List<Category> GetCategories()
+    {
+        return categories;
+    }
+
     //  Carga el estado del juego en funci�n del json
     public void InitDataLoaded(DataToSave objToLoad)
     {
@@ -116,10 +119,10 @@ public class GameManager : MonoBehaviour
     //  Guarda el estado del juego
     public void SaveGame()
     {
-        DataManager.instance.Save();
         int index = categories[0].levels[0].completedLevels;
         categories[0].levels[0].levelsInfo[index].completed = true;
         categories[0].levels[0].completedLevels++;
+        DataManager.instance.Save();
     }
 
     //  Carga un pack especifico de una categor�a

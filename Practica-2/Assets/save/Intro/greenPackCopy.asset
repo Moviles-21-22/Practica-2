@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a7bf3a848a5c16a4e82753d07d0c1327, type: 3}
-  m_Name: clasicPack
+  m_Name: greenPackCopy
   m_EditorClassIdentifier: 
-  levelName: "Paquete Cl\xE1sico"
-  txt: {fileID: 4900000, guid: 9c5810b305b19a54cac9c1f9c83fbebc, type: 3}
+  levelName: Paquete Verde
+  txt: {fileID: 4900000, guid: 1efa9ef735d89a448aec64eac68ea4fb, type: 3}
   gridNames:
   - "5x5 - f\xE1cil"
   - 6x6
@@ -28,7 +28,7 @@ MonoBehaviour:
     perfect: 0
   - completed: 0
     perfect: 0
-  - completed: 1
+  - completed: 0
     perfect: 0
   - completed: 0
     perfect: 0
