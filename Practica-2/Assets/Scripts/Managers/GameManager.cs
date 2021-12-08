@@ -45,6 +45,18 @@ public class GameManager : MonoBehaviour
         return isPremium;
     }
 
+    public void UnLockPremium()
+    {
+        isPremium = true;
+        SaveGame();
+        AdsManager.instance.HideBanner();
+    }
+
+    public void AddHints(int numOfHints)
+    {
+        numHints += numOfHints;
+    }
+
     public int GetNumHints()
     {
         return numHints;
@@ -104,12 +116,10 @@ public class GameManager : MonoBehaviour
     //  Guarda el estado del juego
     public void SaveGame()
     {
+        DataManager.instance.Save();
         int index = categories[0].levels[0].completedLevels;
-         
         categories[0].levels[0].levelsInfo[index].completed = true;
         categories[0].levels[0].completedLevels++;
-
-        dataManager.Save();
     }
 
     //  Carga un pack especifico de una categor�a

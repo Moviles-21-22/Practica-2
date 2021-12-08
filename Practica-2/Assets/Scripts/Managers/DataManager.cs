@@ -63,6 +63,22 @@ public class DataManager : MonoBehaviour
     private string routeToSave;
 
     private const int numHintsDefault = 2;
+
+    public static DataManager instance;
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(this.gameObject);
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
+    }
+
     public void Start()
     {
         routeToSave = Directory.GetCurrentDirectory() + "/Assets/save/";
