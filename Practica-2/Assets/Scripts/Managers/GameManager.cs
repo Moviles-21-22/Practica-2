@@ -47,6 +47,8 @@ public class GameManager : MonoBehaviour
     public void UnLockPremium()
     {
         isPremium = true;
+        SaveGame();
+        AdsManager.instance.HideBanner();
     }
 
     public void AddHints(int numOfHints)
@@ -117,7 +119,7 @@ public class GameManager : MonoBehaviour
     //  Guarda el estado del juego
     public void SaveGame()
     {
-        dataManager.Save();
+        DataManager.instance.Save();
     }
 
     //  Carga un pack especifico de una categor�a

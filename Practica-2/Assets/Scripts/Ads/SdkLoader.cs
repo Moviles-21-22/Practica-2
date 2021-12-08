@@ -10,13 +10,13 @@ public class SdkLoader : MonoBehaviour, IUnityAdsInitializationListener
 
     void Awake()
     {
-        InitializeAds();
+        //InitializeAds();
     }
 
     public void InitializeAds()
     {
         _gameId = _androidGameId;
-        Advertisement.Initialize(_gameId, _testMode, _enablePerPlacementMode, this);
+        //Advertisement.Initialize(_gameId, _testMode, _enablePerPlacementMode, this);
     }
 
     public void OnInitializationComplete()
