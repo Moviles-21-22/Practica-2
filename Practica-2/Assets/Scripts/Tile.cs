@@ -13,6 +13,10 @@ public class Tile : MonoBehaviour
     private int x;
     private int y;
 
+    [Tooltip("Valor del alpha del color del fondo del tile")]
+    [SerializeField]
+    private float backgroundAlpha = 0.5f;
+
     //Variable que define si el tile es hueco o no
     private bool empty = false;
 
@@ -50,11 +54,17 @@ public class Tile : MonoBehaviour
     private RawImage lines;
 
     private Rect logicRect;
+    private Vector3 worldPos;
 
-    //private void OnEnable()
-    //{
-    //    var a = graphicRect;
-    //}
+    private void OnEnable()
+    {
+        var a = graphicRect;
+        var b = graphicRect.position;
+        var c = graphicRect.localPosition;
+        var d = graphicRect.rect.position;
+        worldPos = transform.TransformPoint(graphicRect.rect.position);
+        logicRect = new Rect(worldPos.x, worldPos.y, graphicRect.rect.width, graphicRect.rect.height);
+    }
 
     //Tienen que tener los mismos colores y en el mismo orden que colors de BoardMngr
     /*
@@ -102,10 +112,10 @@ public class Tile : MonoBehaviour
     }
     
     //  Activa el color de fondo del tile
-    public void ActiveBgColor(bool status,Color _color)
+    public void ActiveBgColor(bool status, Color _color)
     {
         color = _color;
-        bgColor.color = color;
+        bgColor.color = new Color(color.r, color.g, color.b, backgroundAlpha);
         bgColor.enabled = status;
     }
 
@@ -234,9 +244,9 @@ public class Tile : MonoBehaviour
         graphicRect.sizeDelta = new Vector2(width, height);
     }
 
-    public void SetLogicalRect(float x, float y)
+    public void InitLogicalRect()
     {
-        Vector2 worldPos = Camera.main.WorldToScreenPoint(new Vector2(x, y));
+        worldPos = transform.TransformPoint(graphicRect.rect.position);
         logicRect = new Rect(worldPos.x, worldPos.y, graphicRect.rect.width, graphicRect.rect.height);
     }
 
@@ -288,7 +298,7 @@ public class Tile : MonoBehaviour
     public void Touched()
     {
         bgColor.enabled = true;
-        bgColor.color = color;
+        bgColor.color = new Color(color.r, color.g, color.b, backgroundAlpha);
     }
 
     public void RemoveTail()

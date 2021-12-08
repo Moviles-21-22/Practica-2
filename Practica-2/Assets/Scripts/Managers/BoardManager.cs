@@ -415,8 +415,8 @@ public class BoardManager : MonoBehaviour
 
         size.x = currLevel.numBoardX;
         size.y = currLevel.numBoardY;
-        float posX = -2;
-        float posY = -2;
+        float posX = 0;
+        float posY = 0;
         float tileW = poolW / size.x;
         float tileH = poolH / size.y;
 
@@ -428,8 +428,8 @@ public class BoardManager : MonoBehaviour
             {
                 tiles[i, j] = Instantiate(tilePrefab, initPos, Quaternion.identity, pool);
                 tiles[i, j].SetSize(tileW, tileH);
-                tiles[i, j].SetLogicalRect(initPos.x, initPos.y);
-                tiles[i, j].SetLocalGraphicPos(initPos.x + 2, initPos.y + 2);
+                tiles[i, j].SetLocalGraphicPos(initPos.x, initPos.y);
+                tiles[i, j].InitLogicalRect();
                 tiles[i, j].SetX(i);
                 tiles[i, j].SetY(j);
                 initPos.x += tileW;
