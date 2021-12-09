@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEditor;
 
 [System.Serializable]
 public class DataToSave
@@ -70,6 +71,11 @@ public class DataManager : MonoBehaviour
     private const int numHintsDefault = 2;
     [Tooltip("Lista de categorias por defecto")]
     [SerializeField] List<Category> categories;
+    // Rutas para el guardado por defecto
+    private string[] saveRoutes;
+
+    private string saveRoute;
+
     public static DataManager instance;
 
     private void Awake()
@@ -173,40 +179,53 @@ public class DataManager : MonoBehaviour
     {
         print("Props por defecto");
         List<Category> categoriesCopy = new List<Category>();
+        saveRoute = "Assets/save";
+        saveRoutes = new string[categories.Count];
         try
         {
-            UnityEditor.AssetDatabase.CreateFolder("Assets/save","Intro");
-            UnityEditor.AssetDatabase.CreateFolder("Assets/save","Mania");
-            UnityEditor.AssetDatabase.CreateFolder("Assets/save","Rectangle");
+            //  Creación de carpetas y rutas para el guardado de packs
+            for (int i = 0; i < categories.Count; i++)
+            {
+                saveRoutes[i] =  "Assets/save/" + categories[i].name;
+                if (!AssetDatabase.IsValidFolder(saveRoute + "/" + categories[i].name))
+                {
+                    AssetDatabase.CreateFolder(saveRoute, categories[i].name);
+                }
 
-            UnityEditor.AssetDatabase.CopyAsset("Assets/Data/Categories/intro.asset", "Assets/save/Intro/introCopy.asset");
-            Category c = (Category)UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/save/Intro/introCopy.asset", typeof(Category));
-            categoriesCopy.Add(c);
-            UnityEditor.AssetDatabase.CopyAsset("Assets/Data/Categories/Mania.asset", "Assets/save/Mania/maniaCopy.asset");
-            c  = (Category)UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/save/Mania/maniaCopy.asset", typeof(Category));
-            categoriesCopy.Add(c);
-            UnityEditor.AssetDatabase.CopyAsset("Assets/Data/Categories/rectangles.asset", "Assets/save/Rectangle/rectanglesCopy.asset");
-            c = (Category)UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/save/Rectangle/rectanglesCopy.asset", typeof(Category));
-            categoriesCopy.Add(c);
+                //  Copiamos la categoria
+                string categoryOriginalRoute = AssetDatabase.GetAssetPath(categories[i]);
+                string categoryCopyRoute = saveRoutes[i] + "/" + categories[i].name + "Copy.asset";
 
-            LevelPack[] currPack = new LevelPack[4];
-            UnityEditor.AssetDatabase.CopyAsset("Assets/Data/Levels/Intro/clasicPack.asset", "Assets/save/Intro/clasicPackCopy.asset");
-            currPack[0] = (LevelPack)UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/save/Intro/clasicPackCopy.asset", typeof(LevelPack));
+                string statusMov = AssetDatabase.ValidateMoveAsset(categoryOriginalRoute, categoryCopyRoute);
+                if (!statusMov.Equals(string.Empty))
+                {
+                    print("Borro " + categories[i].name);
+                    AssetDatabase.DeleteAsset(categoryCopyRoute);
+                }
+                AssetDatabase.CopyAsset(categoryOriginalRoute, categoryCopyRoute);
+                categoriesCopy.Add((Category)AssetDatabase.LoadAssetAtPath(categoryCopyRoute, typeof(Category)));
 
-            UnityEditor.AssetDatabase.CopyAsset("Assets/Data/Levels/Intro/bonusPack.asset", "Assets/save/Intro/bonusPackCopy.asset");
-            currPack[1] = (LevelPack)UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/save/Intro/bonusPackCopy.asset", typeof(LevelPack));
-
-            UnityEditor.AssetDatabase.CopyAsset("Assets/Data/Levels/Intro/greenPack.asset", "Assets/save/Intro/greenPackCopy.asset");
-            currPack[2] = (LevelPack)UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/save/Intro/greenPackCopy.asset", typeof(LevelPack));
-
-            UnityEditor.AssetDatabase.CopyAsset("Assets/Data/Levels/Intro/bluePack.asset", "Assets/save/Intro/bluePackCopy.asset");
-            currPack[3] = (LevelPack)UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/save/Intro/bluePackCopy.asset", typeof(LevelPack));
-
-            categoriesCopy[0].levels = currPack;
+                //  Copiamos los niveles
+                LevelPack[] currPack = new LevelPack[categories[i].levels.Length];
+                for (int j = 0; j < categories[i].levels.Length; j++)
+                {
+                    string originalPackRoute = AssetDatabase.GetAssetPath(categories[i].levels[j]);
+                    string copyPackRoute = saveRoutes[i] + "/" + categories[i].levels[j].name + "Copy.asset";
+                    string packStatus = AssetDatabase.ValidateMoveAsset(originalPackRoute, copyPackRoute);
+                    if (!packStatus.Equals(string.Empty))
+                    {
+                        print("Borro " + categories[i].levels[j].name);
+                        AssetDatabase.DeleteAsset(copyPackRoute);
+                    }
+                    AssetDatabase.CopyAsset(originalPackRoute, copyPackRoute);
+                    currPack[j] = (LevelPack)AssetDatabase.LoadAssetAtPath(copyPackRoute, typeof(LevelPack));
+                }
+                categoriesCopy[i].levels = currPack;
+            }
         }
         catch (Exception e)
         {
-            print(e.Message);
+            throw new Exception("Reinstala la app");
         }
         DataToSave currData = new DataToSave(numHintsDefault, false, categoriesCopy);
         currData.SetHash(SecureManager.Hash(JsonUtility.ToJson(currData)));
