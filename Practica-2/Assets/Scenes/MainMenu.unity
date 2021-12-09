@@ -452,7 +452,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4075807167624887494, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4075807167624887494, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4605,7 +4605,7 @@ RectTransform:
   - {fileID: 546198783}
   - {fileID: 721266340}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -4625,8 +4625,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   paquetes:
-  - categoria: {fileID: 11400000, guid: e0654b64e5519d54b902550dc30109f9, type: 2}
-    titleSprite: {fileID: 1035091190}
+  - titleSprite: {fileID: 1035091190}
     titleText: {fileID: 1239568260}
     levels:
     - button: {fileID: 929207014}
@@ -4641,8 +4640,7 @@ MonoBehaviour:
     - button: {fileID: 1376607602}
       name: {fileID: 1774748133}
       levels: {fileID: 1428158576}
-  - categoria: {fileID: 11400000, guid: 14e41d866031a2749b450e0ccabb96af, type: 2}
-    titleSprite: {fileID: 757794992}
+  - titleSprite: {fileID: 757794992}
     titleText: {fileID: 397587890}
     levels:
     - button: {fileID: 1281644612}
@@ -4660,8 +4658,7 @@ MonoBehaviour:
     - button: {fileID: 681131054}
       name: {fileID: 279292397}
       levels: {fileID: 25376324}
-  - categoria: {fileID: 11400000, guid: ad1975f958b7ef64893a9c5647145511, type: 2}
-    titleSprite: {fileID: 585702381}
+  - titleSprite: {fileID: 585702381}
     titleText: {fileID: 1341123985}
     levels:
     - button: {fileID: 1993497542}
@@ -4885,7 +4882,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1774748131
 GameObject:
@@ -5975,7 +5972,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: ad1975f958b7ef64893a9c5647145511, type: 2}
     - target: {fileID: 3665923234473658842, guid: 91357429db7db2142826cab5d2502d22, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3665923234473658842, guid: 91357429db7db2142826cab5d2502d22, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6028,7 +6025,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7869540305906426174, guid: 3f9c6b9b9d7a1864fa51e853a7b38cf4, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7869540305906426174, guid: 3f9c6b9b9d7a1864fa51e853a7b38cf4, type: 3}
       propertyPath: m_LocalPosition.x

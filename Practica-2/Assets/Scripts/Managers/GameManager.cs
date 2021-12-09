@@ -53,6 +53,7 @@ public class GameManager : MonoBehaviour
     public void AddHints(int numOfHints)
     {
         numHints += numOfHints;
+        SaveGame();
     }
 
     public int GetNumHints()
@@ -111,6 +112,7 @@ public class GameManager : MonoBehaviour
     //  Carga el estado del juego en funci�n del json
     public void InitDataLoaded(DataToSave objToLoad)
     {
+        print("Cargamos json");
         categories = objToLoad.GetCategories();
         numHints = objToLoad.GetNumHints();
         isPremium = objToLoad.GetPremiumStatus();
@@ -119,9 +121,9 @@ public class GameManager : MonoBehaviour
     //  Guarda el estado del juego
     public void SaveGame()
     {
-        int index = categories[0].levels[0].completedLevels;
-        categories[0].levels[0].levelsInfo[index].completed = true;
-        categories[0].levels[0].completedLevels++;
+        //int index = categories[0].levels[0].completedLevels;
+        //categories[0].levels[0].levelsInfo[index].completed = true;
+        //categories[0].levels[0].completedLevels++;
         DataManager.instance.Save();
     }
 

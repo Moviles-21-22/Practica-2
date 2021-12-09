@@ -12,8 +12,8 @@ public class MainMenuManager : MonoBehaviour
     [System.Serializable]
     private class Paquete 
     {
-        [Tooltip("Inserte la categoria empaquetada")]
-        public Category categoria;
+        //[Tooltip("Inserte la categoria empaquetada")]
+        //private Category categoria;
         [Tooltip("Referencia al sprite colorido de la categoria")]
         public Image titleSprite;
         [Tooltip("Referencia al texto que indica el nombre de la categoria")]
@@ -50,26 +50,41 @@ public class MainMenuManager : MonoBehaviour
     private void Start()
     {
         GameManager gm = GameManager.instance;
+        List<Category> cats = gm.GetCategories();
 
-        // Inicializa toda la informaci�n correspondiente a cada paquete y a cada nivel para mostrarla en el Canvas
-        for (int i = 0; i < paquetes.Count; i++)
+        for (int i = 0; i < cats.Count; i++)
         {
-            // Nombre y color de cada paquete
-            paquetes[i].titleText.text = paquetes[i].categoria.categoryName;
-            paquetes[i].titleSprite.color = paquetes[i].categoria.color;
-            // Inicializaci�n de cada nivel dentro de la categor�a
-            for (int j = 0; j < paquetes[i].categoria.levels.Length; j++)
+            paquetes[i].titleText.text = cats[i].categoryName;
+            paquetes[i].titleSprite.color = cats[i].color;
+            for (int j = 0; j < cats[i].levels.Length; j++)
             {
-                // Color del nivel
-                paquetes[i].levels[j].name.color = paquetes[i].categoria.color;
-                // Nombre del nivel
-                paquetes[i].levels[j].name.text = paquetes[i].categoria.levels[j].levelName;
-                // Niveles completados
-                paquetes[i].levels[j].levels.text = paquetes[i].categoria.levels[j].completedLevels + "/" + paquetes[i].categoria.levels[j].levelsInfo.Count;
-                // Logica del bot�n
-                paquetes[i].levels[j].LoadLevelCallback(paquetes[i].categoria, j);
+                paquetes[i].levels[j].name.color = cats[i].color;
+                paquetes[i].levels[j].name.text = cats[i].levels[j].levelName;
+                paquetes[i].levels[j].levels.text = cats[i].levels[j].completedLevels + "/" + cats[i].levels[j].levelsInfo.Count;
+                paquetes[i].levels[j].LoadLevelCallback(cats[i], j);
             }
         }
+
+        //// Inicializa toda la informaci�n correspondiente a cada paquete y a cada nivel para mostrarla en el Canvas
+        //for (int i = 0; i < paquetes.Count; i++)
+        //{
+        //    paquetes[i].categoria = gm.GetCategories()[i];
+        //    // Nombre y color de cada paquete
+        //    paquetes[i].titleText.text = paquetes[i].categoria.categoryName;
+        //    paquetes[i].titleSprite.color = paquetes[i].categoria.color;
+        //    // Inicializaci�n de cada nivel dentro de la categor�a
+        //    for (int j = 0; j < paquetes[i].categoria.levels.Length; j++)
+        //    {
+        //        // Color del nivel
+        //        paquetes[i].levels[j].name.color = paquetes[i].categoria.color;
+        //        // Nombre del nivel
+        //        paquetes[i].levels[j].name.text = paquetes[i].categoria.levels[j].levelName;
+        //        // Niveles completados
+        //        paquetes[i].levels[j].levels.text = paquetes[i].categoria.levels[j].completedLevels + "/" + paquetes[i].categoria.levels[j].levelsInfo.Count;
+        //        // Logica del bot�n
+        //        paquetes[i].levels[j].LoadLevelCallback(paquetes[i].categoria, j);
+        //    }
+        //}
     }
 
 }

@@ -61,21 +61,20 @@ public class DataToSave
 
 public class DataManager : MonoBehaviour
 {
-    private SecureManager secureManager;
     // TODO Poner algo chulo de clave 
     private string key = "asdladawdajdw";
+    //  Nombre del props
     private string fileName = "props.json";
+    //  Ruta abs de la carpeta save
     private string routeToSave;
-    private string routeToPaste;
-
+    //  Numero de pistas por defecto
     private const int numHintsDefault = 2;
     [Tooltip("Lista de categorias por defecto")]
     [SerializeField] List<Category> categories;
     // Rutas para el guardado por defecto
     private string[] saveRoutes;
-
+    //  Ruta de guardado
     private string saveRoute;
-
     public static DataManager instance;
 
     private void Awake()
@@ -83,6 +82,8 @@ public class DataManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
+            routeToSave = Directory.GetCurrentDirectory() + "/Assets/save/";
+            Load();
             DontDestroyOnLoad(this.gameObject);
         }
         else
@@ -91,27 +92,20 @@ public class DataManager : MonoBehaviour
         }
     }
 
-    public void Start()
-    {
-        routeToSave = Directory.GetCurrentDirectory() + "/Assets/save/";
-        secureManager = new SecureManager();
-        Load();
-    }
-
+    //  Guardamos en un json toda la información necesaria
     public void Save()
     {
-        //  Guardamos los datos
+        //  Guardamos los datos recogidos del gameManager
         int numHints = GameManager.instance.GetNumHints();
         bool premium = GameManager.instance.IsPremium();
         List<Category> cat = GameManager.instance.GetCategories();
 
+        //  Serializamos
         DataToSave objToSave = new DataToSave(numHints, premium, cat);
-        print(JsonUtility.ToJson(objToSave));
-
+        //  Creamos el hash
         objToSave.SetHash(SecureManager.Hash(JsonUtility.ToJson(objToSave)));
-        print(objToSave.GetHash());
+        //  Escribimos en el json
         string json = JsonUtility.ToJson(objToSave);
-
         if (!Directory.Exists(routeToSave)) 
         {
             Directory.CreateDirectory(routeToSave);
@@ -121,17 +115,14 @@ public class DataManager : MonoBehaviour
         if (System.IO.File.Exists(routeToSave + fileName))
         {
             System.IO.File.Delete(routeToSave + fileName);
-            System.IO.File.WriteAllText(routeToSave + fileName, json);
         }
-        else
-        {
-            System.IO.File.WriteAllText(routeToSave + fileName, json);
-        }
+        System.IO.File.WriteAllText(routeToSave + fileName, json);
     }
 
     //  Carga el json con la información necesaria para cargar un usuario
     public void Load()
     {
+        // Si existe el props
         if (System.IO.File.Exists(routeToSave + fileName))
         {
             string json = string.Empty;
@@ -174,7 +165,7 @@ public class DataManager : MonoBehaviour
         }
     }
 
-    //  Crea el json props por defecto
+    //  Crea el json props y categorias por defecto
     private DataToSave CreateDefaultJson()
     {
         print("Props por defecto");
@@ -206,7 +197,6 @@ public class DataManager : MonoBehaviour
                 categoriesCopy.Add((Category)AssetDatabase.LoadAssetAtPath(categoryCopyRoute, typeof(Category)));
 
                 //  Copiamos los niveles
-                LevelPack[] currPack = new LevelPack[categories[i].levels.Length];
                 for (int j = 0; j < categories[i].levels.Length; j++)
                 {
                     string originalPackRoute = AssetDatabase.GetAssetPath(categories[i].levels[j]);
@@ -218,13 +208,13 @@ public class DataManager : MonoBehaviour
                         AssetDatabase.DeleteAsset(copyPackRoute);
                     }
                     AssetDatabase.CopyAsset(originalPackRoute, copyPackRoute);
-                    currPack[j] = (LevelPack)AssetDatabase.LoadAssetAtPath(copyPackRoute, typeof(LevelPack));
+                    categoriesCopy[i].levels[j] = (LevelPack)AssetDatabase.LoadAssetAtPath(copyPackRoute, typeof(LevelPack));
                 }
-                categoriesCopy[i].levels = currPack;
             }
         }
         catch (Exception e)
         {
+            print(e.Message);
             throw new Exception("Reinstala la app");
         }
         DataToSave currData = new DataToSave(numHintsDefault, false, categoriesCopy);
