@@ -7,13 +7,16 @@ public class BoardManager : MonoBehaviour
 {
     [Tooltip("Referencia al objeto padre donde se van a instanciar los tiles")]
     [SerializeField]
-    private RectTransform pool;
+    private Transform pool;
     [Tooltip("Referencia al prefab de los tiles que se van a crear")]
     [SerializeField]
     private Tile tilePrefab;
     [Tooltip("Colores de los diferentes flujos que haya en el juego")]
     [SerializeField]
     private Color[] colors;
+    [Tooltip("Referencia a los objetos del HUD")]
+    [SerializeField]
+    private RectTransform [] hudRegion;
 
     // Tiles del tablero
     private Tile[,] tiles;
@@ -409,36 +412,63 @@ public class BoardManager : MonoBehaviour
     //  Inicializa el nivel actual
     public void Init()
     {
-        float poolW = pool.rect.width;
-        float poolH = pool.rect.height;
-
+        // Creación de los tiles
         tabSize.x = currLevel.numBoardX;
         tabSize.y = currLevel.numBoardY;
-        float posX = 0;
-        float posY = 0;
-        float tileW = poolW / tabSize.x;
-        float tileH = poolH / tabSize.y;
+        Vector2 initPos = Vector2.zero;
 
-        Vector2 initPos = new Vector2(posX, posY);
         tiles = new Tile[currLevel.numBoardY, currLevel.numBoardX];
         for (int i = 0; i < currLevel.numBoardY; i++)
         {
             for (int j = 0; j < currLevel.numBoardX; j++)
             {
-                tiles[i, j] = Instantiate(tilePrefab, initPos, Quaternion.identity, pool);
-                tiles[i, j].SetSize(tileW, tileH);
-                tiles[i, j].SetLocalGraphicPos(initPos.x, initPos.y);
-                tiles[i, j].InitLogicalRect();
-                tiles[i, j].SetX(i);
-                tiles[i, j].SetY(j);
-                initPos.x += tileW;
+                tiles[i, j] = Instantiate(tilePrefab, pool);
+                tiles[i, j].transform.position = initPos;
+                initPos.x += 1;
             }
-            initPos.x = posX;
-            initPos.y -= tileH;
+            initPos.x = 0;
+            initPos.y -= 1;
         }
+
         initCircles(currLevel);
         initGaps(currLevel);
         initWalls(currLevel);
+
+        // Escalado del tablero
+        var cam = Camera.main;
+
+        // Unidades de Unity
+        float camH = cam.orthographicSize * 2.0f;
+        float camW = camH * cam.aspect;
+
+        float tileH = camH / tabSize.y;
+        float tileW = camW / tabSize.x;
+
+        float tileAspect = tileH >= tileW ? tileW : tileH;
+
+        pool.localScale = Vector2.one * tileAspect;
+        // Hay que tener en cuenta que la cámara está situada en el (0, 0) y el tablero también,
+        // por tanto, se estará viendo un cacho del tablero y habría que desplazar el tablero o la cámara.
+        // Optamos por la cámara.
+
+        // A partir de la mitad del ancho de la cámara se calculan el número de tiles visibles sin desplazamiento
+        float numTilesX = (camW / 2) / tileW;
+        float numTilesY = (camH / 2) / tileH;
+
+        // El offset de desplazamiento para la cámara será el número de tiles que no se vean por el tamaño de tile
+        // Se le resta 0.5f porque el pivote de los objetos está en el centro, es decir, nos sobra la mitad de un tile
+        // que en unidades de Unity es 0.5f
+        float offsetX = (tabSize.x - numTilesX - 0.5f) * tileAspect;
+        float offsetY = (tabSize.y - numTilesY - 0.5f) * tileAspect;
+
+        Vector2 hud = Vector2.zero;
+        foreach (var rect in hudRegion)
+        {
+            hud = new Vector2(hud.x + rect.sizeDelta.x, hud.y  + rect.sizeDelta.y);
+        }
+
+        cam.gameObject.transform.position = new Vector2(offsetX, -offsetY);
+
     }
 
     //  Inicializa los circulos del nivel
