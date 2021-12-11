@@ -21,61 +21,48 @@ public class Tile : MonoBehaviour
     private bool empty = false;
 
     [SerializeField]
-    private RectTransform graphicRect;
+    private SpriteRenderer bridgeTail;
 
     [SerializeField]
-    private RawImage bridgeTail;
+    private SpriteRenderer bridge;
 
     [SerializeField]
-    private RawImage bridge;
+    private SpriteRenderer elbow;
 
     [SerializeField]
-    private RawImage elbow;
+    private SpriteRenderer circle;
 
     [SerializeField]
-    private RawImage circle;
+    private SpriteRenderer star;
 
     [SerializeField]
-    private RawImage star;
+    private SpriteRenderer wallUp;
+    [SerializeField]
+    private SpriteRenderer wallRight;
+    [SerializeField]
+    private SpriteRenderer wallDown;
+    [SerializeField]
+    private SpriteRenderer wallLeft;
 
     [SerializeField]
-    private RawImage wallUp;
-    [SerializeField]
-    private RawImage wallRight;
-    [SerializeField]
-    private RawImage wallDown;
-    [SerializeField]
-    private RawImage wallLeft;
+    private SpriteRenderer bgColor;
 
     [SerializeField]
-    private RawImage bgColor;
-
-    [SerializeField]
-    private RawImage lines;
+    private SpriteRenderer lines;
 
     private Rect logicRect;
     private Vector3 worldPos;
 
     private void OnEnable()
     {
-        var a = graphicRect;
-        var b = graphicRect.position;
-        var c = graphicRect.localPosition;
-        var d = graphicRect.rect.position;
-        worldPos = transform.TransformPoint(graphicRect.rect.position);
-        logicRect = new Rect(worldPos.x, worldPos.y, graphicRect.rect.width, graphicRect.rect.height);
+        //var a = transform;
+        //var b = transform.position;
+        //var c = transform.localPosition;
+        //var d = transform.rect.position;
+        //worldPos = transform.TransformPoint(transform.rect.position);
+        //logicRect = new Rect(worldPos.x, worldPos.y, transform.rect.width, transform.rect.height);
     }
 
-    //Tienen que tener los mismos colores y en el mismo orden que colors de BoardMngr
-    /*
-     Color.red, Color.blue, Color.green,
-                               Color.magenta, Color.cyan, Color.yellow,
-                               Color.grey, Color.white,
-                               new Color(251.0f, 112.0f, 0.0f),
-                               new Color(115.0f, 7.0f, 155.0f),
-                               new Color(171.0f, 40.0f, 40.0f),
-                               new Color(147.0f, 120.0f, 55.0f)
-     */
     public enum TILE_COLOR : int
     {
         RED, BLUE, GREEN, MAGENTA, CYAN, YELLOW, GREY, WHITE, ORANGE, PURPLE, BROWN, NONE   //Este enum no es necesario, se puede cambiar tileColor por un int
@@ -236,18 +223,18 @@ public class Tile : MonoBehaviour
 
     public void SetLocalGraphicPos(float x, float y) 
     {
-        graphicRect.anchoredPosition = new Vector2(x, y);    
+        //transform.anchoredPosition = new Vector2(x, y);    
     }
 
     public void SetSize(float width, float height) 
     {
-        graphicRect.sizeDelta = new Vector2(width, height);
+        //transform.sizeDelta = new Vector2(width, height);
     }
 
     public void InitLogicalRect()
     {
-        worldPos = transform.TransformPoint(graphicRect.rect.position);
-        logicRect = new Rect(worldPos.x, worldPos.y, graphicRect.rect.width, graphicRect.rect.height);
+       //worldPos = transform.TransformPoint(transform.rect.position);
+       //logicRect = new Rect(worldPos.x, worldPos.y, transform.rect.width, transform.rect.height);
     }
 
     public void SetX(int _x)
@@ -290,7 +277,7 @@ public class Tile : MonoBehaviour
         return (int)tileColor;
     }
 
-    public RawImage GetCircleRender()
+    public SpriteRenderer GetCircleRender()
     {
         return circle;
     }
