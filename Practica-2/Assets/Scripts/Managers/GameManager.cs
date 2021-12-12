@@ -80,7 +80,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Devuelve el mapa actual cargado
     /// </summary>
-    public Map GetMap() 
+    public Map GetMap()
     {
         return currMap;
     }
@@ -93,12 +93,12 @@ public class GameManager : MonoBehaviour
     //  Carga un nivel en concreto de la categor�a y pack cargadoss
     public void LoadLevel(int lvl)
     {
-        currMap = new Map(currPack.txt.ToString(),1);
+        currMap = new Map(currPack.txt.ToString(), 1);
         currLevel = currMap.GetLevel(lvl);
         LoadScene(3);
     }
 
-    public void ChangeLevel(int lvl) 
+    public void ChangeLevel(int lvl)
     {
         currLevel = currMap.GetLevel(lvl);
         LoadScene(3);
@@ -121,17 +121,50 @@ public class GameManager : MonoBehaviour
     //  Guarda el estado del juego
     public void SaveGame()
     {
-        //int index = categories[0].levels[0].completedLevels;
-        //categories[0].levels[0].levelsInfo[index].completed = true;
-        //categories[0].levels[0].completedLevels++;
         DataManager.instance.Save();
     }
 
     //  Carga un pack especifico de una categor�a
-    public void LoadPackage(LevelPack level, Category cat) 
+    public void LoadPackage(LevelPack level, Category cat)
     {
         currCategory = cat;
         currPack = level;
         LoadScene(2);
+    }
+
+    /// <summary>
+    /// Añade una solución de nivel del paquete actual
+    /// </summary>
+    /// <param name="perfect">Determinas si el nivel es perfecto o no</param>
+    public void AddSolutionLevel(bool perfect)
+    {
+        bool saved = false;
+        int i = 0;
+        int j = 0;
+        // De momento así
+        while (!saved && i < categories.Count)
+        {
+            if (categories[i].name == currCategory.name)
+            {
+                while (!saved && j < categories[i].levels.Length)
+                {
+                    if (categories[i].levels[j].name == currPack.name)
+                    {
+                        saved = true;
+                        // Se añade un nivel completado al paquete
+                        categories[i].levels[j].completedLevels++;
+
+                        // El nivel actual se ha completado
+                        categories[i].levels[j].levelsInfo[currLevel.lvl - 1].completed = true;
+                        categories[i].levels[j].levelsInfo[currLevel.lvl - 1].perfect = true;
+
+                        SaveGame();
+                        print("Guardado");
+                    }
+                    j++;
+                }
+            }
+            i++;
+        }
     }
 }

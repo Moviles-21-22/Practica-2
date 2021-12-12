@@ -17,12 +17,14 @@ public class GridManager : MonoBehaviour
     [SerializeField]
     private GridPack packPrefab;
 
+    private LevelPack currLevelPack;
+
     private Color[] colors = { Color.red, Color.blue, Color.green, Color.cyan, Color.magenta };
 
     private void Start()
     {
         // Paquete de niveles que se va a cargar
-        LevelPack currLevelPack = GameManager.instance.GetCurrentPack();
+        currLevelPack = GameManager.instance.GetCurrentPack();
         packTitle.color = GameManager.instance.GetCurrentCategory().color;
         packTitle.text = currLevelPack.levelName;
 
@@ -55,6 +57,7 @@ public class GridManager : MonoBehaviour
             boxes[i].SetCallBack((index * boxes.Length) + i);
             boxes[i].SetLevelNum(i + 1);
             boxes[i].initBox(color);
+            boxes[i].CompletedBox(currLevelPack.levelsInfo[(index * boxes.Length) + i].perfect, currLevelPack.levelsInfo[(index * boxes.Length) + i].completed);
         }
     }
 }

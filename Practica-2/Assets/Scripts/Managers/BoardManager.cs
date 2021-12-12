@@ -16,7 +16,10 @@ public class BoardManager : MonoBehaviour
     private Color[] colors;
     [Tooltip("Referencia a los objetos del HUD")]
     [SerializeField]
-    private RectTransform [] hudRegion;
+    private RectTransform[] hudRegion;
+    [Tooltip("Referencia al GameObject del canvas que se muestra al superar el nivel")]
+    [SerializeField]
+    private HUDManager hud;
 
     // Tiles del tablero
     private Tile[,] tiles;
@@ -34,6 +37,8 @@ public class BoardManager : MonoBehaviour
     private Vector2 previousDir;
     // Tile del puntero 
     private Tile inputTile;
+    // Número de flujos completados
+    private int conFlows = 0;
 
     //No hace falta hacerlo así, se puede hacer con una lista de listas ordenada por color
     /// <summary>
@@ -90,6 +95,8 @@ public class BoardManager : MonoBehaviour
     public void Start()
     {
         currLevel = GameManager.instance.GetCurrLevel();
+        conFlows = 0;
+
         Init();
         inputTile = Instantiate(tilePrefab, transform);
         Vector3 scale = inputTile.transform.localScale;
@@ -106,9 +113,6 @@ public class BoardManager : MonoBehaviour
         {
             inputDown = true;
             initPosInput = Input.mousePosition;
-
-            print(initPosInput);
-
             InputDown(Input.mousePosition);
         }
         //  El ratón se ha levantado
@@ -155,15 +159,15 @@ public class BoardManager : MonoBehaviour
         return a.Overlaps(b);
 
         //AABB
-         //return (b.xMin <= a.xMax && b.xMin >= a.xMin && b.yMax >= a.yMin && b.yMax <= a.yMax)   // Esquina superior izquierda de b
-         //    || (b.xMax <= a.xMax && b.xMax >= a.xMin && b.yMax >= a.yMin && b.yMax <= a.yMax)   // Esquina superior derecha de b
-         //    || (b.xMin <= a.xMax && b.xMin >= a.xMin && b.yMin >= a.yMin && b.yMin <= a.yMax)   // Esquina inferior izquierda de b
-         //    || (b.xMax <= a.xMax && b.xMax >= a.xMin && b.yMin >= a.yMin && b.yMin <= a.yMax)
+        //return (b.xMin <= a.xMax && b.xMin >= a.xMin && b.yMax >= a.yMin && b.yMax <= a.yMax)   // Esquina superior izquierda de b
+        //    || (b.xMax <= a.xMax && b.xMax >= a.xMin && b.yMax >= a.yMin && b.yMax <= a.yMax)   // Esquina superior derecha de b
+        //    || (b.xMin <= a.xMax && b.xMin >= a.xMin && b.yMin >= a.yMin && b.yMin <= a.yMax)   // Esquina inferior izquierda de b
+        //    || (b.xMax <= a.xMax && b.xMax >= a.xMin && b.yMin >= a.yMin && b.yMin <= a.yMax)
 
-         //    || (a.xMin <= b.xMax && b.xMin >= b.xMin && a.yMax >= b.yMin && a.yMax <= b.yMax)   // Esquina superior izquierda de a
-         //    || (a.xMax <= b.xMax && b.xMax >= b.xMin && a.yMax >= b.yMin && a.yMax <= b.yMax)   // Esquina superior derecha de a
-         //    || (a.xMin <= b.xMax && b.xMin >= b.xMin && a.yMin >= b.yMin && a.yMin <= b.yMax)   // Esquina inferior izquierda de a
-         //    || (a.xMax <= b.xMax && b.xMax >= b.xMin && a.yMin >= b.yMin && a.yMin <= b.yMax);  // Esquina inferior derecha de a
+        //    || (a.xMin <= b.xMax && b.xMin >= b.xMin && a.yMax >= b.yMin && a.yMax <= b.yMax)   // Esquina superior izquierda de a
+        //    || (a.xMax <= b.xMax && b.xMax >= b.xMin && a.yMax >= b.yMin && a.yMax <= b.yMax)   // Esquina superior derecha de a
+        //    || (a.xMin <= b.xMax && b.xMin >= b.xMin && a.yMin >= b.yMin && a.yMin <= b.yMax)   // Esquina inferior izquierda de a
+        //    || (a.xMax <= b.xMax && b.xMax >= b.xMin && a.yMin >= b.yMin && a.yMin <= b.yMax);  // Esquina inferior derecha de a
 
 
         /*        if (a.x < (b.x + b.width)
@@ -188,22 +192,22 @@ public class BoardManager : MonoBehaviour
             {
                 //  Buscamos el tile entre todas las tiles
                 var dragedTile = GetTileOnCollision(touchRect);
-                if (dragedTile.Key) 
+                if (dragedTile.Key)
                 {
-                    print($"TILE: {dragedTile.Value}");
+                    //print($"TILE: {dragedTile.Value}");
                 }
 
                 //print("draged: " + dragedTile.Value.x + " drY: " + dragedTile.Value.y);
 
                 int c = currTile.GetTileColor();
-                Debug.Log("C " + c);
+                //Debug.Log("C " + c);
 
                 if (cMovements[c].GetMovements().Count > 0)
                 {
                     int countX = cMovements[c].GetMovements()[cMovements[c].GetMovements().Count - 1].GetX();
                     int countY = cMovements[c].GetMovements()[cMovements[c].GetMovements().Count - 1].GetY();
 
-                    print("countX: " + countX + " countY: " + countY + " dragedX: " + dragedTile.Value.x  + " dragedY: " + dragedTile.Value.y);
+                    //print("countX: " + countX + " countY: " + countY + " dragedX: " + dragedTile.Value.x + " dragedY: " + dragedTile.Value.y);
 
                     if (!AreNeighbour(dragedTile.Value.x, dragedTile.Value.y, countX, countY))
                         return;
@@ -215,27 +219,35 @@ public class BoardManager : MonoBehaviour
                     Vector2 dir = (dragedTile.Key.GetLogicRect().position - currTile.GetLogicRect().position).normalized;
 
                     //  Hemos llegado al tile que le corresponde (solución)
+                    // TODO: Revisar ese if para que se sume el nivel completado cuando corresponda
                     if (dragedTile.Key.CircleActive() && dragedTile.Key.GetColor() == currTile.GetColor())
                     {
-                        print("SOLUCIÓN");
-                        //  Es un codo
-                        if (IsElbow(dir))
+                        conFlows++;
+                        if (conFlows == currLevel.numFlow)
                         {
-                            currTile.ActiveElbow(currTileColor, dir, previousDir);
+                            GameManager.instance.AddSolutionLevel(true);
+                            hud.LevelCompleted(true);
                         }
-                        else if (!currTile.CircleActive())
+                        else if(conFlows < currLevel.numFlow)
                         {
-                            currTile.ActiveBridge(dir, currTileColor);
-                        }
+                            //  Es un codo
+                            if (IsElbow(dir))
+                            {
+                                currTile.ActiveElbow(currTileColor, dir, previousDir);
+                            }
+                            else if (!currTile.CircleActive())
+                            {
+                                currTile.ActiveBridge(dir, currTileColor);
+                            }
 
-                        dragedTile.Key.ActiveTail(dir * -1, currTileColor);
-                        dragedTile.Key.SetX(dragedTile.Value.x);
-                        dragedTile.Key.SetY(dragedTile.Value.y);
-                        dragedTile.Key.SetTileColor(c);
-                        currTile = dragedTile.Key;
-                        //currMovement.Add(currTile);
-                        cMovements[c].AddMov(dragedTile.Key);
-                        previousDir = dir;
+                            dragedTile.Key.ActiveTail(dir * -1, currTileColor);
+                            dragedTile.Key.SetX(dragedTile.Value.x);
+                            dragedTile.Key.SetY(dragedTile.Value.y);
+                            dragedTile.Key.SetTileColor(c);
+                            currTile = dragedTile.Key;
+                            cMovements[c].AddMov(dragedTile.Key);
+                            previousDir = dir;
+                        }
                     }
                     //  No es un circulo
                     else if (!dragedTile.Key.CircleActive())
@@ -247,7 +259,7 @@ public class BoardManager : MonoBehaviour
                             currTile.ActiveTail(new Vector2(dir.x, -dir.y), currTileColor);
                             dragedTile.Key.ActiveTail(dir, currTileColor);
                             dragedTile.Key.SetX(dragedTile.Value.x);
-                            dragedTile.Key.SetY(dragedTile.Value.y); 
+                            dragedTile.Key.SetY(dragedTile.Value.y);
                             dragedTile.Key.SetTileColor(c);
                             currTile = dragedTile.Key;
                             //currMovement.Add(currTile);
@@ -336,8 +348,6 @@ public class BoardManager : MonoBehaviour
             var pair = GetTileOnCollision(touchRect);
             if (pair.Key != null)
             {
-                print(pair.Value);
-
                 currTile = pair.Key;
                 Vector2Int index = pair.Value;
                 //originPoint = tiles[index.x, index.y].GetLogicRect().position;

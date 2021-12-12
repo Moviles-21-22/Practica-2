@@ -10,7 +10,7 @@ public struct Level
     public int numBoardY;
     //  nivel que le corresponede
     public int lvl;
-    //  numero de jugadas
+    //  numero de flujos
     public int numFlow;
     //  Determina si hay que poner o no muros rodeando el tablero
     public bool closed;

@@ -8,6 +8,18 @@ public class HUDManager : MonoBehaviour
 {
     [Tooltip("Referencia al objeto que muestra si el nivel se ha completado")]
     [SerializeField]
+    private GameObject winInfo;
+
+    [Tooltip("Referencia a la imagen de la estrella cuando se gana")]
+    [SerializeField]
+    private RawImage winStar;
+
+    [Tooltip("Sprites que se usan para el icono de ganar")]
+    [SerializeField]
+    private Texture[] winSprites;
+
+    [Tooltip("Referencia al objeto que muestra si el nivel se ha completado")]
+    [SerializeField]
     private HUD_Element completedLevelIcon;
 
     [Tooltip("Referencia al objeto que regresa al nivel anterior")]
@@ -54,6 +66,8 @@ public class HUDManager : MonoBehaviour
     private Map map;
     private Level currLevel;
     private GameManager gm;
+    private bool winPerfect;
+    private float timer = 0.0f;
 
     [System.Serializable]
     class HUD_Element
@@ -120,4 +134,47 @@ public class HUDManager : MonoBehaviour
         }
     }
 
+    public void LevelCompleted(bool perfect) 
+    {
+        winPerfect = perfect;
+        winStar.enabled = true;
+        // Si es una solución con movimientos perfectos sale una estrella grande
+        if (perfect)
+        {
+            winStar.texture = winSprites[0];
+        }
+        else
+        {
+            // Si es una solución normal aparece un tic
+            winStar.texture = winSprites[1];
+        }
+
+        InvokeRepeating(nameof(WinAnimation), 0.0f, 0.05f);
+    }
+
+    /// <summary>
+    /// Animación de aparición de la estrella al ganar
+    /// </summary>
+    private void WinAnimation() 
+    {
+        timer += 0.05f;
+        if (timer < 0.5f)
+        {
+            var color = winStar.color;
+            color.a += 0.1f;
+            winStar.color = color;
+        }
+        else if (timer < 1.0f) 
+        {
+            var color = winStar.color;
+            color.a -= 0.1f;
+            winStar.color = color;
+        }
+        else if(timer >= 1.0f)
+        {
+            winStar.enabled = false;
+            winInfo.SetActive(true);
+            CancelInvoke();
+        }
+    }
 }
