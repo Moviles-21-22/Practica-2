@@ -258,6 +258,11 @@ public class Tile : MonoBehaviour
         y = _y;
     }
 
+    public void SetTileColor(int c)
+    {
+        tileColor = (TILE_COLOR)c;
+    }
+
     public int GetX()
     {
         return x;

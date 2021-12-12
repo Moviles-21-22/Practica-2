@@ -195,16 +195,17 @@ public class BoardManager : MonoBehaviour
 
                 //print("draged: " + dragedTile.Value.x + " drY: " + dragedTile.Value.y);
 
-                int c = dragedTile.Key.GetTileColor();
+                int c = currTile.GetTileColor();
+                Debug.Log("C " + c);
 
                 if (cMovements[c].GetMovements().Count > 0)
                 {
                     int countX = cMovements[c].GetMovements()[cMovements[c].GetMovements().Count - 1].GetX();
                     int countY = cMovements[c].GetMovements()[cMovements[c].GetMovements().Count - 1].GetY();
 
-                    //print("countX: " + countX + " countY: " + countY);
+                    print("countX: " + countX + " countY: " + countY + " dragedX: " + dragedTile.Value.x  + " dragedY: " + dragedTile.Value.y);
 
-                    if (!AreNeighbour(dragedTile.Value.x, dragedTile.Value.y, countY, countX))
+                    if (!AreNeighbour(dragedTile.Value.x, dragedTile.Value.y, countX, countY))
                         return;
                 }
 
@@ -228,6 +229,9 @@ public class BoardManager : MonoBehaviour
                         }
 
                         dragedTile.Key.ActiveTail(dir * -1, currTileColor);
+                        dragedTile.Key.SetX(dragedTile.Value.x);
+                        dragedTile.Key.SetY(dragedTile.Value.y);
+                        dragedTile.Key.SetTileColor(c);
                         currTile = dragedTile.Key;
                         //currMovement.Add(currTile);
                         cMovements[c].AddMov(dragedTile.Key);
@@ -242,6 +246,9 @@ public class BoardManager : MonoBehaviour
                         {
                             currTile.ActiveTail(new Vector2(dir.x, -dir.y), currTileColor);
                             dragedTile.Key.ActiveTail(dir, currTileColor);
+                            dragedTile.Key.SetX(dragedTile.Value.x);
+                            dragedTile.Key.SetY(dragedTile.Value.y); 
+                            dragedTile.Key.SetTileColor(c);
                             currTile = dragedTile.Key;
                             //currMovement.Add(currTile);
                             cMovements[c].AddMov(dragedTile.Key);
@@ -255,6 +262,9 @@ public class BoardManager : MonoBehaviour
                             {
                                 currTile.ActiveElbow(currTileColor, dir, previousDir);
                                 dragedTile.Key.ActiveTail(dir, currTileColor);
+                                dragedTile.Key.SetX(dragedTile.Value.x);
+                                dragedTile.Key.SetY(dragedTile.Value.y);
+                                dragedTile.Key.SetTileColor(c);
                                 currTile = dragedTile.Key;
                                 //currMovement.Add(currTile);
                                 cMovements[c].AddMov(dragedTile.Key);
@@ -264,6 +274,9 @@ public class BoardManager : MonoBehaviour
                             {
                                 currTile.ActiveBridge(dir, currTileColor);
                                 dragedTile.Key.ActiveTail(dir, currTileColor);
+                                dragedTile.Key.SetX(dragedTile.Value.x);
+                                dragedTile.Key.SetY(dragedTile.Value.y);
+                                dragedTile.Key.SetTileColor(c);
                                 currTile = dragedTile.Key;
                                 //currMovement.Add(currTile);
                                 cMovements[c].AddMov(dragedTile.Key);
@@ -503,7 +516,7 @@ public class BoardManager : MonoBehaviour
                 filaA -= 1;
             }
             //print("colA: " + colA + " filaA: " + filaA);
-            tiles[filaA, colA].InitTile(i, colors[i], filaA, colA);
+            tiles[filaA, colA].InitTile(i, colors[i], colA, filaA);
             circleTiles.Add(tiles[filaA, colA]);
 
             //Inicializamos la lista de movimientos de este color
@@ -521,7 +534,7 @@ public class BoardManager : MonoBehaviour
                 colB = currLevel.numBoardX - 1;
                 filaB -= 1;
             }
-            tiles[filaB, colB].InitTile(i, colors[i], filaB, colB);
+            tiles[filaB, colB].InitTile(i, colors[i], colB, filaB);
             circleTiles.Add(tiles[filaB, colB]);
         }
     }
