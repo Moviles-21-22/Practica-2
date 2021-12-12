@@ -233,7 +233,7 @@ public class Tile : MonoBehaviour
 
     public void InitLogicalRect()
     {
-       //worldPos = transform.TransformPoint(transform.rect.position);
+       worldPos = transform.TransformPoint(transform.position);
        //logicRect = new Rect(worldPos.x, worldPos.y, transform.rect.width, transform.rect.height);
     }
 

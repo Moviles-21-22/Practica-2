@@ -1,0 +1,326 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7bf3a848a5c16a4e82753d07d0c1327, type: 3}
+  m_Name: bonusPackCopy
+  m_EditorClassIdentifier: 
+  levelName: Paquete Adicional
+  txt: {fileID: 4900000, guid: 7033c50408d96fe40b522f7c653846d6, type: 3}
+  gridNames:
+  - "5x5 - f\xE1cil"
+  - 6x6
+  - 7x7 - medio
+  - '8x8 '
+  - "9x9 - dif\xEDcil"
+  completedLevels: 0
+  levelsInfo:
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  - completed: 0
+    perfect: 0
+  lockPack: 0
+  records: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

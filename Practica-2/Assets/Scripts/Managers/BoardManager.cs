@@ -423,6 +423,7 @@ public class BoardManager : MonoBehaviour
             for (int j = 0; j < currLevel.numBoardX; j++)
             {
                 tiles[i, j] = Instantiate(tilePrefab, pool);
+                tiles[i, j].InitLogicalRect();
                 tiles[i, j].transform.position = initPos;
                 initPos.x += 1;
             }
@@ -438,6 +439,9 @@ public class BoardManager : MonoBehaviour
         var cam = Camera.main;
 
         // Unidades de Unity
+        var a = hudRegion[0].sizeDelta;
+        var b = hudRegion[1].sizeDelta;
+
         float camH = cam.orthographicSize * 2.0f;
         float camW = camH * cam.aspect;
 
