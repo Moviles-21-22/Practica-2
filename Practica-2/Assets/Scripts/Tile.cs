@@ -97,7 +97,7 @@ public class Tile : MonoBehaviour
     {
         return circle.enabled;
     }
-    
+
     //  Activa el color de fondo del tile
     public void ActiveBgColor(bool status, Color _color)
     {
@@ -161,7 +161,7 @@ public class Tile : MonoBehaviour
         bridge.color = color;
     }
 
-    public void ActiveElbow(Color _color ,Vector2 dir, Vector2 previous)
+    public void ActiveElbow(Color _color, Vector2 dir, Vector2 previous)
     {
         bridgeTail.enabled = false;
         elbow.enabled = true;
@@ -221,20 +221,31 @@ public class Tile : MonoBehaviour
         }
     }
 
-    public void SetLocalGraphicPos(float x, float y) 
+    public void SetLocalGraphicPos(float x, float y)
     {
         //transform.anchoredPosition = new Vector2(x, y);    
     }
 
-    public void SetSize(float width, float height) 
+    public void SetSize(float width, float height)
     {
         //transform.sizeDelta = new Vector2(width, height);
     }
 
-    public void InitLogicalRect()
+    /// <summary>
+    /// Inicializa el rectangulo logico del tile, con las dimensiones 
+    /// y coordenadas en pixeles
+    /// </summary>
+    /// <param name="x_">Posicion x del tile dentro del array de tiles. Para debug</param>
+    /// <param name="y_">Posicion y del tile dentro del array de tiles. Para debug</param>
+    public void InitLogicalRect(int x_, int y_)
     {
-       worldPos = transform.TransformPoint(transform.position);
-       //logicRect = new Rect(worldPos.x, worldPos.y, transform.rect.width, transform.rect.height);
+        // Tamaño del tile en pixeles
+        Vector2 origin = Camera.main.WorldToScreenPoint(new Vector2(lines.bounds.min.x, lines.bounds.min.y));
+        Vector2 extent = Camera.main.WorldToScreenPoint(new Vector2(lines.bounds.max.x, lines.bounds.max.y));
+        Vector2 size = (extent - origin);
+
+        worldPos = Camera.main.WorldToScreenPoint(transform.localPosition);
+        logicRect = new Rect(origin.x, origin.y, size.x, size.y);
     }
 
     public void SetX(int _x)

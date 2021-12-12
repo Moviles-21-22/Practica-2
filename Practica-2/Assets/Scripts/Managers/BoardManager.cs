@@ -107,6 +107,8 @@ public class BoardManager : MonoBehaviour
             inputDown = true;
             initPosInput = Input.mousePosition;
 
+            print(initPosInput);
+
             InputDown(Input.mousePosition);
         }
         //  El ratón se ha levantado
@@ -150,26 +152,28 @@ public class BoardManager : MonoBehaviour
     //  Determina si dos rects colisionan
     private bool Collision(Rect a, Rect b)
     {
-        // AABB
-        // return (b.xMin <= a.xMax && b.xMin >= a.xMin && b.yMax >= a.yMin && b.yMax <= a.yMax)   // Esquina superior izquierda de b
-        //     || (b.xMax <= a.xMax && b.xMax >= a.xMin && b.yMax >= a.yMin && b.yMax <= a.yMax)   // Esquina superior derecha de b
-        //     || (b.xMin <= a.xMax && b.xMin >= a.xMin && b.yMin >= a.yMin && b.yMin <= a.yMax)   // Esquina inferior izquierda de b
-        //     || (b.xMax <= a.xMax && b.xMax >= a.xMin && b.yMin >= a.yMin && b.yMin<= a.yMax)
-        //
-        //     || (a.xMin <= b.xMax && b.xMin >= b.xMin && a.yMax >= b.yMin && a.yMax <= b.yMax)   // Esquina superior izquierda de a
-        //     || (a.xMax <= b.xMax && b.xMax >= b.xMin && a.yMax >= b.yMin && a.yMax <= b.yMax)   // Esquina superior derecha de a
-        //     || (a.xMin <= b.xMax && b.xMin >= b.xMin && a.yMin >= b.yMin && a.yMin <= b.yMax)   // Esquina inferior izquierda de a
-        //     || (a.xMax <= b.xMax && b.xMax >= b.xMin && a.yMin >= b.yMin && a.yMin <= b.yMax);  // Esquina inferior derecha de a
-        //
+        return a.Overlaps(b);
 
-        if (a.x < (b.x + b.width)
-            && (a.x + a.width) > b.x
-            && a.y < (b.y + b.height)
-            && (a.height + a.y) > b.y)
-        {
-            return true;
-        }
-        else return false;
+        //AABB
+         //return (b.xMin <= a.xMax && b.xMin >= a.xMin && b.yMax >= a.yMin && b.yMax <= a.yMax)   // Esquina superior izquierda de b
+         //    || (b.xMax <= a.xMax && b.xMax >= a.xMin && b.yMax >= a.yMin && b.yMax <= a.yMax)   // Esquina superior derecha de b
+         //    || (b.xMin <= a.xMax && b.xMin >= a.xMin && b.yMin >= a.yMin && b.yMin <= a.yMax)   // Esquina inferior izquierda de b
+         //    || (b.xMax <= a.xMax && b.xMax >= a.xMin && b.yMin >= a.yMin && b.yMin <= a.yMax)
+
+         //    || (a.xMin <= b.xMax && b.xMin >= b.xMin && a.yMax >= b.yMin && a.yMax <= b.yMax)   // Esquina superior izquierda de a
+         //    || (a.xMax <= b.xMax && b.xMax >= b.xMin && a.yMax >= b.yMin && a.yMax <= b.yMax)   // Esquina superior derecha de a
+         //    || (a.xMin <= b.xMax && b.xMin >= b.xMin && a.yMin >= b.yMin && a.yMin <= b.yMax)   // Esquina inferior izquierda de a
+         //    || (a.xMax <= b.xMax && b.xMax >= b.xMin && a.yMin >= b.yMin && a.yMin <= b.yMax);  // Esquina inferior derecha de a
+
+
+        /*        if (a.x < (b.x + b.width)
+                    && (a.x + a.width) > b.x
+                    && a.y < (b.y + b.height)
+                    && (a.height + a.y) > b.y)
+                {
+                    return true;
+                }
+                else return false;*/
     }
 
     private void InputMoving(Vector2 inputPos)
@@ -177,13 +181,18 @@ public class BoardManager : MonoBehaviour
         if (currTile != null)
         {
             //  Creamos un rect en donde se ha tocado la pantalla
-            Rect touchRect = new Rect(inputPos.x, inputPos.y, 50, 50);
+            Rect touchRect = new Rect(inputPos.x, inputPos.y, 1, 1);
 
             //  El nuevo touch no está colisionando con el actual tile (Es nuevo)
             if (!touchRect.Overlaps(currTile.GetLogicRect()))
             {
                 //  Buscamos el tile entre todas las tiles
                 var dragedTile = GetTileOnCollision(touchRect);
+                if (dragedTile.Key) 
+                {
+                    print($"TILE: {dragedTile.Value}");
+                }
+
                 //print("draged: " + dragedTile.Value.x + " drY: " + dragedTile.Value.y);
 
                 int c = dragedTile.Key.GetTileColor();
@@ -310,10 +319,12 @@ public class BoardManager : MonoBehaviour
     {
         if (currTile == null)
         {
-            Rect touchRect = new Rect(inputPos.x, inputPos.y, 50, 50);
+            Rect touchRect = new Rect(inputPos.x, inputPos.y, 1, 1);
             var pair = GetTileOnCollision(touchRect);
             if (pair.Key != null)
             {
+                print(pair.Value);
+
                 currTile = pair.Key;
                 Vector2Int index = pair.Value;
                 //originPoint = tiles[index.x, index.y].GetLogicRect().position;
@@ -423,7 +434,6 @@ public class BoardManager : MonoBehaviour
             for (int j = 0; j < currLevel.numBoardX; j++)
             {
                 tiles[i, j] = Instantiate(tilePrefab, pool);
-                tiles[i, j].InitLogicalRect();
                 tiles[i, j].transform.position = initPos;
                 initPos.x += 1;
             }
@@ -465,13 +475,16 @@ public class BoardManager : MonoBehaviour
         float offsetX = (tabSize.x - numTilesX - 0.5f) * tileAspect;
         float offsetY = (tabSize.y - numTilesY - 0.5f) * tileAspect;
 
-        Vector2 hud = Vector2.zero;
-        foreach (var rect in hudRegion)
-        {
-            hud = new Vector2(hud.x + rect.sizeDelta.x, hud.y  + rect.sizeDelta.y);
-        }
-
         cam.gameObject.transform.position = new Vector2(offsetX, -offsetY);
+
+        // Inicializacion de los rectangulos logicos de cada tile
+        for (int i = 0; i < currLevel.numBoardY; i++)
+        {
+            for (int j = 0; j < currLevel.numBoardX; j++)
+            {
+                tiles[i, j].InitLogicalRect(j, i);
+            }
+        }
 
     }
 

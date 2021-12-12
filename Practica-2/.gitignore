@@ -58,3 +58,5 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+# Archivos de guardado
+/[Aa]ssets/[Ss]ave/
