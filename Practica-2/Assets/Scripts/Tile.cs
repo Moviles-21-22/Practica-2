@@ -109,6 +109,7 @@ public class Tile : MonoBehaviour
     //  Activa la estrella de un tile
     public void ActiveStar(bool status)
     {
+        star.color = Color.white;
         star.enabled = status;
     }
 

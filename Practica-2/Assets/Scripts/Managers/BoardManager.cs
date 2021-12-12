@@ -3,6 +3,70 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//No hace falta hacerlo así, se puede hacer con una lista de listas ordenada por color
+/// <summary>
+/// Struct auxiliar para controlar el color del tile en función de los movimientos
+/// </summary>
+struct ColorMovements
+{
+    //Tile tiene los colores asociados a su numero
+    int color;
+    List<Tile> movements;
+    //  Determina si existe un camino entre ambas esferas
+    public bool conected;
+
+    public ColorMovements(int c)
+    {
+        color = c;
+        movements = new List<Tile>();
+        conected = false;
+    }
+
+    public void AddMov(Tile t)
+    {
+        movements.Add(t);
+    }
+
+    public List<Tile> GetMovements()
+    {
+        return movements;
+    }
+
+    public void ClearUntilTile(Tile t)
+    {
+        bool rem = true;
+        while (rem && movements.Count > 0)
+        {
+            Tile ultTile = movements[movements.Count - 1];
+            if (ultTile == t)
+            {
+                //Hemos encontrado el tile desde el que queremos mantener el camino
+                rem = false;
+            }
+            else
+            {
+                movements.Remove(ultTile);
+            }
+        }
+    }
+
+    public bool IsConected()
+    {
+        return conected;
+    }
+
+    public int GetColor()
+    {
+        return color;
+    }
+
+    internal void Conect()
+    {
+        this.conected = true;
+    }
+
+}
+
 public class BoardManager : MonoBehaviour
 {
     [Tooltip("Referencia al objeto padre donde se van a instanciar los tiles")]
@@ -34,51 +98,6 @@ public class BoardManager : MonoBehaviour
     private Vector2 previousDir;
     // Tile del puntero 
     private Tile inputTile;
-
-    //No hace falta hacerlo así, se puede hacer con una lista de listas ordenada por color
-    /// <summary>
-    /// Struct auxiliar para controlar el color del tile en función de los movimientos
-    /// </summary>
-    private struct ColorMovements
-    {
-        //Tile tiene los colores asociados a su numero
-        int color;
-        List<Tile> movements;
-
-        public ColorMovements(int c)
-        {
-            color = c;
-            movements = new List<Tile>();
-        }
-
-        public void AddMov(Tile t)
-        {
-            movements.Add(t);
-        }
-
-        public List<Tile> GetMovements()
-        {
-            return movements;
-        }
-
-        public void ClearUntilTile(Tile t)
-        {
-            bool rem = true;
-            while (rem && movements.Count > 0)
-            {
-                Tile ultTile = movements[movements.Count - 1];
-                if (ultTile == t)
-                {
-                    //Hemos encontrado el tile desde el que queremos mantener el camino
-                    rem = false;
-                }
-                else
-                {
-                    movements.Remove(ultTile);
-                }
-            }
-        }
-    }
 
     private List<ColorMovements> cMovements = new List<ColorMovements>();
 
@@ -365,8 +384,60 @@ public class BoardManager : MonoBehaviour
 
     public void GiveHint()
     {
-        //Todo pistas iniciales
+        if (GameManager.instance.GetNumHints() > 0)
+        {
+            List<int> movs = new List<int>();
+            int cont = 0;
+            foreach (ColorMovements cM in cMovements)
+            {
+                if (!cM.IsConected()) 
+                {
+                    int cl = cM.GetColor();
+                    if(cl != -1)
+                        movs.Add(cont);
+                }
+                cont++;
+            }
+            if (movs.Count > 0)
+            {
+                int elc = UnityEngine.Random.Range(0,movs.Count - 1);
+                int choice = movs[elc];
+                var d = cMovements[choice];
+                d.Conect();
+                cMovements[choice] = d;
 
+                List<int> currSolution = GameManager.instance.GetCurrLevel().solutions[choice];
+                Vector2Int ind = ConvertIndex(currSolution[0]);
+                Color color = tiles[ind.y, ind.x].GetColor();
+                for (int i = 0; i < currSolution.Count; i++)
+                {
+                    Vector2Int index = ConvertIndex(currSolution[i]);
+                    cMovements[choice].AddMov(tiles[index.y,index.x]);
+                    if (i == 0 || i == currSolution.Count - 1)
+                    {
+                        tiles[index.y, index.x].ActiveStar(true);
+                    }
+                    else
+                    {
+                        
+                        tiles[index.y, index.x].ActiveTail(Vector2.down,color);
+                    }
+                }
+                GameManager.instance.UseHint();
+            }
+        }
+    }
+
+    private Vector2Int ConvertIndex(int index)
+    {
+        int x = (int)((index + 1) % currLevel.numBoardX) - 1;
+        int y = (int)((index + 1) / currLevel.numBoardX);
+        if (x < 0)
+        {
+            x = currLevel.numBoardX - 1;
+            y -= 1;
+        }
+        return new Vector2Int(x,y);
     }
 
     //  Determina si el tile anterior es un codo

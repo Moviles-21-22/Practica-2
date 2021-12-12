@@ -56,6 +56,18 @@ public class GameManager : MonoBehaviour
         SaveGame();
     }
 
+    public void UseHint()
+    {
+        if (numHints > 0)
+        {
+            numHints -= 1;
+        }
+        else
+        {
+            throw new Exception("No se puede restar una pista pistas = 0");
+        }
+    }
+
     public int GetNumHints()
     {
         return numHints;
