@@ -148,12 +148,12 @@ public class DataManager : MonoBehaviour
             //  Ambos hash coinciden
             if (SecureManager.Hash(serializado).Equals(objToLoad.GetHash()))
             {
-                print("Datos verificados");
+                print("Datos verificados...");
                 GameManager.instance.InitDataLoaded(objToLoad);
             }
             else
             {
-                print("Datos corruptos");
+                Debug.LogWarning("Datos corruptos, creando unos por defecto...");
                 // Reseteamos el json con valores por defecto
                 GameManager.instance.InitDataLoaded(CreateDefaultJson());
             }

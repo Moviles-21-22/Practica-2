@@ -41,7 +41,6 @@ public class AdsManager : MonoBehaviour
     {
         if (!GameManager.instance.IsPremium())
         {
-            print("No es premium");
             Advertisement.Initialize(androidGameId, testMode);
             ShowBanner();
         }
