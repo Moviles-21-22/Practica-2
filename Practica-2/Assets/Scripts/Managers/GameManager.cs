@@ -171,7 +171,6 @@ public class GameManager : MonoBehaviour
                         categories[i].levels[j].levelsInfo[currLevel.lvl - 1].perfect = true;
 
                         SaveGame();
-                        print("Guardado");
                     }
                     j++;
                 }

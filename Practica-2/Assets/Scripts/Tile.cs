@@ -174,11 +174,10 @@ public class Tile : MonoBehaviour
         {
             if (previous.x > 1.0f) // izq->abajo
             {
-                print("Para abajo desde la izquierda");
+                //print("Para abajo desde la izquierda");
             }
             else if (previous.x < 0.0f) // der->abajo
             {
-                print("Para abajo desde la derecha");
                 elbow.transform.Rotate(Vector3.forward, 90);
             }
         }
@@ -186,25 +185,21 @@ public class Tile : MonoBehaviour
         {
             if (previous.x == -1.0f) // der->arriba
             {
-                print("Para arriba desde la derecha");
                 elbow.transform.Rotate(Vector3.forward, 180);
             }
             else if (previous.x > 0.0f)// izq->arriba
             {
                 elbow.transform.Rotate(Vector3.forward, -90);
-                print("Para arriba desde la izquierda");
             }
         }
         else if (dir.x > 0.0f) //Va a la derecha
         {
             if (previous.y < 0.0f)// arriba->derecha
             {
-                print("Para derecha desde abajo");
                 elbow.transform.Rotate(Vector3.forward, 180);
             }
             else if (previous.y > 0.0f)// abajo->derecha
             {
-                print("Para derecha desde abajo");
                 elbow.transform.Rotate(Vector3.forward, 90);
             }
         }
@@ -212,11 +207,10 @@ public class Tile : MonoBehaviour
         {
             if (previous.y > 0.0f)// abajo->izquierda
             {
-                print("Para izquierda desde abajo");
+                //print("Para izquierda desde abajo");
             }
             else if (previous.y < 0.0f)// arriba->izquierda
             {
-                print("Para izquierda desde arriba");
                 elbow.transform.Rotate(Vector3.forward, -90);
             }
         }
