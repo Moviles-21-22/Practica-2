@@ -177,4 +177,12 @@ public class HUDManager : MonoBehaviour
             CancelInvoke();
         }
     }
+
+    /// <summary>
+    /// Muestra la parte entera del porcentaje que hay resuelto del tablero
+    /// </summary>
+    public void ShowPercentage(float percentage)
+    {
+        percentageText.text = "tubería: " + ((int)percentage).ToString() + "%";
+    }
 }

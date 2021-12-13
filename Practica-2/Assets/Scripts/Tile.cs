@@ -51,7 +51,6 @@ public class Tile : MonoBehaviour
     private SpriteRenderer lines;
 
     private Rect logicRect;
-    private Vector3 worldPos;
 
     private void OnEnable()
     {
@@ -150,7 +149,12 @@ public class Tile : MonoBehaviour
         // bot->top
         else if (_dir.y == -1.0f)
         {
-            bridgeTail.transform.Rotate(Vector3.forward, 180);
+            bridgeTail.transform.Rotate(Vector3.forward, factor == -1.0f ? 0.0f : 180.0f);
+        }
+        // top->bot
+        else if (_dir.y == 1.0f)
+        {
+            bridgeTail.transform.Rotate(Vector3.forward, factor == -1.0f ? 180.0f : 0.0f);
         }
     }
 
@@ -216,6 +220,21 @@ public class Tile : MonoBehaviour
         }
     }
 
+    public void DesactiveLines()
+    {
+        lines.enabled = false;
+    }
+    
+    public void ClearTile()
+    {
+        tileColor = TILE_COLOR.NONE;
+        color = Color.white;
+        bgColor.enabled = false;
+        bridgeTail.enabled = false;
+        bridge.enabled = false;
+        elbow.enabled = false;
+    }
+
     public void SetLocalGraphicPos(float x, float y)
     {
         //transform.anchoredPosition = new Vector2(x, y);    
@@ -239,7 +258,6 @@ public class Tile : MonoBehaviour
         Vector2 extent = Camera.main.WorldToScreenPoint(new Vector2(lines.bounds.max.x, lines.bounds.max.y));
         Vector2 size = (extent - origin);
 
-        worldPos = Camera.main.WorldToScreenPoint(transform.localPosition);
         logicRect = new Rect(origin.x, origin.y, size.x, size.y);
     }
 

@@ -32,22 +32,29 @@ struct ColorMovements
         return movements;
     }
 
-    public void ClearUntilTile(Tile t)
+    /// <summary>
+    /// Borra todos los elementos de la lista de movimientos hasta t
+    /// Devuelve el numero de elementos borrados
+    /// </summary>
+    public int ClearUntilTile(Tile t)
     {
+        int p = 0;
         bool rem = true;
         while (rem && movements.Count > 0)
         {
             Tile ultTile = movements[movements.Count - 1];
+
+            //Hemos encontrado el tile desde el que queremos mantener el camino
             if (ultTile == t)
             {
-                //Hemos encontrado el tile desde el que queremos mantener el camino
                 rem = false;
             }
-            else
-            {
-                movements.Remove(ultTile);
-            }
+
+            p++;
+            ultTile.ClearTile();
+            movements.Remove(ultTile);
         }
+        return p;
     }
 
     public bool IsConected()
@@ -101,8 +108,9 @@ public class BoardManager : MonoBehaviour
     private Vector2 previousDir;
     // Tile del puntero 
     private Tile inputTile;
-    // Número de flujos completados
-    private int conFlows = 0;
+    // Porcentaje de tablero completo
+    private float percentage = 0.0f;
+    private float plusPercentage = 0.0f;
 
     private List<ColorMovements> cMovements = new List<ColorMovements>();
 
@@ -114,10 +122,11 @@ public class BoardManager : MonoBehaviour
     public void Start()
     {
         currLevel = GameManager.instance.GetCurrLevel();
-        conFlows = 0;
 
         Init();
+        plusPercentage = 100.0f / ((tabSize.x * tabSize.y) - currLevel.numFlow);
         inputTile = Instantiate(tilePrefab, transform);
+        inputTile.DesactiveLines();
         Vector3 scale = inputTile.transform.localScale;
         scale.x = 2;
         scale.y = 2;
@@ -211,22 +220,13 @@ public class BoardManager : MonoBehaviour
             {
                 //  Buscamos el tile entre todas las tiles
                 var dragedTile = GetTileOnCollision(touchRect);
-                if (dragedTile.Key)
-                {
-                    //print($"TILE: {dragedTile.Value}");
-                }
-
-                //print("draged: " + dragedTile.Value.x + " drY: " + dragedTile.Value.y);
 
                 int c = currTile.GetTileColor();
-                //Debug.Log("C " + c);
 
                 if (cMovements[c].GetMovements().Count > 0)
                 {
                     int countX = cMovements[c].GetMovements()[cMovements[c].GetMovements().Count - 1].GetX();
                     int countY = cMovements[c].GetMovements()[cMovements[c].GetMovements().Count - 1].GetY();
-
-                    //print("countX: " + countX + " countY: " + countY + " dragedX: " + dragedTile.Value.x + " dragedY: " + dragedTile.Value.y);
 
                     if (!AreNeighbour(dragedTile.Value.x, dragedTile.Value.y, countX, countY))
                         return;
@@ -234,56 +234,63 @@ public class BoardManager : MonoBehaviour
 
                 if (dragedTile.Key != null && dragedTile.Key != currTile)
                 {
-                    //  Dirección entre el nuevo tile y el anterior
+                    // Dirección entre el nuevo tile y el anterior
                     Vector2 dir = (dragedTile.Key.GetLogicRect().position - currTile.GetLogicRect().position).normalized;
 
-                    //  Hemos llegado al tile que le corresponde (solución)
-                    // TODO: Revisar ese if para que se sume el nivel completado cuando corresponda
-                    if (dragedTile.Key.CircleActive() && dragedTile.Key.GetColor() == currTile.GetColor())
+                    // Hemos llegado al tile que le corresponde (solución)
+                    // Condiciones: Sea un círculo, sea del mismo color que mi tubería y no sea el mismo círculo con el que empecé
+                    if (dragedTile.Key.CircleActive() && dragedTile.Key.GetColor() == currTile.GetColor() && dragedTile.Key != cMovements[c].GetMovements()[0])
                     {
-                        conFlows++;
-                        if (conFlows == currLevel.numFlow)
+                        // Es un codo
+                        if (IsElbow(dir))
                         {
-                            GameManager.instance.AddSolutionLevel(true);
-                            hud.LevelCompleted(true);
+                            currTile.ActiveElbow(currTileColor, dir, previousDir);
                         }
-                        else if(conFlows < currLevel.numFlow)
+                        else if (!currTile.CircleActive())
                         {
-                            //  Es un codo
-                            if (IsElbow(dir))
-                            {
-                                currTile.ActiveElbow(currTileColor, dir, previousDir);
-                            }
-                            else if (!currTile.CircleActive())
-                            {
-                                currTile.ActiveBridge(dir, currTileColor);
-                            }
+                            currTile.ActiveBridge(dir, currTileColor);
+                        }
+                        percentage += plusPercentage;
+                        hud.ShowPercentage(percentage);
 
-                            dragedTile.Key.ActiveTail(dir * -1, currTileColor);
-                            dragedTile.Key.SetX(dragedTile.Value.x);
-                            dragedTile.Key.SetY(dragedTile.Value.y);
-                            dragedTile.Key.SetTileColor(c);
-                            currTile = dragedTile.Key;
-                            cMovements[c].AddMov(dragedTile.Key);
-                            previousDir = dir;
-                        }
+                        dragedTile.Key.ActiveTail(dir * -1, currTileColor);
+                        dragedTile.Key.SetX(dragedTile.Value.x);
+                        dragedTile.Key.SetY(dragedTile.Value.y);
+                        dragedTile.Key.SetTileColor(c);
+                        currTile = dragedTile.Key;
+                        cMovements[c].AddMov(dragedTile.Key);
+                        previousDir = dir;
                     }
-                    //  No es un circulo
+                    // No es un circulo
                     else if (!dragedTile.Key.CircleActive())
                     {
-                        //print("dir " +dir + " / pre " + previousDir);
+                        //Si nos movemos a una tubería que ya tenía nuestro color, se resetea
+                        if (dragedTile.Key.GetColor() == currTile.GetColor())
+                        {
+                            //int nC = dragedTile.Key.GetTileColor();
+                            //Debug.Log(nC);
+
+                            int p = cMovements[c].ClearUntilTile(dragedTile.Key);
+                            percentage -= plusPercentage * p;
+
+                            currTile = cMovements[c].GetMovements()[cMovements[c].GetMovements().Count - 1];
+                            dir = (dragedTile.Key.GetLogicRect().position - currTile.GetLogicRect().position).normalized;
+                        }
+
+                        percentage += plusPercentage;
+                        hud.ShowPercentage(percentage);
+
+                        dragedTile.Key.ActiveTail(dir, currTileColor);
+                        dragedTile.Key.SetX(dragedTile.Value.x);
+                        dragedTile.Key.SetY(dragedTile.Value.y);
+                        dragedTile.Key.SetTileColor(c);
+                        cMovements[c].AddMov(dragedTile.Key);
+
                         //  El anterior es un circulo
                         if (currTile.CircleActive())
                         {
-                            currTile.ActiveTail(new Vector2(dir.x, -dir.y), currTileColor);
-                            dragedTile.Key.ActiveTail(dir, currTileColor);
-                            dragedTile.Key.SetX(dragedTile.Value.x);
-                            dragedTile.Key.SetY(dragedTile.Value.y);
-                            dragedTile.Key.SetTileColor(c);
-                            currTile = dragedTile.Key;
-                            //currMovement.Add(currTile);
-                            cMovements[c].AddMov(dragedTile.Key);
-                            previousDir = dir;
+                            if (cMovements[c].GetMovements().Count > 1)
+                                currTile.ActiveTail(new Vector2(dir.x, dir.y), currTileColor);
                         }
                         //  El anterior no es un circulo
                         else if (!currTile.CircleActive())
@@ -292,34 +299,20 @@ public class BoardManager : MonoBehaviour
                             if (IsElbow(dir))
                             {
                                 currTile.ActiveElbow(currTileColor, dir, previousDir);
-                                dragedTile.Key.ActiveTail(dir, currTileColor);
-                                dragedTile.Key.SetX(dragedTile.Value.x);
-                                dragedTile.Key.SetY(dragedTile.Value.y);
-                                dragedTile.Key.SetTileColor(c);
-                                currTile = dragedTile.Key;
-                                //currMovement.Add(currTile);
-                                cMovements[c].AddMov(dragedTile.Key);
-                                previousDir = dir;
                             }
                             else
                             {
                                 currTile.ActiveBridge(dir, currTileColor);
-                                dragedTile.Key.ActiveTail(dir, currTileColor);
-                                dragedTile.Key.SetX(dragedTile.Value.x);
-                                dragedTile.Key.SetY(dragedTile.Value.y);
-                                dragedTile.Key.SetTileColor(c);
-                                currTile = dragedTile.Key;
-                                //currMovement.Add(currTile);
-                                cMovements[c].AddMov(dragedTile.Key);
-                                previousDir = dir;
                             }
                         }
+                        currTile = dragedTile.Key;
+                        previousDir = dir;
                     }
-                    //  Es un circulo de otro color
-                    else if (dragedTile.Key.CircleActive())
-                    {
-                        print("MovIncorrecto");
-                    }
+                    ////  Es un circulo de otro color
+                    //else if (dragedTile.Key.CircleActive())
+                    //{
+                    //    print("MovIncorrecto");
+                    //}
                 }
             }
         }
@@ -340,7 +333,7 @@ public class BoardManager : MonoBehaviour
         {
             inputTile.GetCircleRender().enabled = true;
             Vector2 pos = Camera.main.ScreenToWorldPoint(inputPos);
-            inputTile.transform.position = pos;
+            inputTile.transform.position = new Vector3(pos.x, pos.y, 10.0f);
         }
         else
         {
@@ -354,8 +347,13 @@ public class BoardManager : MonoBehaviour
         {
             int c = currTile.GetTileColor();
             currTile = null;
-            SolveMovement(c);
+            SaveLastMovement(c);
             inputTile.GetCircleRender().enabled = false;
+        }
+        if (IsSolution())
+        {
+            GameManager.instance.AddSolutionLevel(true);
+            hud.LevelCompleted(true);
         }
     }
 
@@ -377,19 +375,36 @@ public class BoardManager : MonoBehaviour
                 cMovements[c].AddMov(currTile);
                 //  Para el puntero en pantalla
                 inputTile.GetCircleRender().enabled = true;
-                inputTile.InitTile(0, new Color(currTileColor.r, currTileColor.g, currTileColor.b, 0.5f));
+                inputTile.InitTile(currTile.GetTileColor(), new Color(currTileColor.r, currTileColor.g, currTileColor.b, 0.5f));
                 previousDir = new Vector2(-2, -2);
             }
         }
     }
 
-    private void SolveMovement(int c)
+    private void SaveLastMovement(int c)
     {
         foreach (Tile tile in cMovements[c].GetMovements())
         {
             tile.ActiveBgColor(true, currTileColor);
         }
-        cMovements[c].GetMovements().Clear();
+        //cMovements[c].GetMovements().Clear();
+    }
+
+    private bool IsSolution()
+    {
+        if (percentage < 100.0f)
+            return false;
+
+        //Recorremos todas las listas de movimientos
+        foreach (ColorMovements cM in cMovements)
+        {
+            //Si el primer elem y el ultimo de una lista no es circulo: no es solución
+            if (!cM.GetMovements()[0].CircleActive() ||
+                !cM.GetMovements()[cM.GetMovements().Count - 1].CircleActive())
+                return false;
+        }
+        //Si hemos salido es porque todos los colores tienen la solución
+        return true;
     }
 
     public void GiveHint()
