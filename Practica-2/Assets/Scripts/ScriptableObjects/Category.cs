@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,4 +13,12 @@ public class Category : ScriptableObject
     public Color color;
     [Tooltip("fichero con los niveles")]
     public LevelPack[] levels;
+
+    public void Reset()
+    {
+        foreach (LevelPack level in levels)
+        {
+            level.Reset();
+        }
+    }
 }

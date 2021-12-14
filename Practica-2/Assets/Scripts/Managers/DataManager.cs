@@ -5,6 +5,18 @@ using System.IO;
 using UnityEngine;
 
 [System.Serializable]
+public class CategoryToSave
+{
+    [SerializeField]
+    Category cat;
+
+    public CategoryToSave(Category _cat)
+    {
+        cat = _cat;
+    }
+}
+
+[System.Serializable]
 public class DataToSave
 {
     [SerializeField]
@@ -13,12 +25,8 @@ public class DataToSave
     [SerializeField]
     private bool premium;
 
-    [SerializeField]
     public List<Category> categories;
     
-    [SerializeField]
-    public string data;
-
     [SerializeField]
     private string hash;
 
@@ -28,7 +36,6 @@ public class DataToSave
         numHints = _numHints;
         premium = _premium;
         categories = _category;
-        data = _category.ToString();
     }
 
     public void SetHash(string _hash)
@@ -74,6 +81,8 @@ public class DataManager : MonoBehaviour
     private string[] saveRoutes;
     //  Ruta de guardado
     private string saveRoute;
+    //  Ruta de data
+    private string dataRoute;
     public static DataManager instance;
 
     private void Awake()
@@ -81,7 +90,12 @@ public class DataManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
+#if UNITY_EDITOR
             routeToSave = Directory.GetCurrentDirectory() + "/Assets/save/";
+#endif
+//#if UNITY_ANDROID
+//            routeToSave = "jar:file://" + Application.dataPath + "!/assets/save";
+//#endif
             Load();
             DontDestroyOnLoad(this.gameObject);
         }
@@ -168,60 +182,22 @@ public class DataManager : MonoBehaviour
     private DataToSave CreateDefaultJson()
     {
         print("Props por defecto");
-        List<Category> categoriesCopy = new List<Category>();
-        saveRoute = "Assets/save";
-        saveRoutes = new string[categories.Count];
         try
         {
-#if UNITY_EDITOR
-            //  Creación de carpetas y rutas para el guardado de packs
             for (int i = 0; i < categories.Count; i++)
             {
-                saveRoutes[i] =  "Assets/save/" + categories[i].name;
-                if (!UnityEditor.AssetDatabase.IsValidFolder(saveRoute + "/" + categories[i].name))
-                {
-                    UnityEditor.AssetDatabase.CreateFolder(saveRoute, categories[i].name);
-                }
-
-                //  Copiamos la categoria
-                string categoryOriginalRoute = UnityEditor.AssetDatabase.GetAssetPath(categories[i]);
-                string categoryCopyRoute = saveRoutes[i] + "/" + categories[i].name + "Copy.asset";
-
-                string statusMov = UnityEditor.AssetDatabase.ValidateMoveAsset(categoryOriginalRoute, categoryCopyRoute);
-                if (!statusMov.Equals(string.Empty))
-                {
-                    print("Borro " + categories[i].name);
-                    UnityEditor.AssetDatabase.DeleteAsset(categoryCopyRoute);
-                }
-                UnityEditor.AssetDatabase.CopyAsset(categoryOriginalRoute, categoryCopyRoute);
-                categoriesCopy.Add((Category)UnityEditor.AssetDatabase.LoadAssetAtPath(categoryCopyRoute, typeof(Category)));
-
-                //  Copiamos los niveles
-                for (int j = 0; j < categories[i].levels.Length; j++)
-                {
-                    string originalPackRoute = UnityEditor.AssetDatabase.GetAssetPath(categories[i].levels[j]);
-                    string copyPackRoute = saveRoutes[i] + "/" + categories[i].levels[j].name + "Copy.asset";
-                    string packStatus = UnityEditor.AssetDatabase.ValidateMoveAsset(originalPackRoute, copyPackRoute);
-                    if (!packStatus.Equals(string.Empty))
-                    {
-                        print("Borro " + categories[i].levels[j].name);
-                        UnityEditor.AssetDatabase.DeleteAsset(copyPackRoute);
-                    }
-                    UnityEditor.AssetDatabase.CopyAsset(originalPackRoute, copyPackRoute);
-                    categoriesCopy[i].levels[j] = (LevelPack)UnityEditor.AssetDatabase.LoadAssetAtPath(copyPackRoute, typeof(LevelPack));
-                }
+                categories[i].Reset();
             }
-#endif
+            DataToSave currData = new DataToSave(numHintsDefault, false, categories);
+            currData.SetHash(SecureManager.Hash(JsonUtility.ToJson(currData)));
+            string json = JsonUtility.ToJson(currData);
+            System.IO.File.WriteAllText(routeToSave + fileName, json);
+            return currData;
         }
         catch (Exception e)
         {
             print(e.Message);
             throw new Exception("Reinstala la app");
         }
-        DataToSave currData = new DataToSave(numHintsDefault, false, categoriesCopy);
-        currData.SetHash(SecureManager.Hash(JsonUtility.ToJson(currData)));
-        string json = JsonUtility.ToJson(currData);
-        System.IO.File.WriteAllText(routeToSave + fileName, json);
-        return currData;
     }
 }

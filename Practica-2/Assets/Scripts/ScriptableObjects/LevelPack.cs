@@ -22,6 +22,17 @@ public class LevelPack : ScriptableObject
     public int[] records;
     [Tooltip("Determina la forma de enumerar los niveles")]
     public bool splitLevels = true;
+
+    public void Reset()
+    {
+        completedLevels = 0;
+        for (int i = 0; i < gridNames.Length; i++)
+        {
+            records[i] = 0;
+            levelsInfo[i].completed = false;
+            levelsInfo[i].perfect = false;
+        }
+    }
 }
 
 [System.Serializable]
