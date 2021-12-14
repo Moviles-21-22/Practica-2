@@ -92,6 +92,22 @@ public class Tile : MonoBehaviour
         lines.enabled = false;
     }
 
+    /// <summary>
+    /// Inicializa el rectangulo logico del tile, con las dimensiones 
+    /// y coordenadas en pixeles
+    /// </summary>
+    /// <param name="x_">Posicion x del tile dentro del array de tiles. Para debug</param>
+    /// <param name="y_">Posicion y del tile dentro del array de tiles. Para debug</param>
+    public void InitLogicalRect(int x_, int y_)
+    {
+        // Tamaño del tile en pixeles
+        Vector2 origin = Camera.main.WorldToScreenPoint(new Vector2(lines.bounds.min.x, lines.bounds.min.y));
+        Vector2 extent = Camera.main.WorldToScreenPoint(new Vector2(lines.bounds.max.x, lines.bounds.max.y));
+        Vector2 size = (extent - origin);
+
+        logicRect = new Rect(origin.x, origin.y, size.x, size.y);
+    }
+
     public bool CircleActive()
     {
         return circle.enabled;
@@ -235,6 +251,17 @@ public class Tile : MonoBehaviour
         elbow.enabled = false;
     }
 
+    public void RemoveTail()
+    {
+        if (bridgeTail.enabled && !circle.enabled)
+        {
+            bridgeTail.enabled = false;
+            bridge.enabled = true;
+            bridge.color = bridgeTail.color;
+            bridge.transform.rotation = bridgeTail.transform.rotation;
+        }
+    }
+
     public void SetLocalGraphicPos(float x, float y)
     {
         //transform.anchoredPosition = new Vector2(x, y);    
@@ -243,22 +270,6 @@ public class Tile : MonoBehaviour
     public void SetSize(float width, float height)
     {
         //transform.sizeDelta = new Vector2(width, height);
-    }
-
-    /// <summary>
-    /// Inicializa el rectangulo logico del tile, con las dimensiones 
-    /// y coordenadas en pixeles
-    /// </summary>
-    /// <param name="x_">Posicion x del tile dentro del array de tiles. Para debug</param>
-    /// <param name="y_">Posicion y del tile dentro del array de tiles. Para debug</param>
-    public void InitLogicalRect(int x_, int y_)
-    {
-        // Tamaño del tile en pixeles
-        Vector2 origin = Camera.main.WorldToScreenPoint(new Vector2(lines.bounds.min.x, lines.bounds.min.y));
-        Vector2 extent = Camera.main.WorldToScreenPoint(new Vector2(lines.bounds.max.x, lines.bounds.max.y));
-        Vector2 size = (extent - origin);
-
-        logicRect = new Rect(origin.x, origin.y, size.x, size.y);
     }
 
     public void SetX(int _x)
@@ -317,14 +328,36 @@ public class Tile : MonoBehaviour
         bgColor.color = new Color(color.r, color.g, color.b, backgroundAlpha);
     }
 
-    public void RemoveTail()
+    /// <summary>
+    /// Comprueba si hay un muro en la dirección dir
+    /// </summary>
+    public bool WallCollision(Vector2 _dir)
     {
-        if (bridgeTail.enabled && !circle.enabled)
-        {
-            bridgeTail.enabled = false;
-            bridge.enabled = true;
-            bridge.color = bridgeTail.color;
-            bridge.transform.rotation = bridgeTail.transform.rotation;
-        }
+        //izq->der
+        if (_dir.x == 1.0f)
+            if (wallLeft.enabled)
+                return true;
+            else
+                return false;
+        // der->izq
+        else if (_dir.x == -1.0f)
+            if (wallRight.enabled)
+                return true;
+            else
+                return false;
+        // bot->top
+        else if (_dir.y == -1.0f)
+            if (wallDown.enabled)
+                return true;
+            else
+                return false;
+        // top->bot
+        else if (_dir.y == 1.0f)
+            if (wallUp.enabled)
+                return true;
+            else
+                return false;
+        else
+            return false;
     }
 }

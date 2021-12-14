@@ -467,6 +467,10 @@ public class BoardManager : MonoBehaviour
                     // Dirección entre el nuevo tile y el anterior
                     Vector2 dir = (dragedTile.Key.GetLogicRect().position - currTile.GetLogicRect().position).normalized;
 
+                    //Comprobamos si hace colisión con un muro, en cuyo caso salimos sin hacer nada
+                    if (dragedTile.Key.WallCollision(-dir) || currTile.WallCollision(dir))
+                        return;
+
                     // Hemos llegado al tile que le corresponde (solución)
                     // Condiciones: Sea un círculo, sea del mismo color que mi tubería y no sea el mismo círculo con el que empecé
                     if (dragedTile.Key.CircleActive() && dragedTile.Key.GetColor() == currTile.GetColor() && dragedTile.Key != cMovements[c].GetMovements()[0])
