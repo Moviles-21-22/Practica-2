@@ -262,7 +262,6 @@ public class BoardManager : MonoBehaviour
                 tiles[i, j].InitLogicalRect(j, i);
             }
         }
-
     }
 
     /// <summary>
@@ -534,6 +533,12 @@ public class BoardManager : MonoBehaviour
 
                             currTile = cMovements[c].GetMovements()[cMovements[c].GetMovements().Count - 1];
                             dir = (dragedTile.Key.GetLogicRect().position - currTile.GetLogicRect().position).normalized;
+
+                            if (cMovements[c].GetMovements().Count > 1)
+                            {
+                                Tile prevTile = cMovements[c].GetMovements()[cMovements[c].GetMovements().Count - 2];
+                                previousDir = (currTile.GetLogicRect().position - prevTile.GetLogicRect().position).normalized;
+                            }
                         }
 
                         percentage += plusPercentage;
