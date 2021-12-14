@@ -335,13 +335,13 @@ public class Tile : MonoBehaviour
     {
         //izq->der
         if (_dir.x == 1.0f)
-            if (wallLeft.enabled)
+            if (wallRight.enabled)
                 return true;
             else
                 return false;
         // der->izq
         else if (_dir.x == -1.0f)
-            if (wallRight.enabled)
+            if (wallLeft.enabled)
                 return true;
             else
                 return false;
