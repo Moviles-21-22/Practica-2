@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using UnityEditor;
 
 [System.Serializable]
 public class DataToSave
@@ -174,43 +173,45 @@ public class DataManager : MonoBehaviour
         saveRoutes = new string[categories.Count];
         try
         {
+#if UNITY_EDITOR
             //  Creación de carpetas y rutas para el guardado de packs
             for (int i = 0; i < categories.Count; i++)
             {
                 saveRoutes[i] =  "Assets/save/" + categories[i].name;
-                if (!AssetDatabase.IsValidFolder(saveRoute + "/" + categories[i].name))
+                if (!UnityEditor.AssetDatabase.IsValidFolder(saveRoute + "/" + categories[i].name))
                 {
-                    AssetDatabase.CreateFolder(saveRoute, categories[i].name);
+                    UnityEditor.AssetDatabase.CreateFolder(saveRoute, categories[i].name);
                 }
 
                 //  Copiamos la categoria
-                string categoryOriginalRoute = AssetDatabase.GetAssetPath(categories[i]);
+                string categoryOriginalRoute = UnityEditor.AssetDatabase.GetAssetPath(categories[i]);
                 string categoryCopyRoute = saveRoutes[i] + "/" + categories[i].name + "Copy.asset";
 
-                string statusMov = AssetDatabase.ValidateMoveAsset(categoryOriginalRoute, categoryCopyRoute);
+                string statusMov = UnityEditor.AssetDatabase.ValidateMoveAsset(categoryOriginalRoute, categoryCopyRoute);
                 if (!statusMov.Equals(string.Empty))
                 {
                     print("Borro " + categories[i].name);
-                    AssetDatabase.DeleteAsset(categoryCopyRoute);
+                    UnityEditor.AssetDatabase.DeleteAsset(categoryCopyRoute);
                 }
-                AssetDatabase.CopyAsset(categoryOriginalRoute, categoryCopyRoute);
-                categoriesCopy.Add((Category)AssetDatabase.LoadAssetAtPath(categoryCopyRoute, typeof(Category)));
+                UnityEditor.AssetDatabase.CopyAsset(categoryOriginalRoute, categoryCopyRoute);
+                categoriesCopy.Add((Category)UnityEditor.AssetDatabase.LoadAssetAtPath(categoryCopyRoute, typeof(Category)));
 
                 //  Copiamos los niveles
                 for (int j = 0; j < categories[i].levels.Length; j++)
                 {
-                    string originalPackRoute = AssetDatabase.GetAssetPath(categories[i].levels[j]);
+                    string originalPackRoute = UnityEditor.AssetDatabase.GetAssetPath(categories[i].levels[j]);
                     string copyPackRoute = saveRoutes[i] + "/" + categories[i].levels[j].name + "Copy.asset";
-                    string packStatus = AssetDatabase.ValidateMoveAsset(originalPackRoute, copyPackRoute);
+                    string packStatus = UnityEditor.AssetDatabase.ValidateMoveAsset(originalPackRoute, copyPackRoute);
                     if (!packStatus.Equals(string.Empty))
                     {
                         print("Borro " + categories[i].levels[j].name);
-                        AssetDatabase.DeleteAsset(copyPackRoute);
+                        UnityEditor.AssetDatabase.DeleteAsset(copyPackRoute);
                     }
-                    AssetDatabase.CopyAsset(originalPackRoute, copyPackRoute);
-                    categoriesCopy[i].levels[j] = (LevelPack)AssetDatabase.LoadAssetAtPath(copyPackRoute, typeof(LevelPack));
+                    UnityEditor.AssetDatabase.CopyAsset(originalPackRoute, copyPackRoute);
+                    categoriesCopy[i].levels[j] = (LevelPack)UnityEditor.AssetDatabase.LoadAssetAtPath(copyPackRoute, typeof(LevelPack));
                 }
             }
+#endif
         }
         catch (Exception e)
         {
