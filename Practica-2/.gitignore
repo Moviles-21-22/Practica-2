@@ -59,4 +59,4 @@ sysinfo.txt
 crashlytics-build.properties
 
 # Archivos de guardado
-/[Aa]ssets/[Ss]ave/
+[Aa]ssets/[Ss]ave/

@@ -213,22 +213,31 @@ public class BoardManager : MonoBehaviour
         InitGaps(currLevel);
         InitWalls(currLevel);
 
-        // Escalado del tablero
+        //==============ESCALADO-TABLERO===================//
+        // Auxiliar de la cámara principal
         var cam = Camera.main;
 
-        // Unidades de Unity
+        // Está en unidades de Unity
         var a = hudRegion[0].sizeDelta;
         var b = hudRegion[1].sizeDelta;
 
+        // Dimensiones de la cámara, sin tener en cuenta el hud
         float camH = cam.orthographicSize * 2.0f;
         float camW = camH * cam.aspect;
 
+        // Hay que tener en cuenta la altura del hud - Está en píxeles
+        float hudOffsetY = (hudRegion[0].rect.height + 10) + (hudRegion[1].rect.height + 10);
+        // Conversión a la proporción
+        hudOffsetY = hudOffsetY / cam.pixelHeight;
+
+        camH *= (1 - hudOffsetY - 0.05f);    // 0.05f de margen
         float tileH = camH / tabSize.y;
         float tileW = camW / tabSize.x;
 
         float tileAspect = tileH >= tileW ? tileW : tileH;
 
         pool.localScale = Vector2.one * tileAspect;
+
         // Hay que tener en cuenta que la cámara está situada en el (0, 0) y el tablero también,
         // por tanto, se estará viendo un cacho del tablero y habría que desplazar el tablero o la cámara.
         // Optamos por la cámara.
