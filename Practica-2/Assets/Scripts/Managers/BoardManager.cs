@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//No hace falta hacerlo así, se puede hacer con una lista de listas ordenada por color
 /// <summary>
 /// Struct auxiliar para controlar el color del tile en función de los movimientos
 /// </summary>
@@ -11,6 +10,7 @@ struct ColorMovements
 {
     //Tile tiene los colores asociados a su numero
     int color;
+    // Lista de tiles ordenada con el camino del flujo
     List<Tile> movements;
     //  Determina si existe un camino entre ambas esferas
     public bool conected;
@@ -67,7 +67,7 @@ struct ColorMovements
         return color;
     }
 
-    internal void Conect()
+    public void Conect()
     {
         this.conected = true;
     }
@@ -92,31 +92,35 @@ public class BoardManager : MonoBehaviour
     [SerializeField]
     private HUDManager hud;
 
-    // Tiles del tablero
-    private Tile[,] tiles;
-    // Dimensiones del tablero
-    private Vector2Int tabSize;
-    // Circulos instanciados en el tablero
-    private List<Tile> circleTiles = new List<Tile>();
-    // Muros instanciados en el tablero
-    private List<Tile> wallTiles = new List<Tile>();
-    // Ultimo tile que han tocado, hasta que el dedo se levante
-    private Tile currTile;
+    // Determina si se está pulsadno la pantalla
+    private bool inputDown = false;
+    // Porcentaje de tablero completo
+    private float percentage = 0.0f;
+    // Porcentaje que se suma al total por cada tile ocupado
+    private float plusPercentage = 0.0f;
     // Color del tile tocado
     private Color currTileColor;
     // Dirección del movimiento anterior
     private Vector2 previousDir;
-    // Tile del puntero 
-    private Tile inputTile;
-    // Porcentaje de tablero completo
-    private float percentage = 0.0f;
-    private float plusPercentage = 0.0f;
-
-    private List<ColorMovements> cMovements = new List<ColorMovements>();
-
-    private bool inputDown = false;
+    // Poisición donde se ha pulsado la primera vez
     private Vector3 initPosInput = new Vector2(-1, -1);
+
+    // Ultimo tile que han tocado, hasta que el dedo se levante
+    private Tile currTile;
+    // Tile que representa el recorrido del puntero 
+    private Tile inputTile;
+    // Circulos instanciados en el tablero
+    private List<Tile> circleTiles = new List<Tile>();
+    // Muros instanciados en el tablero
+    private List<Tile> wallTiles = new List<Tile>();
+    // Tiles del tablero
+    private Tile[,] tiles;
+    // Dimensiones del tablero
+    private Vector2Int tabSize;
+    // Struct auxiliar con la información del nivel actual
     private Level currLevel;
+    // Lista con los movimientos de cada uno de los flujos
+    private List<ColorMovements> cMovements = new List<ColorMovements>();
 
     //  Setea al board y activa el puntero
     public void Start()
@@ -153,7 +157,7 @@ public class BoardManager : MonoBehaviour
         else if (inputDown && initPosInput != Input.mousePosition)
         {
             InputMoving(Input.mousePosition);
-            ProcessPointer(Input.mousePosition);
+            DrawCirclePointer(Input.mousePosition);
         }
 #endif
 
@@ -175,39 +179,265 @@ public class BoardManager : MonoBehaviour
             else if (Input.GetTouch(i).phase == TouchPhase.Moved)
             {
                 InputMoving(Input.GetTouch(i).position);
-                ProcessPointer(Input.GetTouch(i).position);
+                DrawCirclePointer(Input.GetTouch(i).position);
             }
         }
 #endif
     }
 
-    //  Determina si dos rects colisionan
-    private bool Collision(Rect a, Rect b)
+    #region Inits
+    /// <summary>
+    /// Inicializa el nivel actual
+    /// </summary>
+    public void Init()
     {
-        return a.Overlaps(b);
+        // Creación de los tiles
+        tabSize.x = currLevel.numBoardX;
+        tabSize.y = currLevel.numBoardY;
+        Vector2 initPos = Vector2.zero;
 
-        //AABB
-        //return (b.xMin <= a.xMax && b.xMin >= a.xMin && b.yMax >= a.yMin && b.yMax <= a.yMax)   // Esquina superior izquierda de b
-        //    || (b.xMax <= a.xMax && b.xMax >= a.xMin && b.yMax >= a.yMin && b.yMax <= a.yMax)   // Esquina superior derecha de b
-        //    || (b.xMin <= a.xMax && b.xMin >= a.xMin && b.yMin >= a.yMin && b.yMin <= a.yMax)   // Esquina inferior izquierda de b
-        //    || (b.xMax <= a.xMax && b.xMax >= a.xMin && b.yMin >= a.yMin && b.yMin <= a.yMax)
+        tiles = new Tile[currLevel.numBoardY, currLevel.numBoardX];
+        for (int i = 0; i < currLevel.numBoardY; i++)
+        {
+            for (int j = 0; j < currLevel.numBoardX; j++)
+            {
+                tiles[i, j] = Instantiate(tilePrefab, pool);
+                tiles[i, j].transform.position = initPos;
+                initPos.x += 1;
+            }
+            initPos.x = 0;
+            initPos.y -= 1;
+        }
 
-        //    || (a.xMin <= b.xMax && b.xMin >= b.xMin && a.yMax >= b.yMin && a.yMax <= b.yMax)   // Esquina superior izquierda de a
-        //    || (a.xMax <= b.xMax && b.xMax >= b.xMin && a.yMax >= b.yMin && a.yMax <= b.yMax)   // Esquina superior derecha de a
-        //    || (a.xMin <= b.xMax && b.xMin >= b.xMin && a.yMin >= b.yMin && a.yMin <= b.yMax)   // Esquina inferior izquierda de a
-        //    || (a.xMax <= b.xMax && b.xMax >= b.xMin && a.yMin >= b.yMin && a.yMin <= b.yMax);  // Esquina inferior derecha de a
+        InitCircles(currLevel);
+        InitGaps(currLevel);
+        InitWalls(currLevel);
 
+        // Escalado del tablero
+        var cam = Camera.main;
 
-        /*        if (a.x < (b.x + b.width)
-                    && (a.x + a.width) > b.x
-                    && a.y < (b.y + b.height)
-                    && (a.height + a.y) > b.y)
-                {
-                    return true;
-                }
-                else return false;*/
+        // Unidades de Unity
+        var a = hudRegion[0].sizeDelta;
+        var b = hudRegion[1].sizeDelta;
+
+        float camH = cam.orthographicSize * 2.0f;
+        float camW = camH * cam.aspect;
+
+        float tileH = camH / tabSize.y;
+        float tileW = camW / tabSize.x;
+
+        float tileAspect = tileH >= tileW ? tileW : tileH;
+
+        pool.localScale = Vector2.one * tileAspect;
+        // Hay que tener en cuenta que la cámara está situada en el (0, 0) y el tablero también,
+        // por tanto, se estará viendo un cacho del tablero y habría que desplazar el tablero o la cámara.
+        // Optamos por la cámara.
+
+        // A partir de la mitad del ancho de la cámara se calculan el número de tiles visibles sin desplazamiento
+        float numTilesX = (camW / 2) / tileW;
+        float numTilesY = (camH / 2) / tileH;
+
+        // El offset de desplazamiento para la cámara será el número de tiles que no se vean por el tamaño de tile
+        // Se le resta 0.5f porque el pivote de los objetos está en el centro, es decir, nos sobra la mitad de un tile
+        // que en unidades de Unity es 0.5f
+        float offsetX = (tabSize.x - numTilesX - 0.5f) * tileAspect;
+        float offsetY = (tabSize.y - numTilesY - 0.5f) * tileAspect;
+
+        cam.gameObject.transform.position = new Vector2(offsetX, -offsetY);
+
+        // Inicializacion de los rectangulos logicos de cada tile
+        for (int i = 0; i < currLevel.numBoardY; i++)
+        {
+            for (int j = 0; j < currLevel.numBoardX; j++)
+            {
+                tiles[i, j].InitLogicalRect(j, i);
+            }
+        }
+
     }
 
+    /// <summary>
+    /// Inicializa los círculos de los flujos
+    /// </summary>
+    private void InitCircles(Level currLevel)
+    {
+        for (int i = 0; i < currLevel.solutions.Count; i++)
+        {
+            //Cabeza de la tuberia
+            float firstElemt = currLevel.solutions[i][0];
+            int filaA = (int)((firstElemt + 1) / currLevel.numBoardX);
+            int colA = (int)((firstElemt + 1) % currLevel.numBoardX) - 1;
+            if (colA < 0)
+            {
+                colA = currLevel.numBoardX - 1;
+                filaA -= 1;
+            }
+            //print("colA: " + colA + " filaA: " + filaA);
+            tiles[filaA, colA].InitTile(i, colors[i], colA, filaA);
+            circleTiles.Add(tiles[filaA, colA]);
+
+            //Inicializamos la lista de movimientos de este color
+            ColorMovements c = new ColorMovements(i);
+            cMovements.Add(c);
+            //List<Tile> t = new List<Tile>();
+            //movements.Add(t);
+
+            //Final de la tuberia
+            float secElement = currLevel.solutions[i][currLevel.solutions[i].Count - 1];
+            int filaB = (int)((secElement + 1) / currLevel.numBoardX);
+            int colB = (int)((secElement + 1) % currLevel.numBoardX) - 1;
+            if (colB < 0)
+            {
+                colB = currLevel.numBoardX - 1;
+                filaB -= 1;
+            }
+            tiles[filaB, colB].InitTile(i, colors[i], colB, filaB);
+            circleTiles.Add(tiles[filaB, colB]);
+        }
+    }
+
+    /// <summary>
+    /// Inicializa los muros de los tiles que lo requieran
+    /// </summary>
+    private void InitWalls(Level currLevel)
+    {
+        for (int i = 0; i < currLevel.walls.Count; i++)
+        {
+            //Cogemos los dos tiles adyacentes al muro
+            int firstElemt = currLevel.walls[i][0];
+            int secElemt = currLevel.walls[i][1];
+
+            int fila = (int)((firstElemt + 1) / currLevel.numBoardX);
+            int colm = (int)((firstElemt + 1) % currLevel.numBoardX) - 1;
+            if (colm < 0)
+            {
+                colm = currLevel.numBoardX - 1;
+                fila -= 1;
+            }
+            //Encontramos en que direccion se encuentra el muro respecto a firstElemt
+            if (firstElemt > secElemt + 1)          //Muro encima
+                tiles[fila, colm].ActiveWall(0);
+            else if (firstElemt == secElemt + 1)    //Muro a la derecha
+                tiles[fila, colm].ActiveWall(1);
+            else if (firstElemt < secElemt - 1)     //Muro debajo
+                tiles[fila, colm].ActiveWall(2);
+            else if (firstElemt == secElemt - 1)    //Muro a la izquierda
+                tiles[fila, colm].ActiveWall(3);
+
+            wallTiles.Add(tiles[fila, colm]);
+        }
+
+        //Ponemos los muros que rodean el tablero, si es que lo pide el nivel
+        if (currLevel.closed)
+        {
+            //Para ello recorremos todo el contorno del tablero
+            //Primera fila del tablero → muro por encima
+            for (int i = 0; i < currLevel.numBoardX; ++i)
+            {
+                if (!tiles[0, i].GetEmpty())
+                    tiles[0, i].ActiveWall(0);
+            }
+            //Ultima columna del tablero → muro por la derecha
+            for (int i = 0; i < currLevel.numBoardY; ++i)
+            {
+                if (!tiles[i, currLevel.numBoardX - 1].GetEmpty())
+                    tiles[i, currLevel.numBoardX - 1].ActiveWall(1);
+            }
+            //Ultima fila del tablero → muro por debajo
+            for (int i = 0; i < currLevel.numBoardX; ++i)
+            {
+                if (!tiles[currLevel.numBoardY - 1, i].GetEmpty())
+                    tiles[currLevel.numBoardY - 1, i].ActiveWall(2);
+            }
+            //Primera columna del tablero → muro por la izquierda
+            for (int i = 0; i < currLevel.numBoardY; ++i)
+            {
+                if (!tiles[i, 0].GetEmpty())
+                    tiles[i, 0].ActiveWall(3);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Inicializa los huecos de los tiles que lo requieran
+    /// </summary>
+    private void InitGaps(Level currLevel)
+    {
+        //Cambiamos la var empty de cada tile si es hueco
+        for (int i = 0; i < currLevel.gaps.Count; i++)
+        {
+            //Cogemos el tile hueco
+            int elem = currLevel.gaps[i];
+
+            int fila = (int)((elem + 1) / currLevel.numBoardX);
+            int colm = (int)((elem + 1) % currLevel.numBoardX) - 1;
+            if (colm < 0)
+            {
+                colm = currLevel.numBoardX - 1;
+                fila -= 1;
+            }
+            tiles[fila, colm].InitEmptyTile();
+        }
+
+        //Recorremos de nuevo los huecos para ponerles los muros necesarios
+        for (int i = 0; i < currLevel.gaps.Count; i++)
+        {
+            //Cogemos el tile hueco
+            int elem = currLevel.gaps[i];
+
+            int fila = (int)((elem + 1) / currLevel.numBoardX);
+            int colm = (int)((elem + 1) % currLevel.numBoardX) - 1;
+            if (colm < 0)
+            {
+                colm = currLevel.numBoardX - 1;
+                fila -= 1;
+            }
+
+            if (fila > 0 && !tiles[fila - 1, colm].GetEmpty())          //Muro encima
+                tiles[fila, colm].ActiveWall(0);
+            if (colm < currLevel.numBoardX - 1 && !tiles[fila, colm + 1].GetEmpty())    //Muro a la derecha
+                tiles[fila, colm].ActiveWall(1);
+            if (fila < currLevel.numBoardY - 1 && !tiles[fila + 1, colm].GetEmpty())     //Muro debajo
+                tiles[fila, colm].ActiveWall(2);
+            if (colm > 0 && !tiles[fila, colm - 1].GetEmpty())    //Muro a la izquierda
+                tiles[fila, colm].ActiveWall(3);
+        }
+    }
+    #endregion
+
+    #region InputLogic
+    /// <summary>
+    /// Lógica que procesa el toque en pantalla
+    /// </summary>
+    /// <param name="inputPos">Posición del toque en pantalla</param>
+    private void InputDown(Vector2 inputPos)
+    {
+        if (currTile == null)
+        {
+            Rect touchRect = new Rect(inputPos.x, inputPos.y, 1, 1);
+            var pair = GetTileOnCollision(touchRect);
+            if (pair.Key != null)
+            {
+                currTile = pair.Key;
+                Vector2Int index = pair.Value;
+                //originPoint = tiles[index.x, index.y].GetLogicRect().position;
+                currTileColor = currTile.GetColor();
+                currTile.Touched();
+                //currMovement.Add(currTile);
+                int c = currTile.GetTileColor();
+                cMovements[c].AddMov(currTile);
+                //  Para el puntero en pantalla
+                inputTile.GetCircleRender().enabled = true;
+                inputTile.InitTile(currTile.GetTileColor(), new Color(currTileColor.r, currTileColor.g, currTileColor.b, 0.5f));
+                previousDir = new Vector2(-2, -2);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Lógica que procesa el comportamiento del input arrastrándose por pantalla
+    /// </summary>
+    /// <param name="inputPos">Posición del toque en pantalla</param>
     private void InputMoving(Vector2 inputPos)
     {
         if (currTile != null)
@@ -318,6 +548,30 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Lógica que procesa el comportamiento al dejar de tocar la pantalla
+    /// </summary>
+    private void InputUp()
+    {
+        if (currTile != null)
+        {
+            int c = currTile.GetTileColor();
+            currTile = null;
+            ApplyMovements(c);
+            inputTile.GetCircleRender().enabled = false;
+        }
+        if (IsSolution())
+        {
+            GameManager.instance.AddSolutionLevel(true);
+            hud.LevelCompleted(true);
+        }
+    }
+    #endregion
+
+    #region Getters
+    /// <summary>
+    /// Determina si la casilla que se está pulsando y la vecina son "juagbles"
+    /// </summary>
     private bool AreNeighbour(int x1, int y1, int x2, int y2)
     {
         if ((x1 == x2 && (y1 == y2 - 1 || y1 == y2 + 1)) ||
@@ -327,69 +581,9 @@ public class BoardManager : MonoBehaviour
             return false;
     }
 
-    private void ProcessPointer(Vector2 inputPos)
-    {
-        if (currTile != null)
-        {
-            inputTile.GetCircleRender().enabled = true;
-            Vector2 pos = Camera.main.ScreenToWorldPoint(inputPos);
-            inputTile.transform.position = new Vector3(pos.x, pos.y, 10.0f);
-        }
-        else
-        {
-            inputTile.GetCircleRender().enabled = false;
-        }
-    }
-
-    private void InputUp()
-    {
-        if (currTile != null)
-        {
-            int c = currTile.GetTileColor();
-            currTile = null;
-            SaveLastMovement(c);
-            inputTile.GetCircleRender().enabled = false;
-        }
-        if (IsSolution())
-        {
-            GameManager.instance.AddSolutionLevel(true);
-            hud.LevelCompleted(true);
-        }
-    }
-
-    private void InputDown(Vector2 inputPos)
-    {
-        if (currTile == null)
-        {
-            Rect touchRect = new Rect(inputPos.x, inputPos.y, 1, 1);
-            var pair = GetTileOnCollision(touchRect);
-            if (pair.Key != null)
-            {
-                currTile = pair.Key;
-                Vector2Int index = pair.Value;
-                //originPoint = tiles[index.x, index.y].GetLogicRect().position;
-                currTileColor = currTile.GetColor();
-                currTile.Touched();
-                //currMovement.Add(currTile);
-                int c = currTile.GetTileColor();
-                cMovements[c].AddMov(currTile);
-                //  Para el puntero en pantalla
-                inputTile.GetCircleRender().enabled = true;
-                inputTile.InitTile(currTile.GetTileColor(), new Color(currTileColor.r, currTileColor.g, currTileColor.b, 0.5f));
-                previousDir = new Vector2(-2, -2);
-            }
-        }
-    }
-
-    private void SaveLastMovement(int c)
-    {
-        foreach (Tile tile in cMovements[c].GetMovements())
-        {
-            tile.ActiveBgColor(true, currTileColor);
-        }
-        //cMovements[c].GetMovements().Clear();
-    }
-
+    /// <summary>
+    /// Determina si el tablero está solucionado o no
+    /// </summary>
     private bool IsSolution()
     {
         if (percentage < 100.0f)
@@ -407,6 +601,90 @@ public class BoardManager : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// Determina si hay que dibujar un codo en el tile y su dirección
+    /// </summary>
+    private bool IsElbow(Vector2 dir)
+    {
+        if (Math.Abs(dir.x + previousDir.y) == 2.0f || Math.Abs(dir.y + previousDir.x) == 2.0f
+            || Math.Abs(dir.x - previousDir.y) == 0.0f || Math.Abs(dir.y - previousDir.x) == 0.0f)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Convierte el índice dentro del mapa leído de cada uno de los tiles
+    /// en coordenadas dentro de la matriz que contiene la información del tablero
+    /// </summary>
+    private Vector2Int ConvertIndex(int index)
+    {
+        int x = (int)((index + 1) % currLevel.numBoardX) - 1;
+        int y = (int)((index + 1) / currLevel.numBoardX);
+        if (x < 0)
+        {
+            x = currLevel.numBoardX - 1;
+            y -= 1;
+        }
+        return new Vector2Int(x, y);
+    }
+
+    //  Busca entre los circulos cual ha sido pulsado
+    private KeyValuePair<Tile, int> GetCircleTileOnCollision(Rect touchRect)
+    {
+        bool collisionDetected = false;
+        int cont = 0;
+        Tile tile = null;
+        Rect tileRect;
+        while (!collisionDetected && cont < circleTiles.Count)
+        {
+            tileRect = circleTiles[cont].GetLogicRect();
+            if (tileRect.Overlaps(touchRect))
+            {
+                collisionDetected = true;
+                tile = circleTiles[cont];
+            }
+            else cont++;
+        }
+        return new KeyValuePair<Tile, int>(tile, cont);
+    }
+
+    //  Busca entre todas las tiles cual ha sido pulsada y la devuelve con su indice
+    private KeyValuePair<Tile, Vector2Int> GetTileOnCollision(Rect touchRect)
+    {
+        bool collisionDetected = false;
+        int x = 0;
+        int y = 0;
+        Tile tile = null;
+        Rect tileRect;
+        //bool limit = false;
+        while (!collisionDetected && y < tabSize.y)
+        {
+            tileRect = tiles[y, x].GetLogicRect();
+            if (tileRect.Overlaps(touchRect))
+            {
+                collisionDetected = true;
+
+                if (!tiles[y, x].GetEmpty())
+                    tile = tiles[y, x];
+                //limit = ((x == size.x - 1 || x == 0) && (y == size.y - 1 || y == 0));
+            }
+            else
+            {
+                x++;
+                if (x >= tabSize.x)
+                {
+                    x = 0;
+                    y++;
+                }
+            }
+        }
+        return new KeyValuePair<Tile, Vector2Int>(tile, !collisionDetected ? new Vector2Int(-1, -1) : new Vector2Int(x, y));
+    }
+    #endregion
+
+    #region Otros
     public void GiveHint()
     {
         if (GameManager.instance.GetNumHints() > 0)
@@ -453,289 +731,35 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private Vector2Int ConvertIndex(int index)
+    /// <summary>
+    /// Dibuja el círculo con el color del flujo que se está tocando
+    /// para indicar dónde se está pulsando y por dónde se arrastra el input dentro
+    /// del tablero
+    /// </summary>
+    private void DrawCirclePointer(Vector2 inputPos)
     {
-        int x = (int)((index + 1) % currLevel.numBoardX) - 1;
-        int y = (int)((index + 1) / currLevel.numBoardX);
-        if (x < 0)
+        if (currTile != null)
         {
-            x = currLevel.numBoardX - 1;
-            y -= 1;
+            inputTile.GetCircleRender().enabled = true;
+            Vector2 pos = Camera.main.ScreenToWorldPoint(inputPos);
+            inputTile.transform.position = new Vector3(pos.x, pos.y, 10.0f);
         }
-        return new Vector2Int(x,y);
-    }
-
-    //  Determina si el tile anterior es un codo
-    private bool IsElbow(Vector2 dir)
-    {
-        if (Math.Abs(dir.x + previousDir.y) == 2.0f || Math.Abs(dir.y + previousDir.x) == 2.0f
-            || Math.Abs(dir.x - previousDir.y) == 0.0f || Math.Abs(dir.y - previousDir.x) == 0.0f)
+        else
         {
-            return true;
-        }
-        return false;
-    }
-
-    //  Busca entre los circulos cual ha sido pulsado
-    private KeyValuePair<Tile, int> GetCircleTileOnCollision(Rect touchRect)
-    {
-        bool collisionDetected = false;
-        int cont = 0;
-        Tile tile = null;
-        Rect tileRect;
-        while (!collisionDetected && cont < circleTiles.Count)
-        {
-            tileRect = circleTiles[cont].GetLogicRect();
-            if (Collision(tileRect, touchRect))
-            {
-                collisionDetected = true;
-                tile = circleTiles[cont];
-            }
-            else cont++;
-        }
-        return new KeyValuePair<Tile, int>(tile, cont);
-    }
-
-    //  Busca entre todas las tiles cual ha sido pulsada y la devuelve con su indice
-    private KeyValuePair<Tile, Vector2Int> GetTileOnCollision(Rect touchRect)
-    {
-        bool collisionDetected = false;
-        int x = 0;
-        int y = 0;
-        Tile tile = null;
-        Rect tileRect;
-        //bool limit = false;
-        while (!collisionDetected && y < tabSize.y)
-        {
-            tileRect = tiles[y, x].GetLogicRect();
-            if (Collision(tileRect, touchRect))
-            {
-                collisionDetected = true;
-
-                if (!tiles[y, x].GetEmpty())
-                    tile = tiles[y, x];
-                //limit = ((x == size.x - 1 || x == 0) && (y == size.y - 1 || y == 0));
-            }
-            else
-            {
-                x++;
-                if (x >= tabSize.x)
-                {
-                    x = 0;
-                    y++;
-                }
-            }
-        }
-        return new KeyValuePair<Tile, Vector2Int>(tile, !collisionDetected ? new Vector2Int(-1, -1) : new Vector2Int(x, y));
-    }
-
-    //  Inicializa el nivel actual
-    public void Init()
-    {
-        // Creación de los tiles
-        tabSize.x = currLevel.numBoardX;
-        tabSize.y = currLevel.numBoardY;
-        Vector2 initPos = Vector2.zero;
-
-        tiles = new Tile[currLevel.numBoardY, currLevel.numBoardX];
-        for (int i = 0; i < currLevel.numBoardY; i++)
-        {
-            for (int j = 0; j < currLevel.numBoardX; j++)
-            {
-                tiles[i, j] = Instantiate(tilePrefab, pool);
-                tiles[i, j].transform.position = initPos;
-                initPos.x += 1;
-            }
-            initPos.x = 0;
-            initPos.y -= 1;
-        }
-
-        initCircles(currLevel);
-        initGaps(currLevel);
-        initWalls(currLevel);
-
-        // Escalado del tablero
-        var cam = Camera.main;
-
-        // Unidades de Unity
-        var a = hudRegion[0].sizeDelta;
-        var b = hudRegion[1].sizeDelta;
-
-        float camH = cam.orthographicSize * 2.0f;
-        float camW = camH * cam.aspect;
-
-        float tileH = camH / tabSize.y;
-        float tileW = camW / tabSize.x;
-
-        float tileAspect = tileH >= tileW ? tileW : tileH;
-
-        pool.localScale = Vector2.one * tileAspect;
-        // Hay que tener en cuenta que la cámara está situada en el (0, 0) y el tablero también,
-        // por tanto, se estará viendo un cacho del tablero y habría que desplazar el tablero o la cámara.
-        // Optamos por la cámara.
-
-        // A partir de la mitad del ancho de la cámara se calculan el número de tiles visibles sin desplazamiento
-        float numTilesX = (camW / 2) / tileW;
-        float numTilesY = (camH / 2) / tileH;
-
-        // El offset de desplazamiento para la cámara será el número de tiles que no se vean por el tamaño de tile
-        // Se le resta 0.5f porque el pivote de los objetos está en el centro, es decir, nos sobra la mitad de un tile
-        // que en unidades de Unity es 0.5f
-        float offsetX = (tabSize.x - numTilesX - 0.5f) * tileAspect;
-        float offsetY = (tabSize.y - numTilesY - 0.5f) * tileAspect;
-
-        cam.gameObject.transform.position = new Vector2(offsetX, -offsetY);
-
-        // Inicializacion de los rectangulos logicos de cada tile
-        for (int i = 0; i < currLevel.numBoardY; i++)
-        {
-            for (int j = 0; j < currLevel.numBoardX; j++)
-            {
-                tiles[i, j].InitLogicalRect(j, i);
-            }
-        }
-
-    }
-
-    //  Inicializa los circulos del nivel
-    private void initCircles(Level currLevel)
-    {
-        for (int i = 0; i < currLevel.solutions.Count; i++)
-        {
-            //Cabeza de la tuberia
-            float firstElemt = currLevel.solutions[i][0];
-            int filaA = (int)((firstElemt + 1) / currLevel.numBoardX);
-            int colA = (int)((firstElemt + 1) % currLevel.numBoardX) - 1;
-            if (colA < 0)
-            {
-                colA = currLevel.numBoardX - 1;
-                filaA -= 1;
-            }
-            //print("colA: " + colA + " filaA: " + filaA);
-            tiles[filaA, colA].InitTile(i, colors[i], colA, filaA);
-            circleTiles.Add(tiles[filaA, colA]);
-
-            //Inicializamos la lista de movimientos de este color
-            ColorMovements c = new ColorMovements(i);
-            cMovements.Add(c);
-            //List<Tile> t = new List<Tile>();
-            //movements.Add(t);
-
-            //Final de la tuberia
-            float secElement = currLevel.solutions[i][currLevel.solutions[i].Count - 1];
-            int filaB = (int)((secElement + 1) / currLevel.numBoardX);
-            int colB = (int)((secElement + 1) % currLevel.numBoardX) - 1;
-            if (colB < 0)
-            {
-                colB = currLevel.numBoardX - 1;
-                filaB -= 1;
-            }
-            tiles[filaB, colB].InitTile(i, colors[i], colB, filaB);
-            circleTiles.Add(tiles[filaB, colB]);
+            inputTile.GetCircleRender().enabled = false;
         }
     }
 
-    //Pone los muros del nivel
-    private void initWalls(Level currLevel)
+    /// <summary>
+    /// Aplica los movimientos realizados cuando se levanta el input de la pantalla
+    /// </summary>
+    private void ApplyMovements(int c)
     {
-        for (int i = 0; i < currLevel.walls.Count; i++)
+        foreach (Tile tile in cMovements[c].GetMovements())
         {
-            //Cogemos los dos tiles adyacentes al muro
-            int firstElemt = currLevel.walls[i][0];
-            int secElemt = currLevel.walls[i][1];
-
-            int fila = (int)((firstElemt + 1) / currLevel.numBoardX);
-            int colm = (int)((firstElemt + 1) % currLevel.numBoardX) - 1;
-            if (colm < 0)
-            {
-                colm = currLevel.numBoardX - 1;
-                fila -= 1;
-            }
-            //Encontramos en que direccion se encuentra el muro respecto a firstElemt
-            if (firstElemt > secElemt + 1)          //Muro encima
-                tiles[fila, colm].ActiveWall(0);
-            else if (firstElemt == secElemt + 1)    //Muro a la derecha
-                tiles[fila, colm].ActiveWall(1);
-            else if (firstElemt < secElemt - 1)     //Muro debajo
-                tiles[fila, colm].ActiveWall(2);
-            else if (firstElemt == secElemt - 1)    //Muro a la izquierda
-                tiles[fila, colm].ActiveWall(3);
-
-            wallTiles.Add(tiles[fila, colm]);
+            tile.ActiveBgColor(true, currTileColor);
         }
-
-        //Ponemos los muros que rodean el tablero, si es que lo pide el nivel
-        if (currLevel.closed)
-        {
-            //Para ello recorremos todo el contorno del tablero
-            //Primera fila del tablero → muro por encima
-            for (int i = 0; i < currLevel.numBoardX; ++i)
-            {
-                if (!tiles[0, i].GetEmpty())
-                    tiles[0, i].ActiveWall(0);
-            }
-            //Ultima columna del tablero → muro por la derecha
-            for (int i = 0; i < currLevel.numBoardY; ++i)
-            {
-                if (!tiles[i, currLevel.numBoardX - 1].GetEmpty())
-                    tiles[i, currLevel.numBoardX - 1].ActiveWall(1);
-            }
-            //Ultima fila del tablero → muro por debajo
-            for (int i = 0; i < currLevel.numBoardX; ++i)
-            {
-                if (!tiles[currLevel.numBoardY - 1, i].GetEmpty())
-                    tiles[currLevel.numBoardY - 1, i].ActiveWall(2);
-            }
-            //Primera columna del tablero → muro por la izquierda
-            for (int i = 0; i < currLevel.numBoardY; ++i)
-            {
-                if (!tiles[i, 0].GetEmpty())
-                    tiles[i, 0].ActiveWall(3);
-            }
-        }
+        //cMovements[c].GetMovements().Clear();
     }
-
-    //Pone los huecos del nivel
-    private void initGaps(Level currLevel)
-    {
-        //Cambiamos la var empty de cada tile si es hueco
-        for (int i = 0; i < currLevel.gaps.Count; i++)
-        {
-            //Cogemos el tile hueco
-            int elem = currLevel.gaps[i];
-
-            int fila = (int)((elem + 1) / currLevel.numBoardX);
-            int colm = (int)((elem + 1) % currLevel.numBoardX) - 1;
-            if (colm < 0)
-            {
-                colm = currLevel.numBoardX - 1;
-                fila -= 1;
-            }
-            tiles[fila, colm].InitEmptyTile();
-        }
-
-        //Recorremos de nuevo los huecos para ponerles los muros necesarios
-        for (int i = 0; i < currLevel.gaps.Count; i++)
-        {
-            //Cogemos el tile hueco
-            int elem = currLevel.gaps[i];
-
-            int fila = (int)((elem + 1) / currLevel.numBoardX);
-            int colm = (int)((elem + 1) % currLevel.numBoardX) - 1;
-            if (colm < 0)
-            {
-                colm = currLevel.numBoardX - 1;
-                fila -= 1;
-            }
-
-            if (fila > 0 && !tiles[fila - 1, colm].GetEmpty())          //Muro encima
-                tiles[fila, colm].ActiveWall(0);
-            if (colm < currLevel.numBoardX - 1 && !tiles[fila, colm + 1].GetEmpty())    //Muro a la derecha
-                tiles[fila, colm].ActiveWall(1);
-            if (fila < currLevel.numBoardY - 1 && !tiles[fila + 1, colm].GetEmpty())     //Muro debajo
-                tiles[fila, colm].ActiveWall(2);
-            if (colm > 0 && !tiles[fila, colm - 1].GetEmpty())    //Muro a la izquierda
-                tiles[fila, colm].ActiveWall(3);
-        }
-    }
+    #endregion
 }
