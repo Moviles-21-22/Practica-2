@@ -20,10 +20,10 @@ MonoBehaviour:
   - 7x7 - medio
   - '8x8 '
   - "9x9 - dif\xEDcil"
-  completedLevels: 0
+  completedLevels: 1
   levelsInfo:
-  - completed: 0
-    perfect: 0
+  - completed: 1
+    perfect: 1
   - completed: 0
     perfect: 0
   - completed: 0

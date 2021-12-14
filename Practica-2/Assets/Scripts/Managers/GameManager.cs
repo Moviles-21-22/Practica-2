@@ -38,11 +38,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Devuelve si el usuario es premium o no
+    /// </summary>
     public bool IsPremium()
     {
         return isPremium;
     }
 
+    /// <summary>
+    /// Desbloquea el acceso premium del usuario
+    /// </summary>
     public void UnLockPremium()
     {
         isPremium = true;

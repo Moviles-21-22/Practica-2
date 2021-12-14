@@ -43,7 +43,7 @@ public class MainMenuManager : MonoBehaviour
         /// </param>
         public void LoadLevelCallback(Category categoria, int level) 
         {
-            button.onClick.AddListener(() => GameManager.instance.LoadPackage(categoria.levels[level],categoria));
+            button.onClick.AddListener(() => GameManager.instance.LoadPackage(categoria.levels[level], categoria));
         }
     }
 

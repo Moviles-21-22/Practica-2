@@ -34,10 +34,6 @@ public class HUDManager : MonoBehaviour
     [SerializeField]
     private HUD_Element hints;
 
-    [Tooltip("Referencia al objeto que deshace el último movimiento")]
-    [SerializeField]
-    private HUD_Element undoMovement;
-
     [Header("Textos")]
     [Tooltip("Referencia al texto que muestra el nivel actual")]
     [SerializeField]
@@ -64,10 +60,13 @@ public class HUDManager : MonoBehaviour
     private Button restartButton;
 
     private Map map;
+    private LevelPack levelPack;
     private Level currLevel;
     private GameManager gm;
     private bool winPerfect;
     private float timer = 0.0f;
+    private int currentFlows = 0;
+    private int currentMovs = 0;
 
     [System.Serializable]
     class HUD_Element
@@ -87,32 +86,72 @@ public class HUDManager : MonoBehaviour
 
     private void Start()
     {
+        InitData();
+
+        InitTopElements();
+        InitBotElements();
+    }
+
+    /// <summary>
+    /// Inicializa los datos generales del juego
+    /// </summary>
+    private void InitData() 
+    {
         // TODO : Organizar esto
         gm = GameManager.instance;
         map = gm.GetMap();
         currLevel = gm.GetCurrLevel();
+        levelPack = gm.GetCurrentPack();
         numLevelText.text = "Nivel " + currLevel.lvl;
-        LevelPack levelPack = gm.GetCurrentPack();
-        completedLevelIcon.elementText.text = currLevel.numBoardX + "x" + currLevel.numBoardY;
-        // TODO: en funcion si se ha completado el nivel o no
-        completedLevelIcon.elementImage.gameObject.SetActive(true);
-        completedLevelIcon.elementImage.sprite = completedLevelIcon.elementSprites[0];
+    }
 
+    /// <summary>
+    /// Inicializa la parte superior del canvas
+    /// </summary>
+    private void InitTopElements() 
+    {
+        //============TITULO-DEL-NIVEL===================//
+        completedLevelIcon.elementText.text = currLevel.numBoardX + "x" + currLevel.numBoardY;
+        if (levelPack.levelsInfo[currLevel.lvl].perfect)
+        {
+            completedLevelIcon.elementImage.enabled = true;
+            completedLevelIcon.elementImage.sprite = completedLevelIcon.elementSprites[0];
+        }
+        else if (levelPack.levelsInfo[currLevel.lvl].completed)
+        {
+            completedLevelIcon.elementImage.enabled = true;
+            completedLevelIcon.elementImage.sprite = completedLevelIcon.elementSprites[1];
+        }
+
+        //============VOLVER===================//
         backButton.onClick.AddListener(() => gm.LoadScene(2));
+
+        //============RECORD===================//
+        var a = levelPack.records[currLevel.lvl - 1];
+        recordText.text = "récord: " + levelPack.records[currLevel.lvl - 1];
+    }
+
+    /// <summary>
+    /// Inicializa la parte inferior del canvas
+    /// </summary>
+    private void InitBotElements() 
+    {
+        // Reinicia el nivel
         restartButton.onClick.AddListener(() => gm.LoadScene(3));
 
+        //============PISTAS===================//
         int numHints = gm.GetNumHints();
         hints.elementText.text = numHints + "x";
         if (gm.GetNumHints() == 0)
         {
             hints.elementImage.sprite = hints.elementSprites[0];
         }
-        else 
+        else
         {
             hints.elementImage.sprite = hints.elementSprites[1];
-            //hints.elementButton.onClick.AddListener(() => UseHint());
         }
 
+        //============NIVEL-ANTERIOR===================//
         if (currLevel.lvl == 1)
         {
             prevLevel.elementImage.sprite = prevLevel.elementSprites[0];
@@ -123,18 +162,37 @@ public class HUDManager : MonoBehaviour
             prevLevel.elementButton.onClick.AddListener(() => gm.ChangeLevel(currLevel.lvl - 2));
         }
 
+        //============NIVEL-POSTERIOR===================//
         if (currLevel.lvl == levelPack.levelsInfo.Count)
         {
             nextLevel.elementImage.sprite = nextLevel.elementSprites[0];
         }
-        else 
+        else
         {
             nextLevel.elementImage.sprite = nextLevel.elementSprites[1];
             nextLevel.elementButton.onClick.AddListener(() => gm.ChangeLevel(currLevel.lvl));
         }
     }
 
-    public void LevelCompleted(bool perfect) 
+    /// <summary>
+    /// Cambia el texto que muestra las pistas en función de las pistas
+    /// que queden en el GameManager
+    /// </summary>
+    public void UseHint()
+    {
+        int leftHints = gm.GetNumHints();
+        hints.elementText.text = leftHints.ToString() + "x";
+        if (leftHints == 0)
+        {
+            hints.elementImage.sprite = hints.elementSprites[0];
+        }
+    }
+
+    /// <summary>
+    /// Lógica que procesa el comportamiento al completar un nivel
+    /// </summary>
+    /// <param name="perfect">Determina si el nivel es perfecto o no</param>
+    public void LevelCompleted(bool perfect)
     {
         winPerfect = perfect;
         winStar.enabled = true;
@@ -155,7 +213,7 @@ public class HUDManager : MonoBehaviour
     /// <summary>
     /// Animación de aparición de la estrella al ganar
     /// </summary>
-    private void WinAnimation() 
+    private void WinAnimation()
     {
         timer += 0.05f;
         if (timer < 0.5f)
@@ -164,13 +222,13 @@ public class HUDManager : MonoBehaviour
             color.a += 0.1f;
             winStar.color = color;
         }
-        else if (timer < 1.0f) 
+        else if (timer < 1.0f)
         {
             var color = winStar.color;
             color.a -= 0.1f;
             winStar.color = color;
         }
-        else if(timer >= 1.0f)
+        else if (timer >= 1.0f)
         {
             winStar.enabled = false;
             winInfo.SetActive(true);
@@ -184,5 +242,23 @@ public class HUDManager : MonoBehaviour
     public void ShowPercentage(float percentage)
     {
         percentageText.text = "tubería: " + ((int)percentage).ToString() + "%";
+    }
+
+    /// <summary>
+    /// Añade o quita un flujo al contador de flujos completos
+    /// </summary>
+    public void AddFlow(int flow)
+    {
+        currentFlows += flow;
+        numFlowsText.text = "flujos: " + currentFlows + "/" + currLevel.numFlow;
+    }
+
+    /// <summary>
+    /// Añade un nuevo movimiento al contador de pasos del canvas
+    /// </summary>
+    public void AddMovement(int mov)
+    {
+        currentMovs += mov;
+        numPasosText.text = "pasos: " + currentMovs;
     }
 }

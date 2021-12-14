@@ -57,9 +57,12 @@ struct ColorMovements
         return p;
     }
 
+    /// <summary>
+    /// Determina si el flujo está conectado o no
+    /// </summary>
     public bool IsConected()
     {
-        return conected;
+        return (movements.Count > 1  && movements[0].CircleActive() && movements[movements.Count - 1].CircleActive()) || conected;
     }
 
     public int GetColor()
@@ -594,6 +597,7 @@ public class BoardManager : MonoBehaviour
             ApplyMovements(c);
             inputTile.GetCircleRender().enabled = false;
         }
+
         if (IsSolution())
         {
             GameManager.instance.AddSolutionLevel(true);
@@ -721,7 +725,8 @@ public class BoardManager : MonoBehaviour
     #region Otros
     public void GiveHint()
     {
-        if (GameManager.instance.GetNumHints() > 0)
+        var gm = GameManager.instance;
+        if (gm.GetNumHints() > 0)
         {
             List<int> movs = new List<int>();
             int cont = 0;
@@ -760,7 +765,8 @@ public class BoardManager : MonoBehaviour
                         tiles[index.y, index.x].ActiveTail(Vector2.down,color);
                     }
                 }
-                GameManager.instance.UseHint();
+                gm.UseHint();
+                hud.UseHint();
             }
         }
     }
@@ -793,6 +799,12 @@ public class BoardManager : MonoBehaviour
         {
             tile.ActiveBgColor(true, currTileColor);
         }
+
+        if (cMovements[c].IsConected()) 
+        {
+            hud.AddFlow(1);
+        }
+
         //cMovements[c].GetMovements().Clear();
     }
     #endregion

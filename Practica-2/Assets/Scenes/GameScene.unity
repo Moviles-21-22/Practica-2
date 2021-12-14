@@ -810,8 +810,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 141.98862, y: -284.1289}
-  m_SizeDelta: {x: 263.97723, y: 61.71236}
+  m_AnchoredPosition: {x: 263.83792, y: -584.2738}
+  m_SizeDelta: {x: 507.67584, y: 176.09128}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &142772775
 MonoBehaviour:
@@ -1550,7 +1550,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &272636405
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3911,8 +3911,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 141.98862, y: -80.35209}
-  m_SizeDelta: {x: 263.97723, y: 140.70418}
+  m_AnchoredPosition: {x: 263.83792, y: -116.04564}
+  m_SizeDelta: {x: 507.67584, y: 212.09128}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &936746975
 MonoBehaviour:
@@ -4817,8 +4817,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 141.98862, y: -186.56036}
-  m_SizeDelta: {x: 263.97723, y: 61.71236}
+  m_AnchoredPosition: {x: 263.83792, y: -315.1369}
+  m_SizeDelta: {x: 507.67584, y: 176.09128}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1090603879
 MonoBehaviour:
@@ -8643,11 +8643,6 @@ MonoBehaviour:
     elementImage: {fileID: 2003309438}
     elementText: {fileID: 1063351235}
     elementButton: {fileID: 2003309437}
-  undoMovement:
-    elementSprites: []
-    elementImage: {fileID: 0}
-    elementText: {fileID: 0}
-    elementButton: {fileID: 0}
   numLevelText: {fileID: 2114533298}
   numFlowsText: {fileID: 121621165}
   numPasosText: {fileID: 1817965219}
