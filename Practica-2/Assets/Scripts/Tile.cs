@@ -6,9 +6,9 @@ using UnityEngine.UI;
 
 public class Tile : MonoBehaviour
 {
-    private TILE_COLOR tileColor;
+    private TILE_COLOR tileColor = TILE_COLOR.NONE;
 
-    private Color color;
+    private Color color = Color.clear;
 
     private int x;
     private int y;
@@ -87,7 +87,7 @@ public class Tile : MonoBehaviour
     public void InitEmptyTile()
     {
         tileColor = TILE_COLOR.NONE;
-        color = Color.white;
+        color = Color.clear;
         empty = true;
         lines.enabled = false;
     }
@@ -240,18 +240,22 @@ public class Tile : MonoBehaviour
     {
         lines.enabled = false;
     }
-    
+    public void DesactiveAll()
+    {
+        bgColor.enabled = false;
+        bridgeTail.enabled = false;
+        bridge.enabled = false;
+        elbow.enabled = false;
+    }
+
     public void ClearTile()
     {
         if (!CircleActive())
         {
             tileColor = TILE_COLOR.NONE;
-            color = Color.white;
+            color = Color.clear;
         }
-        bgColor.enabled = false;
-        bridgeTail.enabled = false;
-        bridge.enabled = false;
-        elbow.enabled = false;
+        DesactiveAll();
     }
 
     public void RemoveTail()

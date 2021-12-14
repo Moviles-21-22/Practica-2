@@ -33,7 +33,7 @@ struct ColorMovements
     }
 
     /// <summary>
-    /// Borra todos los elementos de la lista de movimientos hasta t
+    /// Borra todos los elementos de la lista de movimientos incluido t
     /// Devuelve el numero de elementos borrados
     /// </summary>
     public int ClearUntilTile(Tile t)
@@ -58,11 +58,48 @@ struct ColorMovements
     }
 
     /// <summary>
+    /// Borra todos los elementos de la lista desde el primero hasta t incluido
+    /// Devuelve el numero de elementos borrados
+    /// </summary>
+    public int ClearFirstUntilTile(Tile t)
+    {
+        int p = 0, i = 0;
+        bool rem = true;
+        while (rem && movements.Count > 0)
+        {
+            Tile firstTile = movements[i];
+            movements[i] = movements[movements.Count - 1];
+            movements[movements.Count - 1] = firstTile;
+
+            //Hemos encontrado el tile desde el que queremos mantener el camino
+            if (movements[i] == t)
+            {
+                rem = false;
+            }
+
+            p++;
+            movements[movements.Count - 1].ClearTile();
+            movements.Remove(movements[movements.Count - 1]);
+            ++i;
+        }
+
+        //Si sobra algun movimiento se borra
+        for (int j = movements.Count; j > i; --j)
+        {
+            p++;
+            movements[movements.Count - 1].ClearTile();
+            movements.Remove(movements[movements.Count - 1]);
+        }
+
+        return p;
+    }
+
+    /// <summary>
     /// Determina si el flujo está conectado o no
     /// </summary>
     public bool IsConected()
     {
-        return (movements.Count > 1  && movements[0].CircleActive() && movements[movements.Count - 1].CircleActive()) || conected;
+        return (movements[movements.Count - 1].CircleActive()) || conected;
     }
 
     public int GetColor()
@@ -483,9 +520,10 @@ public class BoardManager : MonoBehaviour
                         return;
 
                     // Hemos llegado al tile que le corresponde (solución)
-                    // Condiciones: Sea un círculo, sea del mismo color que mi tubería y no sea el mismo círculo con el que empecé
+                    // Condiciones: Sea un círculo y sea del mismo color que mi tubería
                     if (dragedTile.Key.CircleActive() && dragedTile.Key.GetColor() == currTile.GetColor())
                     {
+                        //Comprobamos si es el mismo círculo con el que empecé o no
                         if (dragedTile.Key != cMovements[c].GetMovements()[0])
                         {
                             // Es un codo
@@ -542,6 +580,52 @@ public class BoardManager : MonoBehaviour
                                 Tile prevTile = cMovements[c].GetMovements()[cMovements[c].GetMovements().Count - 2];
                                 previousDir = (currTile.GetLogicRect().position - prevTile.GetLogicRect().position).normalized;
                             }
+                        }
+                        //Si nos movemos a una tubería que ya tenía otro color, se resetea dicha tubería
+                        else if (dragedTile.Key.GetTileColor() != (int)Tile.TILE_COLOR.NONE)
+                        {
+                            int cM = dragedTile.Key.GetTileColor();
+
+                            //Si la tubería con la que chocamos ya estaba completa, se recortará dejando el lado más largo
+                            if (cMovements[cM].GetMovements()[cMovements[cM].GetMovements().Count - 1].CircleActive()) {
+                                int p = cMovements[cM].ClearFirstUntilTile(dragedTile.Key);
+                                percentage -= plusPercentage * p;
+
+                            }
+                            //Si la tubería no estaba completa se recortará directamente
+                            else
+                            {
+                                int p = cMovements[cM].ClearUntilTile(dragedTile.Key);
+                                percentage -= plusPercentage * p;
+
+                            }
+                            //Renderizamos la puntita
+                            Tile lastTile = cMovements[cM].GetMovements()[cMovements[cM].GetMovements().Count - 1];
+                                
+                            if (cMovements[cM].GetMovements().Count > 1)
+                            {
+                                Tile prevTile = cMovements[cM].GetMovements()[cMovements[cM].GetMovements().Count - 2];
+                                Vector2 d = (lastTile.GetLogicRect().position - prevTile.GetLogicRect().position).normalized;
+
+                                lastTile.DesactiveAll();
+                                lastTile.ActiveTail(d, lastTile.GetColor());
+                            }
+                            else
+                                lastTile.DesactiveAll();
+
+                            //int nC = dragedTile.Key.GetTileColor();
+                            //Debug.Log(nC);
+
+
+
+                            //currTile = cMovements[c].GetMovements()[cMovements[c].GetMovements().Count - 1];
+                            //dir = (dragedTile.Key.GetLogicRect().position - currTile.GetLogicRect().position).normalized;
+
+                            //if (cMovements[c].GetMovements().Count > 1)
+                            //{
+                            //    Tile prevTile = cMovements[c].GetMovements()[cMovements[c].GetMovements().Count - 2];
+                            //    previousDir = (currTile.GetLogicRect().position - prevTile.GetLogicRect().position).normalized;
+                            //}
                         }
 
                         percentage += plusPercentage;
