@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour
     private List<Category> categories;
     //  TODO(cambiarlo por datos) Lista con los todos los temas
     public List<ColorPack> themes;
+    //  Tema actual
+    private ColorPack currTheme;
     //  Actual pack cargado
     private Map currMap;
     //  N�mero de pistas disponibles
@@ -108,6 +110,29 @@ public class GameManager : MonoBehaviour
     public List<ColorPack> GetThemes()
     {
         return themes;
+    }
+
+    //  Devuelve el tema usado actualmente
+    public ColorPack GetCurrTheme()
+    {
+        return currTheme;
+    }
+
+    //  Desbloquea un tema
+    public void UnlockTheme(ColorPack t)
+    {
+        //  TODO hacerlo sobre el que se guarda, no sobre la copia original
+        var v = themes[themes.IndexOf(t)];
+        v.active = true;
+        SetTheme(v);
+        SaveGame();
+    }
+
+    //  Cambia el tema
+    internal void SetTheme(ColorPack t)
+    {
+        currTheme = t;
+        SaveGame();
     }
 
     //  Carga una escena
