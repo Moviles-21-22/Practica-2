@@ -102,7 +102,7 @@ public class HUDManager : MonoBehaviour
         map = gm.GetMap();
         currLevel = gm.GetCurrLevel();
         levelPack = gm.GetCurrentPack();
-        numLevelText.text = "Nivel " + currLevel.lvl;
+        numLevelText.text = "Nivel " + (currLevel.lvl + 1);
     }
 
     /// <summary>
@@ -126,9 +126,9 @@ public class HUDManager : MonoBehaviour
         //============VOLVER===================//
         backButton.onClick.AddListener(() => gm.LoadScene(2));
 
-        //============RECORD===================//
-        var a = levelPack.records[currLevel.lvl - 1];
-        recordText.text = "récord: " + levelPack.records[currLevel.lvl - 1];
+        //============TABLERO-INFO===================//
+        numFlowsText.text = "flujos: " + 0 + "/" + currLevel.numFlow;
+        recordText.text = "récord: " + levelPack.records[currLevel.lvl];
     }
 
     /// <summary>
@@ -152,25 +152,26 @@ public class HUDManager : MonoBehaviour
         }
 
         //============NIVEL-ANTERIOR===================//
-        if (currLevel.lvl == 1)
+        if (currLevel.lvl == 0)
         {
             prevLevel.elementImage.sprite = prevLevel.elementSprites[0];
         }
         else
         {
             prevLevel.elementImage.sprite = prevLevel.elementSprites[1];
-            prevLevel.elementButton.onClick.AddListener(() => gm.ChangeLevel(currLevel.lvl - 2));
+            //int index = (index * boxes.Length) +i
+            prevLevel.elementButton.onClick.AddListener(() => gm.ChangeLevel(currLevel.lvl - 1));
         }
 
         //============NIVEL-POSTERIOR===================//
-        if (currLevel.lvl == levelPack.levelsInfo.Count)
+        if (currLevel.lvl + 1 == levelPack.levelsInfo.Count)
         {
             nextLevel.elementImage.sprite = nextLevel.elementSprites[0];
         }
         else
         {
             nextLevel.elementImage.sprite = nextLevel.elementSprites[1];
-            nextLevel.elementButton.onClick.AddListener(() => gm.ChangeLevel(currLevel.lvl));
+            nextLevel.elementButton.onClick.AddListener(() => gm.ChangeLevel(currLevel.lvl + 1));
         }
     }
 
@@ -239,9 +240,9 @@ public class HUDManager : MonoBehaviour
     /// <summary>
     /// Muestra la parte entera del porcentaje que hay resuelto del tablero
     /// </summary>
-    public void ShowPercentage(float percentage)
+    public void ShowPercentage(int percentage)
     {
-        percentageText.text = "tubería: " + ((int)percentage).ToString() + "%";
+        percentageText.text = "tubería: " + (percentage).ToString() + "%";
     }
 
     /// <summary>

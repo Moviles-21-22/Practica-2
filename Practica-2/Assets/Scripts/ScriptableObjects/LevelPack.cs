@@ -20,6 +20,8 @@ public class LevelPack : ScriptableObject
     public bool lockPack;
     [Tooltip("Record de cada nivel")]
     public int[] records;
+    [Tooltip("Determina la forma de enumerar los niveles")]
+    public bool splitLevels = true;
 }
 
 [System.Serializable]

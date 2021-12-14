@@ -498,7 +498,7 @@ public class BoardManager : MonoBehaviour
                                 currTile.ActiveBridge(dir, currTileColor);
                             }
                             percentage += plusPercentage;
-                            hud.ShowPercentage(percentage);
+                            hud.ShowPercentage((int)Math.Round(percentage));
 
                             dragedTile.Key.ActiveTail(dir * -1, currTileColor);
                             dragedTile.Key.SetX(dragedTile.Value.x);
@@ -514,7 +514,7 @@ public class BoardManager : MonoBehaviour
                             percentage -= plusPercentage * p;
 
                             percentage += plusPercentage;
-                            hud.ShowPercentage(percentage);
+                            hud.ShowPercentage((int)Math.Round(percentage));
 
                             currTile = dragedTile.Key;
                             previousDir = -dir;
@@ -545,7 +545,7 @@ public class BoardManager : MonoBehaviour
                         }
 
                         percentage += plusPercentage;
-                        hud.ShowPercentage(percentage);
+                        hud.ShowPercentage((int)Math.Round(percentage));
 
                         dragedTile.Key.ActiveTail(dir, currTileColor);
                         dragedTile.Key.SetX(dragedTile.Value.x);
@@ -601,7 +601,8 @@ public class BoardManager : MonoBehaviour
         if (IsSolution())
         {
             GameManager.instance.AddSolutionLevel(true);
-            hud.LevelCompleted(true);
+            bool perfect = true;
+            hud.LevelCompleted(perfect);
         }
     }
     #endregion
@@ -624,17 +625,18 @@ public class BoardManager : MonoBehaviour
     /// </summary>
     private bool IsSolution()
     {
-        if (percentage < 100.0f)
+        if (Math.Round(percentage) < 100)
             return false;
+
 
         //Recorremos todas las listas de movimientos
         foreach (ColorMovements cM in cMovements)
         {
             //Si el primer elem y el ultimo de una lista no es circulo: no es solución
-            if (!cM.GetMovements()[0].CircleActive() ||
-                !cM.GetMovements()[cM.GetMovements().Count - 1].CircleActive())
+            if (!cM.IsConected())
                 return false;
         }
+
         //Si hemos salido es porque todos los colores tienen la solución
         return true;
     }

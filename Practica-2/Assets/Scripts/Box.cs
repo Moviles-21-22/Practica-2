@@ -26,6 +26,10 @@ public class Box : MonoBehaviour
     [SerializeField]
     private RawImage starImage;
 
+    [Tooltip("Referencia al candado del nivel bloqueado")]
+    [SerializeField]
+    private RawImage lockImage;
+
     /// <summary>
     /// color actual del tile
     /// </summary>
@@ -45,7 +49,7 @@ public class Box : MonoBehaviour
         frame.color = color;
     }
 
-    public void initBox(Color _color)
+    public void InitBox(Color _color)
     {
         color = _color;
         background.color = color;
@@ -71,5 +75,36 @@ public class Box : MonoBehaviour
         var color = background.color;
         color.a = completed ? 1.0f : 0.5f;
         background.color = color;
+    }
+
+    public void ActiveLockImage() 
+    {
+        var color = background.color;
+        color = Color.grey;
+        background.color = color;
+
+        color = frame.color;
+        color = Color.white;
+        frame.color = color;
+
+        lockImage.enabled = true;
+    }
+
+    public void CurrentLevel() 
+    {
+        //var color = background.color;
+        //color = Color.grey;
+        //background.color = color;
+        //
+        //color = frame.color;
+        //color = Color.white;
+        //frame.color = color;
+
+        ///InvokeRepeating(nameof(CurrentLevelAnim), 0.0f, 0.1f);
+    }
+
+    private void CurrentLevelAnim() 
+    {
+        
     }
 }

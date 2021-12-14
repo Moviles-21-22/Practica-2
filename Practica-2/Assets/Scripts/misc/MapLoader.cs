@@ -21,7 +21,7 @@ public struct Level
     public List<List<int>> walls;
     //  Vector con huecos
     public List<int> gaps;
-    public Level(int _numBoardX,int _lvl,int _numFlow,int _numBoardY, bool _closed = false)
+    public Level(int _numBoardX, int _lvl, int _numFlow, int _numBoardY, bool _closed = false)
     {
         numBoardX = _numBoardX;
         numBoardY = _numBoardY;
@@ -44,14 +44,17 @@ public class Map
     {
         //  Todos los niveles por separado
         string[] lvls = text.Split('\n');
-        foreach (string chain in lvls)
+
+        for (int i = 0; i < lvls.Length; i++)
         {
-            if(chain != "")
-                levels.Add(ProcessLevel(chain));
+            if (lvls[i] != "")
+            {
+                levels.Add(ProcessLevel(lvls[i], i));
+            }
         }
     }
 
-    private Level ProcessLevel(string level)
+    private Level ProcessLevel(string level, int index)
     {
         //  Separamos por segmentos
         string[] seg = level.Split(';');
@@ -75,7 +78,7 @@ public class Map
 
         int lvl = int.Parse(subChain[2].ToString());
         int numFlow = int.Parse(subChain[3].ToString());
-        Level currLevel = new Level(numBoardX, lvl, numFlow, numBoardY, closed);
+        Level currLevel = new Level(numBoardX, index, numFlow, numBoardY, closed);
 
         //Miramos a ver si hay muros o huecos
         //i == 4 → puentes (no hay que implementarlos)
@@ -148,7 +151,7 @@ public class Map
             }
             int lvl = int.Parse(subChain[2].ToString());
             int numFlow = int.Parse(subChain[3].ToString());
-            Level currLevel = new Level(numBoardX,lvl,numFlow,numBoardY);
+            Level currLevel = new Level(numBoardX, lvl, numFlow, numBoardY);
             for (int i = 0; i < currLevel.numFlow; i++)
             {
                 string[] chars = subs[i + 1].Split(',');

@@ -159,7 +159,7 @@ public class GameManager : MonoBehaviour
         bool saved = false;
         int i = 0;
         int j = 0;
-        // De momento así
+        // De momento así, pero es mejorable
         while (!saved && i < categories.Count)
         {
             if (categories[i].name == currCategory.name)
@@ -169,13 +169,17 @@ public class GameManager : MonoBehaviour
                     if (categories[i].levels[j].name == currPack.name)
                     {
                         saved = true;
-                        // Se añade un nivel completado al paquete
-                        categories[i].levels[j].completedLevels++;
 
+                        // Cuando ya se ha completado el nivel no hace falta esto
+                        if (!categories[i].levels[j].levelsInfo[currLevel.lvl].completed)
+                        {
+                            // Se añade un nivel completado al paquete
+                            categories[i].levels[j].completedLevels++;
+                            categories[i].levels[j].levelsInfo[currLevel.lvl].completed = true;
+                        }
+
+                        categories[i].levels[j].levelsInfo[currLevel.lvl].perfect = perfect;
                         // El nivel actual se ha completado
-                        categories[i].levels[j].levelsInfo[currLevel.lvl - 1].completed = true;
-                        categories[i].levels[j].levelsInfo[currLevel.lvl - 1].perfect = true;
-
                         SaveGame();
                     }
                     j++;

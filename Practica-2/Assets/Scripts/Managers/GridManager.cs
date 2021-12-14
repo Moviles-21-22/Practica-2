@@ -21,12 +21,19 @@ public class GridManager : MonoBehaviour
 
     private Color[] colors = { Color.red, Color.blue, Color.green, Color.cyan, Color.magenta };
 
+    private bool splitLevels = false;
+    private bool lockPack = false;
+    private int completedLevels = 0;
+
     private void Start()
     {
         // Paquete de niveles que se va a cargar
         currLevelPack = GameManager.instance.GetCurrentPack();
         packTitle.color = GameManager.instance.GetCurrentCategory().color;
         packTitle.text = currLevelPack.levelName;
+        splitLevels = currLevelPack.splitLevels;
+        lockPack = currLevelPack.lockPack;
+        completedLevels = currLevelPack.completedLevels;
 
         // Número de niveles dentro del paquete
         int numPacks = currLevelPack.gridNames.Length;
@@ -46,18 +53,38 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    private void CreateGrid(LevelPack pack,int index,Color color)
+    private void CreateGrid(LevelPack pack, int index, Color color)
     {
-        GridPack currPack = Instantiate<GridPack>(packPrefab,contentScroll.transform);
+        GridPack currPack = Instantiate<GridPack>(packPrefab, contentScroll.transform);
         currPack.SetText(pack.gridNames[index]);
         Box[] boxes = currPack.GetAllBoxes();
 
         for (int i = 0; i < boxes.Length; i++)
         {
-            boxes[i].SetCallBack((index * boxes.Length) + i);
-            boxes[i].SetLevelNum(i + 1);
-            boxes[i].initBox(color);
+            if (splitLevels)
+            {
+                boxes[i].SetLevelNum(i + 1);
+            }
+            else
+            {
+                boxes[i].SetLevelNum((index * boxes.Length) + i + 1);
+            }
+
+            boxes[i].InitBox(color);
             boxes[i].CompletedBox(currLevelPack.levelsInfo[(index * boxes.Length) + i].perfect, currLevelPack.levelsInfo[(index * boxes.Length) + i].completed);
+
+            if (!lockPack || lockPack && (index * boxes.Length) + i <= completedLevels)   // Desbloquea los niveles hasta dejar el primero sin hacer desbloqueado
+            {
+                boxes[i].SetCallBack((index * boxes.Length) + i);
+                if ((index * boxes.Length) + i == completedLevels)
+                {
+                    boxes[i].CurrentLevel();
+                }
+            }
+            else
+            {
+                boxes[i].ActiveLockImage();
+            }
         }
     }
 }
