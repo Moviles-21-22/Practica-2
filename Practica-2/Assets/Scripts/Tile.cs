@@ -243,8 +243,11 @@ public class Tile : MonoBehaviour
     
     public void ClearTile()
     {
-        tileColor = TILE_COLOR.NONE;
-        color = Color.white;
+        if (!CircleActive())
+        {
+            tileColor = TILE_COLOR.NONE;
+            color = Color.white;
+        }
         bgColor.enabled = false;
         bridgeTail.enabled = false;
         bridge.enabled = false;

@@ -482,27 +482,43 @@ public class BoardManager : MonoBehaviour
 
                     // Hemos llegado al tile que le corresponde (solución)
                     // Condiciones: Sea un círculo, sea del mismo color que mi tubería y no sea el mismo círculo con el que empecé
-                    if (dragedTile.Key.CircleActive() && dragedTile.Key.GetColor() == currTile.GetColor() && dragedTile.Key != cMovements[c].GetMovements()[0])
+                    if (dragedTile.Key.CircleActive() && dragedTile.Key.GetColor() == currTile.GetColor())
                     {
-                        // Es un codo
-                        if (IsElbow(dir))
+                        if (dragedTile.Key != cMovements[c].GetMovements()[0])
                         {
-                            currTile.ActiveElbow(currTileColor, dir, previousDir);
-                        }
-                        else if (!currTile.CircleActive())
-                        {
-                            currTile.ActiveBridge(dir, currTileColor);
-                        }
-                        percentage += plusPercentage;
-                        hud.ShowPercentage(percentage);
+                            // Es un codo
+                            if (IsElbow(dir))
+                            {
+                                currTile.ActiveElbow(currTileColor, dir, previousDir);
+                            }
+                            else if (!currTile.CircleActive())
+                            {
+                                currTile.ActiveBridge(dir, currTileColor);
+                            }
+                            percentage += plusPercentage;
+                            hud.ShowPercentage(percentage);
 
-                        dragedTile.Key.ActiveTail(dir * -1, currTileColor);
-                        dragedTile.Key.SetX(dragedTile.Value.x);
-                        dragedTile.Key.SetY(dragedTile.Value.y);
-                        dragedTile.Key.SetTileColor(c);
-                        currTile = dragedTile.Key;
+                            dragedTile.Key.ActiveTail(dir * -1, currTileColor);
+                            dragedTile.Key.SetX(dragedTile.Value.x);
+                            dragedTile.Key.SetY(dragedTile.Value.y);
+                            dragedTile.Key.SetTileColor(c);
+                            currTile = dragedTile.Key;
+                            previousDir = dir;
+                        }
+                        //Es el circulo con el que comenzamos, se borra toda la tubería
+                        else
+                        {
+                            int p = cMovements[c].ClearUntilTile(dragedTile.Key);
+                            percentage -= plusPercentage * p;
+
+                            percentage += plusPercentage;
+                            hud.ShowPercentage(percentage);
+
+                            currTile = dragedTile.Key;
+                            previousDir = -dir;
+                        }
+                        
                         cMovements[c].AddMov(dragedTile.Key);
-                        previousDir = dir;
                     }
                     // No es un circulo
                     else if (!dragedTile.Key.CircleActive())
