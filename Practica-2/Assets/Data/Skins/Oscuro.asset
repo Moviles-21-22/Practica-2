@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a2a691a8db979845bda9bf3285f5b67, type: 3}
+  m_Name: Oscuro
+  m_EditorClassIdentifier: 
+  colorPackName: Materia oscura
+  colors:
+  - {r: 0.5882353, g: 0, b: 0, a: 1}
+  - {r: 0, g: 0.25490198, b: 0, a: 1}
+  - {r: 0.047058824, g: 0.16078432, b: 0.5882353, a: 1}
+  - {r: 0.5882353, g: 0.5882353, b: 0, a: 1}
+  - {r: 0.6320754, g: 0.33958563, b: 0, a: 1}
+  - {r: 0, g: 0.5754717, b: 0.5754717, a: 1}
+  - {r: 0.5754717, g: 0, b: 0.44863316, a: 1}
+  - {r: 0.33962262, g: 0, b: 0, a: 1}
+  - {r: 0.2924528, g: 0.0041384757, b: 0.2924528, a: 1}
+  - {r: 0.6132076, g: 0.6132076, b: 0.6132076, a: 1}
+  - {r: 0.30744925, g: 0.30744925, b: 0.4433962, a: 1}
+  - {r: 0, g: 0.46226418, b: 0, a: 1}
+  - {r: 0.3490566, g: 0.29840636, b: 0.1728818, a: 1}
+  - {r: 0, g: 0.033207517, b: 0.31132078, a: 1}
+  - {r: 0.0011569981, g: 0.24528301, b: 0.24528301, a: 1}
+  - {r: 0.5754717, g: 0.28502136, b: 0.5352555, a: 1}

@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour
     private Level currLevel;
     //  Array con todas las categor�as disponibles
     private List<Category> categories;
+    //  TODO(cambiarlo por datos) Lista con los todos los temas
+    public List<ColorPack> themes;
     //  Actual pack cargado
     private Map currMap;
     //  N�mero de pistas disponibles
@@ -101,6 +103,11 @@ public class GameManager : MonoBehaviour
     public Map GetMap()
     {
         return currMap;
+    }
+
+    public List<ColorPack> GetThemes()
+    {
+        return themes;
     }
 
     //  Carga una escena
