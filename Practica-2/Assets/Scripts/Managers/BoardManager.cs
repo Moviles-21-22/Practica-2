@@ -65,7 +65,7 @@ struct ColorMovements
     {
         int p = 0, i = 0;
         bool rem = true;
-        while (rem && movements.Count > 0)
+        while (rem && movements.Count > i)
         {
             Tile firstTile = movements[i];
             movements[i] = movements[movements.Count - 1];
@@ -566,9 +566,6 @@ public class BoardManager : MonoBehaviour
                         //Si nos movemos a una tubería que ya tenía nuestro color, se resetea
                         if (dragedTile.Key.GetColor() == currTile.GetColor())
                         {
-                            //int nC = dragedTile.Key.GetTileColor();
-                            //Debug.Log(nC);
-
                             int p = cMovements[c].ClearUntilTile(dragedTile.Key);
                             percentage -= plusPercentage * p;
 
@@ -588,7 +585,21 @@ public class BoardManager : MonoBehaviour
 
                             //Si la tubería con la que chocamos ya estaba completa, se recortará dejando el lado más largo
                             if (cMovements[cM].GetMovements()[cMovements[cM].GetMovements().Count - 1].CircleActive()) {
-                                int p = cMovements[cM].ClearFirstUntilTile(dragedTile.Key);
+                                //Encontramos el lado más largo
+                                int i = 0;
+                                while (i < cMovements[cM].GetMovements().Count)
+                                {
+                                    if (cMovements[cM].GetMovements()[i] == dragedTile.Key)
+                                        break;
+                                    ++i;
+                                }
+
+                                //Empezamos a borrar según que lado sea más largo
+                                int p = 0;
+                                if (i < cMovements[cM].GetMovements().Count / 2)
+                                    p = cMovements[cM].ClearFirstUntilTile(dragedTile.Key);
+                                else
+                                    p = cMovements[cM].ClearUntilTile(dragedTile.Key);
                                 percentage -= plusPercentage * p;
 
                             }
@@ -599,6 +610,7 @@ public class BoardManager : MonoBehaviour
                                 percentage -= plusPercentage * p;
 
                             }
+
                             //Renderizamos la puntita
                             Tile lastTile = cMovements[cM].GetMovements()[cMovements[cM].GetMovements().Count - 1];
                                 
@@ -612,20 +624,6 @@ public class BoardManager : MonoBehaviour
                             }
                             else
                                 lastTile.DesactiveAll();
-
-                            //int nC = dragedTile.Key.GetTileColor();
-                            //Debug.Log(nC);
-
-
-
-                            //currTile = cMovements[c].GetMovements()[cMovements[c].GetMovements().Count - 1];
-                            //dir = (dragedTile.Key.GetLogicRect().position - currTile.GetLogicRect().position).normalized;
-
-                            //if (cMovements[c].GetMovements().Count > 1)
-                            //{
-                            //    Tile prevTile = cMovements[c].GetMovements()[cMovements[c].GetMovements().Count - 2];
-                            //    previousDir = (currTile.GetLogicRect().position - prevTile.GetLogicRect().position).normalized;
-                            //}
                         }
 
                         percentage += plusPercentage;
