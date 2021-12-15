@@ -52,30 +52,34 @@ public class MainMenuManager : MonoBehaviour
         GameManager gm = GameManager.instance;
         List<Category> cats = gm.GetCategories();
 
+        // Inicializa toda la informaci�n correspondiente a cada paquete y a cada nivel para mostrarla en el Canvas
         for (int i = 0; i < cats.Count; i++)
         {
+            // Nombre y color de cada paquete
             paquetes[i].titleText.text = cats[i].categoryName;
             paquetes[i].titleSprite.color = cats[i].color;
+            // Inicializaci�n de cada nivel dentro de la categor�a
             for (int j = 0; j < cats[i].levels.Length; j++)
             {
+                // Color del nivel
                 paquetes[i].levels[j].name.color = cats[i].color;
+                // Nombre del nivel
                 paquetes[i].levels[j].name.text = cats[i].levels[j].levelName;
+                // Niveles completados
                 paquetes[i].levels[j].levels.text = cats[i].levels[j].completedLevels + "/" + cats[i].levels[j].levelsInfo.Count;
+                // Logica del boton
                 paquetes[i].levels[j].LoadLevelCallback(cats[i], j);
             }
         }
 
-        //// Inicializa toda la informaci�n correspondiente a cada paquete y a cada nivel para mostrarla en el Canvas
         //for (int i = 0; i < paquetes.Count; i++)
         //{
         //    paquetes[i].categoria = gm.GetCategories()[i];
-        //    // Nombre y color de cada paquete
         //    paquetes[i].titleText.text = paquetes[i].categoria.categoryName;
         //    paquetes[i].titleSprite.color = paquetes[i].categoria.color;
-        //    // Inicializaci�n de cada nivel dentro de la categor�a
+        //    
         //    for (int j = 0; j < paquetes[i].categoria.levels.Length; j++)
         //    {
-        //        // Color del nivel
         //        paquetes[i].levels[j].name.color = paquetes[i].categoria.color;
         //        // Nombre del nivel
         //        paquetes[i].levels[j].name.text = paquetes[i].categoria.levels[j].levelName;

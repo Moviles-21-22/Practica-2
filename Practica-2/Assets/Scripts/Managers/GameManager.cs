@@ -8,6 +8,15 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    [System.Serializable]
+    public enum SceneOrder
+    {
+        MAIN_MENU = 0,
+        LEVEL_SELECT = 1,
+        ADS = 2,
+        GAME_SCENE = 3
+    }
+
     //  Instancia est�tica del gameManager
     public static GameManager instance;
     //  Categoría acutal escogida
@@ -145,13 +154,13 @@ public class GameManager : MonoBehaviour
     {
         currMap = new Map(currPack.txt.ToString(), 1);
         currLevel = currMap.GetLevel(lvl);
-        LoadScene(3);
+        LoadScene((int)SceneOrder.GAME_SCENE);
     }
 
     public void ChangeLevel(int lvl)
     {
         currLevel = currMap.GetLevel(lvl);
-        LoadScene(3);
+        LoadScene((int)SceneOrder.GAME_SCENE);
     }
 
     public List<Category> GetCategories()
@@ -179,7 +188,7 @@ public class GameManager : MonoBehaviour
     {
         currCategory = cat;
         currPack = level;
-        LoadScene(2);
+        LoadScene((int)SceneOrder.LEVEL_SELECT);
     }
 
     /// <summary>

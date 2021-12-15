@@ -10,10 +10,10 @@ public class BackButton : MonoBehaviour
 
     [Tooltip("Escena a la que se quiere ir")]
     [SerializeField]
-    private int sceneToLoad;
+    private GameManager.SceneOrder sceneToLoad;
 
     public void Start()
     {
-        button.onClick.AddListener(()=> GameManager.instance.LoadScene(sceneToLoad));
+        button.onClick.AddListener(()=> GameManager.instance.LoadScene((int)sceneToLoad));
     }
 }

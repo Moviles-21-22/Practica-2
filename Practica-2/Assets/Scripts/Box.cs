@@ -34,24 +34,34 @@ public class Box : MonoBehaviour
     /// color actual del tile
     /// </summary>
     private Color color;
+    /// <summary>
+    /// Cantidad de alpha que se va a ir aplicando para la animación
+    /// </summary>
+    private float offsetAlpha = -0.1f;
 
     public void SetLevelNum(int num)
     {
         numText.text = num.ToString();
     }
 
-    public void SelectBox()
-    {
-        color = Color.white;
-        background.enabled = true;
-        frame.enabled = true;
-        background.color = color;
-        frame.color = color;
-    }
-
-    public void InitBox(Color _color)
+    /// <summary>
+    /// Inicializa el tile de forma normal
+    /// </summary>
+    /// <param name="_color">Color que le corresponde al tile</param>
+    public void InitBox(Color _color, bool perfect, bool completed)
     {
         color = _color;
+
+        if (perfect)
+        {
+            starImage.enabled = true;
+        }
+        else if (completed)
+        {
+            completedImage.enabled = true;
+        }
+
+        color.a = completed ? 1.0f : 0.2f;
         background.color = color;
         frame.color = color;
     }
@@ -61,23 +71,22 @@ public class Box : MonoBehaviour
         button.onClick.AddListener(() => GameManager.instance.LoadLevel(level));
     }
 
-    public void CompletedBox(bool perfect, bool completed) 
+    public void ActiveLockImage() 
     {
-        if (perfect)
-        {
-            starImage.enabled = true;
-        }
-        else if(completed)
-        {
-            completedImage.enabled = true;
-        }
-
         var color = background.color;
-        color.a = completed ? 1.0f : 0.5f;
+        color.a = 0.0f;
         background.color = color;
+
+        color = frame.color;
+        color = Color.white;
+        frame.color = color;
+
+        color = Color.gray;
+        numText.color = color;
+        lockImage.enabled = true;
     }
 
-    public void ActiveLockImage() 
+    public void CurrentLevel() 
     {
         var color = background.color;
         color = Color.grey;
@@ -87,24 +96,28 @@ public class Box : MonoBehaviour
         color = Color.white;
         frame.color = color;
 
-        lockImage.enabled = true;
+        InvokeRepeating(nameof(CurrentLevelAnim), 0.0f, 0.1f);
     }
 
-    public void CurrentLevel() 
-    {
-        //var color = background.color;
-        //color = Color.grey;
-        //background.color = color;
-        //
-        //color = frame.color;
-        //color = Color.white;
-        //frame.color = color;
-
-        ///InvokeRepeating(nameof(CurrentLevelAnim), 0.0f, 0.1f);
-    }
-
+    /// <summary>
+    /// Animación del frame brillando del nivel que toca
+    /// </summary>
     private void CurrentLevelAnim() 
     {
+        if (frame.color.a <= 0.0f) 
+        {
+            offsetAlpha = 0.1f;
+        }
         
+        var color = frame.color;
+        color.a += offsetAlpha;
+        frame.color = color;
+
+        if (frame.color.a >= 1.0f) 
+        {
+            offsetAlpha = -0.1f;
+            CancelInvoke(nameof(CurrentLevelAnim));
+            InvokeRepeating(nameof(CurrentLevelAnim), 1.0f, 0.1f);
+        }
     }
 }

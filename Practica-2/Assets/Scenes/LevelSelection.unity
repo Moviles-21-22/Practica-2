@@ -136,7 +136,7 @@ PrefabInstance:
       objectReference: {fileID: 569801993}
     - target: {fileID: 6322887835042086268, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
       propertyPath: sceneToLoad
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8370638751146021697, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size

@@ -70,8 +70,10 @@ public class GridManager : MonoBehaviour
                 boxes[i].SetLevelNum((index * boxes.Length) + i + 1);
             }
 
-            boxes[i].InitBox(color);
-            boxes[i].CompletedBox(currLevelPack.levelsInfo[(index * boxes.Length) + i].perfect, currLevelPack.levelsInfo[(index * boxes.Length) + i].completed);
+            bool perfect = currLevelPack.levelsInfo[(index * boxes.Length) + i].perfect;
+            bool completed = currLevelPack.levelsInfo[(index * boxes.Length) + i].completed;
+
+            boxes[i].InitBox(color, perfect, completed);
 
             if (!lockPack || lockPack && (index * boxes.Length) + i <= completedLevels)   // Desbloquea los niveles hasta dejar el primero sin hacer desbloqueado
             {

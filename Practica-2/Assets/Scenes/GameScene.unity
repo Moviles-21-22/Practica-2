@@ -322,8 +322,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 135.73485, y: -247.96661}
-  m_SizeDelta: {x: 271.4697, y: 99.186646}
+  m_AnchoredPosition: {x: 269.12, y: -366.19077}
+  m_SizeDelta: {x: 538.24, y: 146.4763}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &16922787
 CanvasRenderer:
@@ -1180,10 +1180,10 @@ RectTransform:
   m_Father: {fileID: 1661658911}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.117000006, y: 0.08817519}
-  m_AnchorMax: {x: 0.8833334, y: 0.91176057}
-  m_AnchoredPosition: {x: -0.5999756, y: -0.063934326}
-  m_SizeDelta: {x: -12.2400055, y: 0.020019531}
+  m_AnchorMin: {x: 0.12361112, y: 0.19776496}
+  m_AnchorMax: {x: 0.87200004, y: 0.80064744}
+  m_AnchoredPosition: {x: 0, y: 0.000061035156}
+  m_SizeDelta: {x: 0, y: 0.0001}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &243838804
 GameObject:
@@ -1854,8 +1854,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 135.73485, y: -49.593323}
-  m_SizeDelta: {x: 271.4697, y: 99.186646}
+  m_AnchoredPosition: {x: 269.12, y: -73.23815}
+  m_SizeDelta: {x: 538.24, y: 146.4763}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &381899918
 CanvasRenderer:
@@ -2139,10 +2139,10 @@ RectTransform:
   m_Father: {fileID: 1661658911}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.18650003, y: 0.17226936}
-  m_AnchorMax: {x: 0.81100005, y: 0.82745206}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.12361112, y: 0.19776496}
+  m_AnchorMax: {x: 0.87200004, y: 0.80064744}
+  m_AnchoredPosition: {x: 0, y: 0.000061035}
+  m_SizeDelta: {x: 0, y: 0.0001}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &458588247
 GameObject:
@@ -8297,8 +8297,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 135.73485, y: -148.77997}
-  m_SizeDelta: {x: 271.4697, y: 99.186646}
+  m_AnchoredPosition: {x: 269.12, y: -219.71445}
+  m_SizeDelta: {x: 538.24, y: 146.4763}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2020601002
 CanvasRenderer:
@@ -9486,7 +9486,7 @@ PrefabInstance:
       objectReference: {fileID: 8370638750404734734}
     - target: {fileID: 6322887835042086268, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
       propertyPath: sceneToLoad
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8370638751146021697, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size

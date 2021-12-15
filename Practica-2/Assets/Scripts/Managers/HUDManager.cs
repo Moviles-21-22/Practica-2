@@ -124,7 +124,7 @@ public class HUDManager : MonoBehaviour
         }
 
         //============VOLVER===================//
-        backButton.onClick.AddListener(() => gm.LoadScene(2));
+        backButton.onClick.AddListener(() => gm.LoadScene((int)GameManager.SceneOrder.LEVEL_SELECT));
 
         //============TABLERO-INFO===================//
         numFlowsText.text = "flujos: " + 0 + "/" + currLevel.numFlow;
@@ -137,7 +137,7 @@ public class HUDManager : MonoBehaviour
     private void InitBotElements() 
     {
         // Reinicia el nivel
-        restartButton.onClick.AddListener(() => gm.LoadScene(3));
+        restartButton.onClick.AddListener(() => gm.LoadScene((int)GameManager.SceneOrder.GAME_SCENE));
 
         //============PISTAS===================//
         int numHints = gm.GetNumHints();
