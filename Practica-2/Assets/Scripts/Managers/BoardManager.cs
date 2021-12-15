@@ -525,6 +525,7 @@ public class BoardManager : MonoBehaviour
                         //Comprobamos si es el mismo círculo con el que empecé o no
                         if (dragedTile.Key != cMovements[c].GetMovements()[0])
                         {
+                            dragedTile.Key.PlayParticle();
                             // Es un codo
                             if (IsElbow(dir))
                             {

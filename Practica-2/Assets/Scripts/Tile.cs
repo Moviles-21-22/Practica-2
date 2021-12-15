@@ -50,6 +50,9 @@ public class Tile : MonoBehaviour
     [SerializeField]
     private SpriteRenderer lines;
 
+    [SerializeField]
+    private ParticleSystem particleSystem;
+
     private Rect logicRect;
 
     private void OnEnable()
@@ -366,5 +369,10 @@ public class Tile : MonoBehaviour
                 return false;
         else
             return false;
+    }
+
+    public void PlayParticle()
+    {
+        particleSystem.Play();
     }
 }
