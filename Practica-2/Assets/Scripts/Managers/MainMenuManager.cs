@@ -9,6 +9,12 @@ public class MainMenuManager : MonoBehaviour
     [Tooltip("Lista de los paquetes de niveles que existen en el juego")]
     private List<Paquete> paquetes;
 
+    [SerializeField]
+    private AudioClip forward;
+
+    [SerializeField]
+    private AudioSource audioSource; 
+
     [System.Serializable]
     private class Paquete 
     {
@@ -69,26 +75,8 @@ public class MainMenuManager : MonoBehaviour
                 paquetes[i].levels[j].levels.text = cats[i].levels[j].completedLevels + "/" + cats[i].levels[j].levelsInfo.Count;
                 // Logica del boton
                 paquetes[i].levels[j].LoadLevelCallback(cats[i], j);
+                paquetes[i].levels[j].button.onClick.AddListener(() => audioSource.PlayOneShot(forward));
             }
         }
-
-        //for (int i = 0; i < paquetes.Count; i++)
-        //{
-        //    paquetes[i].categoria = gm.GetCategories()[i];
-        //    paquetes[i].titleText.text = paquetes[i].categoria.categoryName;
-        //    paquetes[i].titleSprite.color = paquetes[i].categoria.color;
-        //    
-        //    for (int j = 0; j < paquetes[i].categoria.levels.Length; j++)
-        //    {
-        //        paquetes[i].levels[j].name.color = paquetes[i].categoria.color;
-        //        // Nombre del nivel
-        //        paquetes[i].levels[j].name.text = paquetes[i].categoria.levels[j].levelName;
-        //        // Niveles completados
-        //        paquetes[i].levels[j].levels.text = paquetes[i].categoria.levels[j].completedLevels + "/" + paquetes[i].categoria.levels[j].levelsInfo.Count;
-        //        // Logica del bot�n
-        //        paquetes[i].levels[j].LoadLevelCallback(paquetes[i].categoria, j);
-        //    }
-        //}
     }
-
 }

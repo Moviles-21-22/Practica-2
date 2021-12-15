@@ -12,4 +12,11 @@ public class ColorPack : ScriptableObject
     [SerializeField] public List<Color> colors;
     [Tooltip("Está desbloqueado")]
     [SerializeField] public bool active;
+    [Tooltip("Estado inicial del theme")]
+    [SerializeField] public bool status;
+
+    public void Reset()
+    {
+        active = status;
+    }
 }

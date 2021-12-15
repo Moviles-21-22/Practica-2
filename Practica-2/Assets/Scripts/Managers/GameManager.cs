@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
         GAME_SCENE = 3
     }
 
-    //  Instancia est�tica del gameManager
+    //  Instancia estática del gameManager
     public static GameManager instance;
     //  Categoría acutal escogida
     private Category currCategory;
@@ -27,8 +27,8 @@ public class GameManager : MonoBehaviour
     private Level currLevel;
     //  Array con todas las categor�as disponibles
     private List<Category> categories;
-    //  TODO(cambiarlo por datos) Lista con los todos los temas
-    public List<ColorPack> themes;
+    //  Lista con los todos los temas
+    private List<ColorPack> themes;
     //  Tema actual
     private ColorPack currTheme;
     //  Actual pack cargado
@@ -69,12 +69,14 @@ public class GameManager : MonoBehaviour
         AdsManager.instance.HideBanner();
     }
 
+    //  Añade una pista y guarda el estado del juego
     public void AddHints(int numOfHints)
     {
         numHints += numOfHints;
         SaveGame();
     }
 
+    //  Usa una pista y guarda el estado
     public void UseHint()
     {
         if (numHints > 0)
@@ -85,8 +87,10 @@ public class GameManager : MonoBehaviour
         {
             throw new Exception("No se puede restar una pista pistas = 0");
         }
+        SaveGame();
     }
 
+    //  Devuelve el número de pistas restantes
     public int GetNumHints()
     {
         return numHints;
@@ -98,6 +102,7 @@ public class GameManager : MonoBehaviour
         return currPack;
     }
 
+    //  Devuelve el nivel actual cargado en gameManager
     public Level GetCurrLevel()
     {
         return currLevel;
@@ -116,6 +121,7 @@ public class GameManager : MonoBehaviour
         return currMap;
     }
 
+    //  Devuelve todos las skins de colores disponibles
     public List<ColorPack> GetThemes()
     {
         return themes;
@@ -163,6 +169,7 @@ public class GameManager : MonoBehaviour
         LoadScene((int)SceneOrder.GAME_SCENE);
     }
 
+    //  Devuelve todas las categorías
     public List<Category> GetCategories()
     {
         return categories;
@@ -175,6 +182,8 @@ public class GameManager : MonoBehaviour
         categories = objToLoad.GetCategories();
         numHints = objToLoad.GetNumHints();
         isPremium = objToLoad.GetPremiumStatus();
+        themes = objToLoad.GetThemes();
+        currTheme = objToLoad.GetCurrentTheme();
     }
 
     //  Guarda el estado del juego

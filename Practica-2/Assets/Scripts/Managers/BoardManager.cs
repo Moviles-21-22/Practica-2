@@ -122,15 +122,14 @@ public class BoardManager : MonoBehaviour
     [Tooltip("Referencia al prefab de los tiles que se van a crear")]
     [SerializeField]
     private Tile tilePrefab;
-    [Tooltip("Colores de los diferentes flujos que haya en el juego")]
-    [SerializeField]
-    private Color[] colors;
     [Tooltip("Referencia a los objetos del HUD")]
     [SerializeField]
     private RectTransform[] hudRegion;
     [Tooltip("Referencia al GameObject del canvas que se muestra al superar el nivel")]
     [SerializeField]
     private HUDManager hud;
+
+    private List<Color> colors;
 
     // Determina si se está pulsadno la pantalla
     private bool inputDown = false;
@@ -166,7 +165,7 @@ public class BoardManager : MonoBehaviour
     public void Start()
     {
         currLevel = GameManager.instance.GetCurrLevel();
-
+        colors = GameManager.instance.GetCurrTheme().colors;
         Init();
         plusPercentage = 100.0f / ((tabSize.x * tabSize.y) - currLevel.numFlow);
         inputTile = Instantiate(tilePrefab, transform);

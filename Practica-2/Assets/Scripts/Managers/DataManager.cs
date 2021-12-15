@@ -25,17 +25,25 @@ public class DataToSave
     [SerializeField]
     private bool premium;
 
+    [SerializeField]
+    private List<ColorPack> themes;
+
+    [SerializeField]
+    private ColorPack currTheme;
+
     public List<Category> categories;
     
     [SerializeField]
     private string hash;
 
     [SerializeField]
-    public DataToSave(int _numHints, bool _premium, List<Category> _category)
+    public DataToSave(int _numHints, bool _premium, List<Category> _category, List<ColorPack> _theme, ColorPack _lastTheme)
     {
         numHints = _numHints;
         premium = _premium;
         categories = _category;
+        themes = _theme;
+        currTheme = _lastTheme;
     }
 
     public void SetHash(string _hash)
@@ -62,6 +70,16 @@ public class DataToSave
     {
         return premium;
     }
+
+    public List<ColorPack> GetThemes()
+    {
+        return themes;
+    }
+
+    public ColorPack GetCurrentTheme()
+    {
+        return currTheme;
+    }
 }
 
 
@@ -77,12 +95,9 @@ public class DataManager : MonoBehaviour
     private const int numHintsDefault = 2;
     [Tooltip("Lista de categorias por defecto")]
     [SerializeField] List<Category> categories;
-    // Rutas para el guardado por defecto
-    private string[] saveRoutes;
-    //  Ruta de guardado
-    private string saveRoute;
-    //  Ruta de data
-    private string dataRoute;
+
+    [Tooltip("Lista de colores por defecto")]
+    [SerializeField] List<ColorPack> colorThemes;
     public static DataManager instance;
 
     private void Awake()
@@ -108,13 +123,12 @@ public class DataManager : MonoBehaviour
     //  Guardamos en un json toda la información necesaria
     public void Save()
     {
-        //  Guardamos los datos recogidos del gameManager
-        int numHints = GameManager.instance.GetNumHints();
-        bool premium = GameManager.instance.IsPremium();
-        List<Category> cat = GameManager.instance.GetCategories();
-
-        //  Serializamos
-        DataToSave objToSave = new DataToSave(numHints, premium, cat);
+        //  Serializamos los posibles datos que pueden haber cambiado
+        DataToSave objToSave = new DataToSave(  GameManager.instance.GetNumHints(),
+                                                GameManager.instance.IsPremium(),
+                                                GameManager.instance.GetCategories(),
+                                                GameManager.instance.GetThemes(),
+                                                GameManager.instance.GetCurrTheme());
         //  Creamos el hash
         objToSave.SetHash(SecureManager.Hash(JsonUtility.ToJson(objToSave)));
         //  Escribimos en el json
@@ -188,7 +202,12 @@ public class DataManager : MonoBehaviour
             {
                 categories[i].Reset();
             }
-            DataToSave currData = new DataToSave(numHintsDefault, false, categories);
+            foreach (ColorPack lP in colorThemes)
+            {
+                lP.Reset();
+            }
+
+            DataToSave currData = new DataToSave(numHintsDefault, false, categories, colorThemes, colorThemes[0]);
             currData.SetHash(SecureManager.Hash(JsonUtility.ToJson(currData)));
             string json = JsonUtility.ToJson(currData);
             System.IO.File.WriteAllText(routeToSave + fileName, json);
