@@ -2821,7 +2821,7 @@ GameObject:
   - component: {fileID: 610616977}
   - component: {fileID: 610616976}
   m_Layer: 5
-  m_Name: PerfectoText
+  m_Name: WinTitleText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4714,7 +4714,7 @@ GameObject:
   - component: {fileID: 1074387418}
   - component: {fileID: 1074387417}
   m_Layer: 5
-  m_Name: Text
+  m_Name: NextLevelText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8469,7 +8469,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -8622,6 +8622,11 @@ MonoBehaviour:
     elementImage: {fileID: 272636406}
     elementText: {fileID: 378209299}
     elementButton: {fileID: 0}
+  undoElement:
+    elementSprites: []
+    elementImage: {fileID: 2037642044}
+    elementText: {fileID: 0}
+    elementButton: {fileID: 2037642043}
   prevLevel:
     elementSprites:
     - {fileID: 21300000, guid: 7c3a9d5982b483242be3b645e1819ea4, type: 3}
@@ -8643,11 +8648,18 @@ MonoBehaviour:
     elementImage: {fileID: 2003309438}
     elementText: {fileID: 1063351235}
     elementButton: {fileID: 2003309437}
+  nextLevelWin:
+    elementSprites: []
+    elementImage: {fileID: 0}
+    elementText: {fileID: 1074387417}
+    elementButton: {fileID: 942295646}
   numLevelText: {fileID: 2114533298}
   numFlowsText: {fileID: 121621165}
   numPasosText: {fileID: 1817965219}
   recordText: {fileID: 1335162354}
   percentageText: {fileID: 458588249}
+  winTitle: {fileID: 610616976}
+  finalMovsText: {fileID: 1572404312}
   backButton: {fileID: 8370638750404734734}
   restartButton: {fileID: 118711457}
 --- !u!1 &2082199861

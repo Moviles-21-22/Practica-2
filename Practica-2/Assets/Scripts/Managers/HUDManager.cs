@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class HUDManager : MonoBehaviour
@@ -22,6 +23,10 @@ public class HUDManager : MonoBehaviour
     [SerializeField]
     private HUD_Element completedLevelIcon;
 
+    [Tooltip("Referencia al objeto que se encarga de deshacer movimientos")]
+    [SerializeField]
+    private HUD_Element undoElement;
+
     [Tooltip("Referencia al objeto que regresa al nivel anterior")]
     [SerializeField]
     private HUD_Element prevLevel;
@@ -33,6 +38,10 @@ public class HUDManager : MonoBehaviour
     [Tooltip("Referencia al objeto que muestra las pistas")]
     [SerializeField]
     private HUD_Element hints;
+
+    [Tooltip("Referencia al botón de próximo nivel al ganar el juego")]
+    [SerializeField]
+    private HUD_Element nextLevelWin;
 
     [Header("Textos")]
     [Tooltip("Referencia al texto que muestra el nivel actual")]
@@ -50,6 +59,12 @@ public class HUDManager : MonoBehaviour
     [Tooltip("Referencia al texto que muestra el porcentaje completado")]
     [SerializeField]
     private Text percentageText;
+    [Tooltip("Referencia al titulo del texto que se muestra al ganar")]
+    [SerializeField]
+    private Text winTitle;
+    [Tooltip("Referencia al texto final que muestra el número de movimientos")]
+    [SerializeField]
+    private Text finalMovsText;
 
     [Header("Botones")]
     [Tooltip("Referencia al botón de volver atrás")]
@@ -89,13 +104,14 @@ public class HUDManager : MonoBehaviour
         InitData();
 
         InitTopElements();
+        InitMidElements();
         InitBotElements();
     }
 
     /// <summary>
     /// Inicializa los datos generales del juego
     /// </summary>
-    private void InitData() 
+    private void InitData()
     {
         // TODO : Organizar esto
         gm = GameManager.instance;
@@ -106,9 +122,9 @@ public class HUDManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Inicializa la parte superior del canvas
+    /// Inicializa la parte superior del hud
     /// </summary>
-    private void InitTopElements() 
+    private void InitTopElements()
     {
         //============TITULO-DEL-NIVEL===================//
         completedLevelIcon.elementText.text = currLevel.numBoardX + "x" + currLevel.numBoardY;
@@ -128,13 +144,23 @@ public class HUDManager : MonoBehaviour
 
         //============TABLERO-INFO===================//
         numFlowsText.text = "flujos: " + 0 + "/" + currLevel.numFlow;
+        numPasosText.text = "pasos: " + 0;
         recordText.text = "récord: " + levelPack.records[currLevel.lvl];
     }
 
     /// <summary>
-    /// Inicializa la parte inferior del canvas
+    /// Inicializa la parte del medio del hud
     /// </summary>
-    private void InitBotElements() 
+    private void InitMidElements()
+    {
+        // Proximo nivel
+        nextLevelWin.elementButton.onClick.AddListener(() => gm.ChangeLevel(currLevel.lvl + 1));
+    }
+
+    /// <summary>
+    /// Inicializa la parte inferior del hud
+    /// </summary>
+    private void InitBotElements()
     {
         // Reinicia el nivel
         restartButton.onClick.AddListener(() => gm.LoadScene((int)GameManager.SceneOrder.GAME_SCENE));
@@ -159,7 +185,6 @@ public class HUDManager : MonoBehaviour
         else
         {
             prevLevel.elementImage.sprite = prevLevel.elementSprites[1];
-            //int index = (index * boxes.Length) +i
             prevLevel.elementButton.onClick.AddListener(() => gm.ChangeLevel(currLevel.lvl - 1));
         }
 
@@ -201,11 +226,26 @@ public class HUDManager : MonoBehaviour
         if (perfect)
         {
             winStar.texture = winSprites[0];
+            winTitle.text = "¡Perfecto!";
         }
         else
         {
             // Si es una solución normal aparece un tic
             winStar.texture = winSprites[1];
+            winTitle.text = "¡Completado!";
+        }
+        finalMovsText.text = "Completaste el nivel\n" + "con " + currentMovs + " pasos";
+
+        // El último nivel
+        if (currLevel.lvl + 1 == levelPack.levelsInfo.Count)
+        {
+            winTitle.text = "¡Felicitaciones!";
+            finalMovsText.text = "Has llegado al final del\n" + levelPack.name;
+
+            // Nos lleva al mainMenu
+            nextLevelWin.elementButton.onClick.RemoveAllListeners();
+            nextLevelWin.elementButton.onClick.AddListener(() => gm.LoadScene((int)GameManager.SceneOrder.MAIN_MENU));
+            nextLevelWin.elementText.text = "elige el próximo paquete";
         }
 
         InvokeRepeating(nameof(WinAnimation), 0.0f, 0.05f);
@@ -257,9 +297,28 @@ public class HUDManager : MonoBehaviour
     /// <summary>
     /// Añade un nuevo movimiento al contador de pasos del canvas
     /// </summary>
-    public void AddMovement(int mov)
+    public void ShowMovements(int movs)
     {
-        currentMovs += mov;
+        currentMovs = movs;
         numPasosText.text = "pasos: " + currentMovs;
+    }
+
+    /// <summary>
+    /// Aplica el comportamiento del botón de deshacer en función de si está activo o no
+    /// </summary>
+    /// <param name="active">Determina si el elemento está activo o no</param>
+    /// <param name="action">Callback del comportamiento del boton undo</param>
+    public void UndoButtonBehaviour(bool active, UnityAction action = null)
+    {
+        undoElement.elementButton.onClick.RemoveAllListeners();
+
+        // Si está activo se ve blanco, sino, gris
+        var color = active ? Color.white : Color.grey;
+        undoElement.elementImage.color = color;
+
+        if (active)
+        {
+            undoElement.elementButton.onClick.AddListener(action);
+        }
     }
 }

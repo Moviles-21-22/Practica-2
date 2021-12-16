@@ -12,6 +12,8 @@ struct ColorMovements
     int color;
     // Lista de tiles ordenada con el camino del flujo
     List<Tile> movements;
+    // Lista del último movimiento
+    List<Tile> lastMovements;
     //  Determina si existe un camino entre ambas esferas
     public bool conected;
 
@@ -19,12 +21,22 @@ struct ColorMovements
     {
         color = c;
         movements = new List<Tile>();
+        lastMovements = new List<Tile>();
         conected = false;
     }
 
     public void AddMov(Tile t)
     {
         movements.Add(t);
+        lastMovements.Add(t);
+    }
+
+    /// <summary>
+    /// Limpia la lista con los últimos movimientos realizados
+    /// </summary>
+    public void ClearLastMovs() 
+    {
+        lastMovements.Clear();
     }
 
     public List<Tile> GetMovements()
@@ -112,6 +124,28 @@ struct ColorMovements
         this.conected = true;
     }
 
+    /// <summary>
+    /// Aplica el efecto de deshacer para cada tile y devuelve
+    /// el número de tiles deshechos, sin contar el primero de la lista
+    /// en caso de que sea un círculo, pues éste no cuenta para el porcentaje total
+    /// </summary>
+    public int UndoMovements()
+    {
+        int p = 0;
+        foreach (Tile t in lastMovements) 
+        {
+            if (t == lastMovements[0] && t.CircleActive()) 
+            {
+                p--;
+            }
+
+            p++;
+            t.ClearTile();
+        }
+
+        lastMovements.Clear();
+        return p;
+    }
 }
 
 public class BoardManager : MonoBehaviour
@@ -160,6 +194,8 @@ public class BoardManager : MonoBehaviour
     private Level currLevel;
     // Lista con los movimientos de cada uno de los flujos
     private List<ColorMovements> cMovements = new List<ColorMovements>();
+    // Contador de movimientos
+    private int currMovs = 0;
 
     //  Setea al board y activa el puntero
     public void Start()
@@ -472,6 +508,8 @@ public class BoardManager : MonoBehaviour
                 currTile.Touched();
                 //currMovement.Add(currTile);
                 int c = currTile.GetTileColor();
+                // Se limpia la antigua lista de antiguos movimientos
+                cMovements[c].ClearLastMovs();
                 cMovements[c].AddMov(currTile);
                 //  Para el puntero en pantalla
                 inputTile.GetCircleRender().enabled = true;
@@ -675,6 +713,7 @@ public class BoardManager : MonoBehaviour
         if (currTile != null)
         {
             int c = currTile.GetTileColor();
+            hud.UndoButtonBehaviour(true, () => UndoMovement(c));
             currTile = null;
             ApplyMovements(c);
             inputTile.GetCircleRender().enabled = false;
@@ -683,7 +722,7 @@ public class BoardManager : MonoBehaviour
         if (IsSolution())
         {
             GameManager.instance.AddSolutionLevel(true);
-            bool perfect = true;
+            bool perfect = currMovs == currLevel.numFlow;
             hud.LevelCompleted(perfect);
         }
     }
@@ -859,6 +898,8 @@ public class BoardManager : MonoBehaviour
                 }
                 gm.UseHint();
                 hud.UseHint();
+                currMovs++;
+                hud.ShowMovements(currMovs);
             }
         }
     }
@@ -896,8 +937,24 @@ public class BoardManager : MonoBehaviour
         {
             hud.AddFlow(1);
         }
-
-        //cMovements[c].GetMovements().Clear();
     }
+
+    /// <summary>
+    /// Deshace el último movimiento
+    /// </summary>
+    public void UndoMovement(int c) 
+    {
+        // Si está conectada, entonces hay que descontar el número de flujos conectados
+        if (cMovements[c].IsConected()) 
+        {
+            hud.AddFlow(-1);
+        }
+
+        int p = cMovements[c].UndoMovements();
+        percentage -= plusPercentage * p;
+        hud.ShowPercentage((int)Math.Round(percentage));
+        hud.UndoButtonBehaviour(false);
+    }
+
     #endregion
 }
