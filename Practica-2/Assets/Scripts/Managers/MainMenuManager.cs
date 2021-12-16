@@ -9,6 +9,8 @@ public class MainMenuManager : MonoBehaviour
     [Tooltip("Lista de los paquetes de niveles que existen en el juego")]
     private List<Paquete> paquetes;
 
+    public RectTransform tr;
+
     [SerializeField]
     private AudioClip forward;
 
@@ -24,6 +26,8 @@ public class MainMenuManager : MonoBehaviour
         public Image titleSprite;
         [Tooltip("Referencia al texto que indica el nombre de la categoria")]
         public Text titleText;
+        [Tooltip("Referencia al RectTransform del título")]
+        public RectTransform titleRect;
         [Tooltip("Lista de las propiedades de los niveles")]
         public List<LevelProperties> levels;
     }
@@ -37,7 +41,8 @@ public class MainMenuManager : MonoBehaviour
         public Text name;
         [Tooltip("Referencia al texto que muestra los niveles completados")]
         public Text levels;
-
+        [Tooltip("Referencia al RectTransform del objeto correspondiente")]
+        public RectTransform levelRect;
         /// <summary>
         /// A�ade un callback para seleccionar el nivel y asociarlo al GameManager
         /// </summary>
@@ -58,12 +63,26 @@ public class MainMenuManager : MonoBehaviour
         GameManager gm = GameManager.instance;
         List<Category> cats = gm.GetCategories();
 
+        var b = tr;
+        int numElems = paquetes.Count;
+        for (int i = 0; i < cats.Count; i++) 
+        {
+            numElems += paquetes[i].levels.Count;
+        }
+
+        float height = tr.rect.height / numElems;
+
         // Inicializa toda la informaci�n correspondiente a cada paquete y a cada nivel para mostrarla en el Canvas
         for (int i = 0; i < cats.Count; i++)
         {
             // Nombre y color de cada paquete
             paquetes[i].titleText.text = cats[i].categoryName;
             paquetes[i].titleSprite.color = cats[i].color;
+            // Tamaño común para todos
+            var aux = paquetes[i].titleRect.sizeDelta;
+            aux.y = height;
+            paquetes[i].titleRect.sizeDelta = aux;
+
             // Inicializaci�n de cada nivel dentro de la categor�a
             for (int j = 0; j < cats[i].levels.Length; j++)
             {
@@ -76,7 +95,12 @@ public class MainMenuManager : MonoBehaviour
                 // Logica del boton
                 paquetes[i].levels[j].LoadLevelCallback(cats[i], j);
                 paquetes[i].levels[j].button.onClick.AddListener(() => audioSource.PlayOneShot(forward));
+
+                // Tamaño común para todos
+                aux = paquetes[i].levels[j].levelRect.sizeDelta;
+                aux.y = height;
+                paquetes[i].levels[j].levelRect.sizeDelta = aux;
             }
-        }
+        }        
     }
 }
