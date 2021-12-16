@@ -203,7 +203,7 @@ public class BoardManager : MonoBehaviour
         currLevel = GameManager.instance.GetCurrLevel();
         colors = GameManager.instance.GetCurrTheme().colors;
         Init();
-        plusPercentage = 100.0f / ((tabSize.x * tabSize.y) - currLevel.numFlow);
+        plusPercentage = 100.0f / ((tabSize.x * tabSize.y) - currLevel.numFlow - currLevel.gaps.Count);
         inputTile = Instantiate(tilePrefab, transform);
         inputTile.DesactiveLines();
         Vector3 scale = inputTile.transform.localScale;
@@ -721,8 +721,8 @@ public class BoardManager : MonoBehaviour
 
         if (IsSolution())
         {
-            GameManager.instance.AddSolutionLevel(true);
             bool perfect = currMovs == currLevel.numFlow;
+            GameManager.instance.AddSolutionLevel(perfect, currMovs);
             hud.LevelCompleted(perfect);
         }
     }

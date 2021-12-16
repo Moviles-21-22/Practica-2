@@ -204,7 +204,7 @@ public class GameManager : MonoBehaviour
     /// Añade una solución de nivel del paquete actual
     /// </summary>
     /// <param name="perfect">Determinas si el nivel es perfecto o no</param>
-    public void AddSolutionLevel(bool perfect)
+    public void AddSolutionLevel(bool perfect, int movs)
     {
         bool saved = false;
         int i = 0;
@@ -229,6 +229,9 @@ public class GameManager : MonoBehaviour
                         }
 
                         categories[i].levels[j].levelsInfo[currLevel.lvl].perfect = perfect;
+                        var rec = categories[i].levels[j].records[currLevel.lvl];
+                        categories[i].levels[j].records[currLevel.lvl] = rec <= movs && rec != 0 ? rec : movs;
+
                         // El nivel actual se ha completado
                         SaveGame();
                     }
