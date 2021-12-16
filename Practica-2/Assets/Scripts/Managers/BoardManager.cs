@@ -565,17 +565,21 @@ public class BoardManager : MonoBehaviour
                     //Hemos tocado un circulito
                     if (currTile.CircleActive() || currTile != cMovements[c].GetMovements()[cMovements[c].GetMovements().Count - 1])
                     {
-                        p = cMovements[c].ClearUntilTile(currTile);
-                        p++;
-
                         if (!currTile.CircleActive())
                         {
+                            p = cMovements[c].ClearUntilTile(currTile) - 1;
+                            
                             Vector2 dir = (currTile.GetLogicRect().position - cMovements[c].GetMovements()[cMovements[c].GetMovements().Count - 1].GetLogicRect().position).normalized;
                             currTile.ActiveTail(dir, currTileColor);
                             previousDir = dir;
                         }
                         else
+                        {
+                            if (cMovements[c].GetMovements().Count > 0)
+                                p = cMovements[c].ClearUntilTile(cMovements[c].GetMovements()[0]) - 1;
+
                             previousDir = new Vector2(-2, -2);
+                        }
                     }
                     
                     // Se limpia la antigua lista de ultimos movimientos
