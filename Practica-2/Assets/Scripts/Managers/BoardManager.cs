@@ -10,11 +10,13 @@ struct ColorMovements
 {
     //Tile tiene los colores asociados a su numero
     int color;
-    // Lista de tiles ordenada con el camino del flujo
+    //Lista de tiles ordenada con el camino del flujo
     List<Tile> movements;
     // Lista del último movimiento
     List<Tile> lastMovements;
-    //  Determina si existe un camino entre ambas esferas
+    //Lista de los tiles que han sido cortados
+    List<Tile> cutMovements;
+    //Determina si existe un camino entre ambas esferas
     public bool conected;
 
     public ColorMovements(int c)
@@ -22,6 +24,7 @@ struct ColorMovements
         color = c;
         movements = new List<Tile>();
         lastMovements = new List<Tile>();
+        cutMovements = new List<Tile>();
         conected = false;
     }
 
@@ -44,6 +47,11 @@ struct ColorMovements
         return movements;
     }
 
+    public List<Tile> GetCutMovements()
+    {
+        return cutMovements;
+    }
+
     /// <summary>
     /// Borra todos los elementos de la lista de movimientos incluido t
     /// Devuelve el numero de elementos borrados
@@ -63,6 +71,7 @@ struct ColorMovements
             }
 
             p++;
+            cutMovements.Add(ultTile);
             ultTile.ClearTile();
             movements.Remove(ultTile);
         }
@@ -90,6 +99,7 @@ struct ColorMovements
             }
 
             p++;
+            cutMovements.Add(movements[movements.Count - 1]);
             movements[movements.Count - 1].ClearTile();
             movements.Remove(movements[movements.Count - 1]);
             ++i;
@@ -99,11 +109,52 @@ struct ColorMovements
         for (int j = movements.Count; j > i; --j)
         {
             p++;
+            cutMovements.Add(movements[movements.Count - 1]);
             movements[movements.Count - 1].ClearTile();
             movements.Remove(movements[movements.Count - 1]);
         }
 
         return p;
+    }
+
+    public void PutCutMovements()
+    {
+        Color c = movements[0].GetColor();
+        Tile prevTile = movements[movements.Count - 2];
+        for (int i = 0; i < cutMovements.Count; ++i)
+        {
+            Tile t = cutMovements[cutMovements.Count - 1 - i];
+            Tile lastTile;
+
+            if (i == 0)
+                lastTile = movements[movements.Count - 1];
+            else
+                lastTile = cutMovements[cutMovements.Count - i];
+
+            Vector2 d = new Vector2(t.GetX() - lastTile.GetX(), t.GetY() - lastTile.GetY());
+            Vector2 prevD = new Vector2(lastTile.GetX() - prevTile.GetX(), lastTile.GetY() - prevTile.GetY());
+
+            if (Math.Abs(d.x + prevD.y) == 2.0f || Math.Abs(d.y + prevD.x) == 2.0f
+            || Math.Abs(d.x + prevD.y) == 0.0f || Math.Abs(d.y + prevD.x) == 0.0f)
+            {
+                t.ActiveTail(d, c);
+                t.ActiveElbow(c, d, prevD);
+            }
+            else if (!t.CircleActive())
+            {
+                t.ActiveTail(d, c);
+                t.ActiveBridge(c);
+            }
+
+            movements.Add(t);
+            prevTile = lastTile;
+        }
+        DeleteCutMovements();
+    }
+
+    public void DeleteCutMovements()
+    {
+        cutMovements.Clear();
     }
 
     /// <summary>
@@ -502,19 +553,42 @@ public class BoardManager : MonoBehaviour
             if (pair.Key != null)
             {
                 currTile = pair.Key;
-                Vector2Int index = pair.Value;
-                //originPoint = tiles[index.x, index.y].GetLogicRect().position;
-                currTileColor = currTile.GetColor();
-                currTile.Touched();
-                //currMovement.Add(currTile);
+
+                //Solo hacemos algo si hemos tocado un tile que no esté vacío
                 int c = currTile.GetTileColor();
-                // Se limpia la antigua lista de antiguos movimientos
-                cMovements[c].ClearLastMovs();
-                cMovements[c].AddMov(currTile);
-                //  Para el puntero en pantalla
-                inputTile.GetCircleRender().enabled = true;
-                inputTile.InitTile(currTile.GetTileColor(), new Color(currTileColor.r, currTileColor.g, currTileColor.b, 0.5f));
-                previousDir = new Vector2(-2, -2);
+                if (c != (int)Tile.TILE_COLOR.NONE)
+                {
+                    currTileColor = currTile.GetColor();
+
+                    int p = 0;
+                    //Comprobamos si hay que hacer algún clear para los movimientos
+                    //Hemos tocado un circulito
+                    if (currTile.CircleActive() || currTile != cMovements[c].GetMovements()[cMovements[c].GetMovements().Count - 1])
+                    {
+                        p = cMovements[c].ClearUntilTile(currTile);
+                        p++;
+
+                        if (!currTile.CircleActive())
+                        {
+                            Vector2 dir = (currTile.GetLogicRect().position - cMovements[c].GetMovements()[cMovements[c].GetMovements().Count - 1].GetLogicRect().position).normalized;
+                            currTile.ActiveTail(dir, currTileColor);
+                            previousDir = dir;
+                        }
+                        else
+                            previousDir = new Vector2(-2, -2);
+                    }
+                    
+                    // Se limpia la antigua lista de ultimos movimientos
+                    cMovements[c].ClearLastMovs();
+                    currTile.SetTileColor(c);
+                    cMovements[c].AddMov(currTile);
+                    percentage -= p > 0 ? plusPercentage * p : 0;
+                    hud.ShowPercentage((int)Mathf.Round(percentage));
+
+                    // Para el puntero en pantalla
+                    inputTile.GetCircleRender().enabled = true;
+                    inputTile.InitTile(currTile.GetTileColor(), new Color(currTileColor.r, currTileColor.g, currTileColor.b, 0.5f));
+                }
             }
         }
     }
@@ -571,7 +645,7 @@ public class BoardManager : MonoBehaviour
                             }
                             else if (!currTile.CircleActive())
                             {
-                                currTile.ActiveBridge(dir, currTileColor);
+                                currTile.ActiveBridge(currTileColor);
                             }
                             percentage += plusPercentage;
                             hud.ShowPercentage((int)Math.Round(percentage));
@@ -689,7 +763,7 @@ public class BoardManager : MonoBehaviour
                             }
                             else
                             {
-                                currTile.ActiveBridge(dir, currTileColor);
+                                currTile.ActiveBridge(currTileColor);
                             }
                         }
                         currTile = dragedTile.Key;
@@ -717,6 +791,15 @@ public class BoardManager : MonoBehaviour
             currTile = null;
             ApplyMovements(c);
             inputTile.GetCircleRender().enabled = false;
+
+            foreach (ColorMovements movs in cMovements)
+            {
+                if (movs.GetColor() != c && movs.GetCutMovements().Count > 0)
+                    if (movs.GetCutMovements()[0].GetTileColor() == c)
+                        movs.DeleteCutMovements();
+                    else
+                        movs.PutCutMovements();
+            }
         }
 
         if (IsSolution())

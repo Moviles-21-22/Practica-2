@@ -177,7 +177,7 @@ public class Tile : MonoBehaviour
         }
     }
 
-    public void ActiveBridge(Vector2 _dir, Color _color)
+    public void ActiveBridge(Color _color)
     {
         bridgeTail.enabled = false;
         color = _color;
