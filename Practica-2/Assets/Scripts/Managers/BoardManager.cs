@@ -99,7 +99,7 @@ struct ColorMovements
     /// </summary>
     public bool IsConected()
     {
-        return (movements[movements.Count - 1].CircleActive()) || conected;
+        return movements.Count > 1 && movements[movements.Count - 1].CircleActive();
     }
 
     public int GetColor()
@@ -812,6 +812,7 @@ public class BoardManager : MonoBehaviour
         var gm = GameManager.instance;
         if (gm.GetNumHints() > 0)
         {
+            //  Buscamos qué elementos no están conectados como posibles candidatos a pista
             List<int> movs = new List<int>();
             int cont = 0;
             foreach (ColorMovements cM in cMovements)
@@ -824,6 +825,7 @@ public class BoardManager : MonoBehaviour
                 }
                 cont++;
             }
+            //  elegimos aleatoriamente uno
             if (movs.Count > 0)
             {
                 int elc = UnityEngine.Random.Range(0,movs.Count - 1);
@@ -835,18 +837,24 @@ public class BoardManager : MonoBehaviour
                 List<int> currSolution = GameManager.instance.GetCurrLevel().solutions[choice];
                 Vector2Int ind = ConvertIndex(currSolution[0]);
                 Color color = tiles[ind.y, ind.x].GetColor();
+                //  
                 for (int i = 0; i < currSolution.Count; i++)
                 {
                     Vector2Int index = ConvertIndex(currSolution[i]);
-                    cMovements[choice].AddMov(tiles[index.y,index.x]);
-                    if (i == 0 || i == currSolution.Count - 1)
+                    Tile tile = tiles[index.y,index.x];
+                    if (tile.CircleActive() && i == 0)
                     {
-                        tiles[index.y, index.x].ActiveStar(true);
+                        InputDown(tile.GetLogicRect().position);
+                        tile.ActiveStar(true);
+                    }
+                    else if (i == currSolution.Count - 1) 
+                    {
+                        InputMoving(tile.GetLogicRect().position);
+                        tile.ActiveStar(true);
                     }
                     else
                     {
-                        
-                        tiles[index.y, index.x].ActiveTail(Vector2.down,color);
+                        InputMoving(tile.GetLogicRect().position);
                     }
                 }
                 gm.UseHint();
