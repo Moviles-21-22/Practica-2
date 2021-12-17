@@ -127,6 +127,9 @@ public class Tile : MonoBehaviour
     //  Activa la estrella de un tile
     public void ActiveStar(bool status)
     {
+        if (!status)
+            return;
+
         star.color = Color.white;
         star.enabled = status;
     }
@@ -147,6 +150,10 @@ public class Tile : MonoBehaviour
             wallLeft.enabled = true;
     }
 
+    /// <summary>
+    /// Activa el tail del tile para que se dibuje en función
+    /// de la dirección con el siguiente tille. 
+    /// </summary>
     public void ActiveTail(Vector2 _dir, Color _color)
     {
         color = _color;
@@ -158,22 +165,22 @@ public class Tile : MonoBehaviour
         //izq->der
         if (_dir.x == 1.0f)
         {
-            bridgeTail.transform.Rotate(Vector3.forward, -90 * factor);
+            bridgeTail.transform.Rotate(Vector3.forward, -90/* * factor*/);
         }
         // der->izq
         else if (_dir.x == -1.0f)
         {
-            bridgeTail.transform.Rotate(Vector3.forward, 90 * factor);
+            bridgeTail.transform.Rotate(Vector3.forward, 90/* * factor*/);
         }
         // bot->top
         else if (_dir.y == -1.0f)
         {
-            bridgeTail.transform.Rotate(Vector3.forward, factor == -1.0f ? 0.0f : 180.0f);
+            bridgeTail.transform.Rotate(Vector3.forward, 0.0f/*factor == 1.0f ? 0.0f : 180.0f*/);
         }
         // top->bot
         else if (_dir.y == 1.0f)
         {
-            bridgeTail.transform.Rotate(Vector3.forward, factor == -1.0f ? 180.0f : 0.0f);
+            bridgeTail.transform.Rotate(Vector3.forward, 180.0f/*factor == 1.0f ? 180.0f : 0.0f*/);
         }
     }
 
@@ -185,7 +192,7 @@ public class Tile : MonoBehaviour
         bridge.color = color;
     }
 
-    public void ActiveElbow(Color _color, Vector2 dir, Vector2 previous)
+    public void ActiveElbow(Color _color, Vector2 dir, Vector2 next)
     {
         bridgeTail.enabled = false;
         elbow.enabled = true;
@@ -193,48 +200,48 @@ public class Tile : MonoBehaviour
         color = _color;
         elbow.transform.rotation = Quaternion.identity;
 
-        if (dir.y < 0.0f) // Va para abajo 
+        if (dir.y == 1.0f) // Va para abajo 
         {
-            if (previous.x > 1.0f) // izq->abajo
+            if (next.x == 1.0f) // abajo->derecha
             {
-                //print("Para abajo desde la izquierda");
+                elbow.transform.Rotate(Vector3.forward, 180.0f);
             }
-            else if (previous.x < 0.0f) // der->abajo
+            else if (next.x == -1.0f) // abajo->izquierda
             {
-                elbow.transform.Rotate(Vector3.forward, 90);
+                elbow.transform.Rotate(Vector3.forward, -90.0f);
             }
         }
-        else if (dir.y > 0.0f) // Va para arriba
+        else if (dir.y == -1.0f) // Va para arriba
         {
-            if (previous.x == -1.0f) // der->arriba
+            if (next.x == 1.0f) // arriba->derecha
             {
-                elbow.transform.Rotate(Vector3.forward, 180);
+                elbow.transform.Rotate(Vector3.forward, 90.0f);
             }
-            else if (previous.x > 0.0f)// izq->arriba
+            else if (next.x == -1.0f)// arriba->izquierda
+            {
+                elbow.transform.Rotate(Vector3.forward, 0.0f);
+            }
+        }
+        else if (dir.x == 1.0f) //Va para derecha
+        {
+            if (next.y == 1.0f)// derecha->abajo
+            {
+                elbow.transform.Rotate(Vector3.forward, 0.0f);
+            }
+            else if (next.y == -1.0f)// derecha->arriba
             {
                 elbow.transform.Rotate(Vector3.forward, -90);
             }
         }
-        else if (dir.x > 0.0f) //Va a la derecha
+        else if (dir.x == -1.0f) //Va para izquierda
         {
-            if (previous.y < 0.0f)// arriba->derecha
-            {
-                elbow.transform.Rotate(Vector3.forward, 180);
-            }
-            else if (previous.y > 0.0f)// abajo->derecha
+            if (next.y == 1.0f)// izquierda->abajo
             {
                 elbow.transform.Rotate(Vector3.forward, 90);
             }
-        }
-        else if (dir.x < 0.0f) //Va a la izquierda
-        {
-            if (previous.y > 0.0f)// abajo->izquierda
+            else if (next.y == -1.0f)// izquierda->arriba
             {
-                //print("Para izquierda desde abajo");
-            }
-            else if (previous.y < 0.0f)// arriba->izquierda
-            {
-                elbow.transform.Rotate(Vector3.forward, -90);
+                elbow.transform.Rotate(Vector3.forward, 180.0f);
             }
         }
     }
