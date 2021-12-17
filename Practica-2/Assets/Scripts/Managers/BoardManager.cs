@@ -137,15 +137,22 @@ struct ColorMovements
             if (Math.Abs(d.x + prevD.y) == 2.0f || Math.Abs(d.y + prevD.x) == 2.0f
             || Math.Abs(d.x + prevD.y) == 0.0f || Math.Abs(d.y + prevD.x) == 0.0f)
             {
-                t.ActiveTail(d, c);
-                t.ActiveElbow(c, d, prevD);
+                lastTile.ActiveTail(d, c);
+                lastTile.ActiveElbow(c, -d, prevD);
+                lastTile.ActiveBgColor(true, c);
             }
-            else if (!t.CircleActive())
+            else if (!lastTile.CircleActive())
             {
-                t.ActiveTail(d, c);
-                t.ActiveBridge(c);
+                lastTile.ActiveTail(d, c);
+                lastTile.ActiveBridge(c);
+                lastTile.ActiveBgColor(true, c);
             }
 
+            if (i == cutMovements.Count - 1)
+            {
+                t.ActiveTail(d, c);
+                t.ActiveBgColor(true, c);
+            }
             movements.Add(t);
             prevTile = lastTile;
         }
@@ -799,7 +806,7 @@ public class BoardManager : MonoBehaviour
             foreach (ColorMovements movs in cMovements)
             {
                 if (movs.GetColor() != c && movs.GetCutMovements().Count > 0)
-                    if (movs.GetCutMovements()[0].GetTileColor() == c)
+                    if (movs.GetCutMovements()[movs.GetCutMovements().Count - 1].GetTileColor() == c)
                         movs.DeleteCutMovements();
                     else
                         movs.PutCutMovements();
