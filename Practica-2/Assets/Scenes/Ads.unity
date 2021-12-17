@@ -6196,7 +6196,7 @@ MonoBehaviour:
   - {fileID: 342614398}
   - {fileID: 1984646090}
   - {fileID: 1021562877}
-  timeToMove: 0.5
+  timeToMove: 0.3
 --- !u!1 &1469216338
 GameObject:
   m_ObjectHideFlags: 0

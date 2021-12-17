@@ -108,9 +108,9 @@ public class DataManager : MonoBehaviour
 #if UNITY_EDITOR
             routeToSave = Directory.GetCurrentDirectory() + "/Assets/save/";
 #endif
-//#if UNITY_ANDROID
-//            routeToSave = "jar:file://" + Application.dataPath + "!/assets/save";
-//#endif
+#if UNITY_ANDROID
+            routeToSave = Application.persistentDataPath + "/save/";
+#endif
             Load();
             DontDestroyOnLoad(this.gameObject);
         }
@@ -198,15 +198,22 @@ public class DataManager : MonoBehaviour
         print("Props por defecto");
         try
         {
+            //  Creamos el directorio
+            if (!Directory.Exists(routeToSave))
+            {
+                Directory.CreateDirectory(routeToSave);
+            }
+            //  Reset a las categorías
             for (int i = 0; i < categories.Count; i++)
             {
                 categories[i].Reset();
             }
+            //  Reset a los colores
             foreach (ColorPack lP in colorThemes)
             {
                 lP.Reset();
             }
-
+            //  Guardado de json
             DataToSave currData = new DataToSave(numHintsDefault, false, categories, colorThemes, colorThemes[0]);
             currData.SetHash(SecureManager.Hash(JsonUtility.ToJson(currData)));
             string json = JsonUtility.ToJson(currData);
@@ -216,6 +223,7 @@ public class DataManager : MonoBehaviour
         catch (Exception e)
         {
             print(e.Message);
+            File.WriteAllText(routeToSave + "errorLog.txt",e.Message);
             throw new Exception("Reinstala la app");
         }
     }

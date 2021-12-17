@@ -12,6 +12,7 @@ public class TitleColor : MonoBehaviour
     public float timeToMove = 0.5f;
     private float currTime = 0.0f;
     private int index = 0;
+    private int lastIndex = 0;
     private List<Color> colors;
 
     void Start()
@@ -39,6 +40,11 @@ public class TitleColor : MonoBehaviour
                     index = 0;
                 }
                 currTime = 0.0f;
+            }
+            index -= letters.Length - 1;
+            if (index < 0)
+            {
+                index = colors.Count - 1;
             }
         }
     }
