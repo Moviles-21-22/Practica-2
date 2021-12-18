@@ -15,14 +15,9 @@ class FlowMovements
     {
         MAIN_PATH = 0,
         LAST_PATH = 1,
-        CURR_PATH = 2,
-        CUT_PATH = 3
+        CURR_PATH = 2
     }
 
-    /// <summary>
-    /// Determina si existe un camino entre ambas esferas
-    /// </summary>
-    public bool conected;
     /// <summary>
     /// Color lógico de la tubería
     /// </summary>
@@ -40,9 +35,10 @@ class FlowMovements
     /// </summary>
     List<Tile> lastPath;
     /// <summary>
-    /// Lista de los tiles que han sido cortados
+    /// Lista de los tiles que han sido borrados en un corte junto con su
+    /// correspondiente color lógico antes de ser cortado
     /// </summary>
-    List<Tile> cutPath;
+    List<KeyValuePair<Tile, int>> cutPath;
 
     /// <summary>
     /// Construye un flujo con un color lógico
@@ -53,7 +49,7 @@ class FlowMovements
         flowColor = c;
         flowPath = new List<Tile>();
         lastPath = new List<Tile>();
-        cutPath = new List<Tile>();
+        cutPath = new List<KeyValuePair<Tile, int>>();
         currentPath = new List<Tile>();
     }
 
@@ -117,6 +113,8 @@ class FlowMovements
     /// </summary>
     public void UpdatePaths()
     {
+        cutPath.Clear();
+
         // Si no ha cambiado el estado de los movimientos, entonces, se deja como estaba
         if (IsEqualPath(PathType.CURR_PATH, PathType.MAIN_PATH))
             return;
@@ -170,6 +168,7 @@ class FlowMovements
     {
         int p = 0;
         bool rem = true;
+
         while (rem && currentPath.Count > 0)
         {
             Tile ultTile = currentPath[currentPath.Count - 1];
@@ -181,7 +180,12 @@ class FlowMovements
             }
 
             p++;
-            cutPath.Add(ultTile);
+            var aux = new KeyValuePair<Tile, int>(ultTile, ultTile.GetTileColor());
+            if (!cutPath.Contains(aux))
+            {
+                cutPath.Add(aux);
+            }
+
             ultTile.ClearTile();
             currentPath.Remove(ultTile);
         }
@@ -195,37 +199,38 @@ class FlowMovements
     /// </summary>
     public int ClearFirstUntilTile(Tile t)
     {
-        int p = 0, i = 0;
-        bool rem = true;
-        while (rem && currentPath.Count > i)
-        {
-            Tile firstTile = currentPath[i];
-            currentPath[i] = currentPath[currentPath.Count - 1];
-            currentPath[currentPath.Count - 1] = firstTile;
-
-            //Hemos encontrado el tile desde el que queremos mantener el camino
-            if (currentPath[i] == t)
-            {
-                rem = false;
-            }
-
-            p++;
-            cutPath.Add(currentPath[currentPath.Count - 1]);
-            currentPath[currentPath.Count - 1].ClearTile();
-            currentPath.Remove(currentPath[currentPath.Count - 1]);
-            ++i;
-        }
-
-        //Si sobra algun movimiento se borra
-        for (int j = currentPath.Count; j > i; --j)
-        {
-            p++;
-            cutPath.Add(currentPath[currentPath.Count - 1]);
-            currentPath[currentPath.Count - 1].ClearTile();
-            currentPath.Remove(currentPath[currentPath.Count - 1]);
-        }
-
-        return p;
+        //int p = 0, i = 0;
+        //bool rem = true;
+        //while (rem && currentPath.Count > i)
+        //{
+        //    Tile firstTile = currentPath[i];
+        //    currentPath[i] = currentPath[currentPath.Count - 1];
+        //    currentPath[currentPath.Count - 1] = firstTile;
+        //
+        //    //Hemos encontrado el tile desde el que queremos mantener el camino
+        //    if (currentPath[i] == t)
+        //    {
+        //        rem = false;
+        //    }
+        //
+        //    p++;
+        //    cutPath.Add(currentPath[currentPath.Count - 1]);
+        //    currentPath[currentPath.Count - 1].ClearTile();
+        //    currentPath.Remove(currentPath[currentPath.Count - 1]);
+        //    ++i;
+        //}
+        //
+        ////Si sobra algun movimiento se borra
+        //for (int j = currentPath.Count; j > i; --j)
+        //{
+        //    p++;
+        //    cutPath.Add(currentPath[currentPath.Count - 1]);
+        //    currentPath[currentPath.Count - 1].ClearTile();
+        //    currentPath.Remove(currentPath[currentPath.Count - 1]);
+        //}
+        //
+        //return p;
+        return 0;
     }
 
     /// <summary>
@@ -265,44 +270,44 @@ class FlowMovements
     /// </summary>
     public void PutCutMovements()
     {
-        Color c = flowPath[0].GetColor();
-        Tile prevTile = flowPath[flowPath.Count - 2];
-        for (int i = 0; i < cutPath.Count; ++i)
-        {
-            Tile t = cutPath[cutPath.Count - 1 - i];
-            Tile lastTile;
-
-            if (i == 0)
-                lastTile = flowPath[flowPath.Count - 1];
-            else
-                lastTile = cutPath[cutPath.Count - i];
-
-            Vector2 d = new Vector2(t.GetX() - lastTile.GetX(), t.GetY() - lastTile.GetY());
-            Vector2 prevD = new Vector2(lastTile.GetX() - prevTile.GetX(), lastTile.GetY() - prevTile.GetY());
-
-            if (Math.Abs(d.x + prevD.y) == 2.0f || Math.Abs(d.y + prevD.x) == 2.0f
-            || Math.Abs(d.x + prevD.y) == 0.0f || Math.Abs(d.y + prevD.x) == 0.0f)
-            {
-                lastTile.ActiveTail(d, c);
-                lastTile.ActiveElbow(c, -d, prevD);
-                lastTile.ActiveBgColor(true, c);
-            }
-            else if (!lastTile.CircleActive())
-            {
-                lastTile.ActiveTail(d, c);
-                lastTile.ActiveBridge(c);
-                lastTile.ActiveBgColor(true, c);
-            }
-
-            if (i == cutPath.Count - 1)
-            {
-                t.ActiveTail(d, c);
-                t.ActiveBgColor(true, c);
-            }
-            flowPath.Add(t);
-            prevTile = lastTile;
-        }
-        ClearCutMovements();
+        //Color c = flowPath[0].GetColor();
+        //Tile prevTile = flowPath[flowPath.Count - 2];
+        //for (int i = 0; i < cutPath.Count; ++i)
+        //{
+        //    Tile t = cutPath[cutPath.Count - 1 - i];
+        //    Tile lastTile;
+        //
+        //    if (i == 0)
+        //        lastTile = flowPath[flowPath.Count - 1];
+        //    else
+        //        lastTile = cutPath[cutPath.Count - i];
+        //
+        //    Vector2 d = new Vector2(t.GetX() - lastTile.GetX(), t.GetY() - lastTile.GetY());
+        //    Vector2 prevD = new Vector2(lastTile.GetX() - prevTile.GetX(), lastTile.GetY() - prevTile.GetY());
+        //
+        //    if (Math.Abs(d.x + prevD.y) == 2.0f || Math.Abs(d.y + prevD.x) == 2.0f
+        //    || Math.Abs(d.x + prevD.y) == 0.0f || Math.Abs(d.y + prevD.x) == 0.0f)
+        //    {
+        //        lastTile.ActiveTail(d, c);
+        //        lastTile.ActiveElbow(c, -d, prevD);
+        //        lastTile.ActiveBgColor(true, c);
+        //    }
+        //    else if (!lastTile.CircleActive())
+        //    {
+        //        lastTile.ActiveTail(d, c);
+        //        lastTile.ActiveBridge(c);
+        //        lastTile.ActiveBgColor(true, c);
+        //    }
+        //
+        //    if (i == cutPath.Count - 1)
+        //    {
+        //        t.ActiveTail(d, c);
+        //        t.ActiveBgColor(true, c);
+        //    }
+        //    flowPath.Add(t);
+        //    prevTile = lastTile;
+        //}
+        //ClearCutMovements();
     }
 
     /// <summary>
@@ -352,7 +357,7 @@ class FlowMovements
     /// <summary>
     /// Devuelve el color lógico de la tubería
     /// </summary>
-    public int GetColor()
+    public int GetFlowColor()
     {
         return flowColor;
     }
@@ -370,7 +375,7 @@ class FlowMovements
     /// Devuelve la lista de los movimientos cortados
     /// </summary>
     /// <returns></returns>
-    public List<Tile> GetCutMovements()
+    public List<KeyValuePair<Tile, int>> GetCutMovements()
     {
         return cutPath;
     }
@@ -410,9 +415,6 @@ class FlowMovements
                 break;
             case PathType.CURR_PATH:
                 a = currentPath;
-                break;
-            case PathType.CUT_PATH:
-                a = cutPath;
                 break;
         }
 
@@ -879,14 +881,14 @@ public class BoardManager : MonoBehaviour
             ApplyMovements(c);
 
             inputTile.GetCircleRender().enabled = false;
-            foreach (FlowMovements movs in cMovements)
-            {
-                if (movs.GetColor() != c && movs.GetCutMovements().Count > 0)
-                    if (movs.GetCutMovements()[movs.GetCutMovements().Count - 1].GetTileColor() == c)
-                        movs.ClearCutMovements();
-                    else
-                        movs.PutCutMovements();
-            }
+            //foreach (FlowMovements movs in cMovements)
+            //{
+            //    if (movs.GetColor() != c && movs.GetCutMovements().Count > 0)
+            //        if (movs.GetCutMovements()[movs.GetCutMovements().Count - 1].GetTileColor() == c)
+            //            movs.ClearCutMovements();
+            //        else
+            //            movs.PutCutMovements();
+            //}
         }
 
         if (IsSolution())
@@ -978,7 +980,6 @@ public class BoardManager : MonoBehaviour
         }
 
         cMovements[tileColor].AddCurrentMov(dragedTile.Key);
-        cMovements[tileColor].DrawPath(FlowMovements.PathType.CURR_PATH);
     }
 
     /// <summary>
@@ -995,9 +996,43 @@ public class BoardManager : MonoBehaviour
         int count = cMovements[tileColor].GetCurrentMoves().Count;
         currTile = cMovements[tileColor].GetCurrentMoves()[count - 1];
 
-        if (count > 1)
+        // Al limpiar los tiles, habría que comprobar a quién pertenecían esos tiles (buscando
+        // entre todos los demás flujos para saber su el tile del flujo actual está solapando algún otro.
+        // Entonces, cuando se esté volviendo hacía atrás, los tiles cortados del flujo actual, serán añadidos a sus
+        // anteriores flujos
+        ResetCutMoves(tileColor);
+    }
+
+    /// <summary>
+    /// Resetea los movimientos cortados por otra tubería
+    /// </summary>
+    private void ResetCutMoves(int tileColor)
+    {
+        var currFlow = cMovements[tileColor];
+        var currPath = currFlow.GetCurrentMoves();
+        var cutPath = currFlow.GetCutMovements();
+
+        foreach (FlowMovements flow in cMovements)
         {
-            Tile prevTile = cMovements[tileColor].GetCurrentMoves()[count - 2];
+            // Solo nos interesan los flujos con cutMoves
+            if (flow != currFlow && flow.GetCutMovements().Count > 0)
+            {
+                // Se recorre la lista de tiles cortados del otro flujo
+                for (int i = flow.GetCutMovements().Count - 1; i >= 0; i--)
+                {
+                    var ultTile = flow.GetCutMovements()[i].Key;
+                    // Si el camino actual ya no contiene al movimiento cortado
+                    if (!currPath.Contains(ultTile)) 
+                    {
+                        ultTile.ClearTile();
+                        ultTile.SetTileColor(flow.GetFlowColor());
+                        flow.GetCutMovements().Remove(flow.GetCutMovements()[i]);
+                        flow.AddCurrentMov(ultTile);
+                    }
+                }
+
+                flow.DrawPath(FlowMovements.PathType.CURR_PATH);
+            }
         }
     }
 
@@ -1013,22 +1048,22 @@ public class BoardManager : MonoBehaviour
         //Si la tubería con la que chocamos ya estaba completa, se recortará dejando el lado más largo
         if (cMovements[cM].GetFlowPath()[cMovements[cM].GetFlowPath().Count - 1].CircleActive())
         {
-            //Encontramos el lado más largo
-            int i = 0;
-            while (i < cMovements[cM].GetFlowPath().Count)
-            {
-                if (cMovements[cM].GetFlowPath()[i] == dragedTile.Key)
-                    break;
-                ++i;
-            }
-
-            //Empezamos a borrar según que lado sea más largo
-            int p = 0;
-            if (i < cMovements[cM].GetFlowPath().Count / 2)
-                p = cMovements[cM].ClearFirstUntilTile(dragedTile.Key);
-            else
-                p = cMovements[cM].ClearUntilTile(dragedTile.Key);
-            percentage -= plusPercentage * p;
+            ////Encontramos el lado más largo
+            //int i = 0;
+            //while (i < cMovements[cM].GetFlowPath().Count)
+            //{
+            //    if (cMovements[cM].GetFlowPath()[i] == dragedTile.Key)
+            //        break;
+            //    ++i;
+            //}
+            //
+            ////Empezamos a borrar según que lado sea más largo
+            //int p = 0;
+            //if (i < cMovements[cM].GetFlowPath().Count / 2)
+            //    p = cMovements[cM].ClearFirstUntilTile(dragedTile.Key);
+            //else
+            //    p = cMovements[cM].ClearUntilTile(dragedTile.Key);
+            //percentage -= plusPercentage * p;
 
         }
         //Si la tubería no estaba completa se recortará directamente
@@ -1037,10 +1072,14 @@ public class BoardManager : MonoBehaviour
             int p = cMovements[cM].ClearUntilTile(dragedTile.Key);
             percentage -= plusPercentage * p;
 
+            // Se resetea el último elemento que quedó en la lista para que aplique la forma correcta del tile
+            var currentPath = cMovements[cM].GetCurrentMoves();
+            var ulTile = currentPath[currentPath.Count - 1];
+            ulTile.ClearTile();
+            ulTile.SetTileColor(cMovements[cM].GetFlowColor());
         }
 
-        //Renderizamos la puntita
-        Tile lastTile = cMovements[cM].GetFlowPath()[cMovements[cM].GetFlowPath().Count - 1];
+        // se dibuja el camino actual del flujo que se acaba de cortar
         cMovements[cM].DrawPath(FlowMovements.PathType.CURR_PATH);
 
         //if (cMovements[cM].GetFlowPath().Count > 1)
@@ -1161,7 +1200,7 @@ public class BoardManager : MonoBehaviour
             {
                 if (!cM.IsConected())
                 {
-                    int cl = cM.GetColor();
+                    int cl = cM.GetFlowColor();
                     if (cl != -1)
                         movs.Add(cont);
                 }

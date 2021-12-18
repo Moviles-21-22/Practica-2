@@ -107,8 +107,7 @@ public class DataManager : MonoBehaviour
             instance = this;
 #if UNITY_EDITOR
             routeToSave = Directory.GetCurrentDirectory() + "/Assets/save/";
-#endif
-#if UNITY_ANDROID
+#elif UNITY_ANDROID
             routeToSave = Application.persistentDataPath + "/save/";
 #endif
             Load();
