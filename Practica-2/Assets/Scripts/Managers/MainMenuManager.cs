@@ -57,7 +57,6 @@ public class MainMenuManager : MonoBehaviour
             button.onClick.AddListener(() => GameManager.instance.LoadPackage(categoria.levels[level], categoria));
         }
     }
-
     private void Start()
     {
         GameManager gm = GameManager.instance;

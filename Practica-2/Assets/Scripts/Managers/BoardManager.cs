@@ -145,6 +145,7 @@ class FlowMovements
         currentPath.Clear();
         for (int i = 0; i < flowPath.Count; i++)
         {
+            flowPath[i].SetTileColor(flowColor);
             currentPath.Add(flowPath[i]);
         }
     }
@@ -878,7 +879,7 @@ public class BoardManager : MonoBehaviour
                 currTile = null;
                 return;
             }
-            ApplyMovements(c);
+            for (int i = 0; i < cMovements.Count; ++i) ApplyMovements(i);
 
             inputTile.GetCircleRender().enabled = false;
             //foreach (FlowMovements movs in cMovements)
@@ -978,7 +979,7 @@ public class BoardManager : MonoBehaviour
 
             currTile = dragedTile.Key;
         }
-
+        currTile.SetTileColor(tileColor);
         cMovements[tileColor].AddCurrentMov(dragedTile.Key);
     }
 
@@ -990,8 +991,11 @@ public class BoardManager : MonoBehaviour
     /// <param name="dir">Dirección del input</param>
     private void BackFlowPath(KeyValuePair<Tile, Vector2Int> dragedTile, int tileColor)
     {
-        int p = cMovements[tileColor].ClearUntilTile(dragedTile.Key);
+        int p = cMovements[tileColor].ClearUntilTile(dragedTile.Key) - 1;
         percentage -= plusPercentage * p;
+
+        dragedTile.Key.SetTileColor(tileColor);
+        cMovements[tileColor].AddCurrentMov(dragedTile.Key);
 
         int count = cMovements[tileColor].GetCurrentMoves().Count;
         currTile = cMovements[tileColor].GetCurrentMoves()[count - 1];
@@ -1022,13 +1026,15 @@ public class BoardManager : MonoBehaviour
                 {
                     var ultTile = flow.GetCutMovements()[i].Key;
                     // Si el camino actual ya no contiene al movimiento cortado
-                    if (!currPath.Contains(ultTile)) 
+                    if (!currPath.Contains(ultTile))
                     {
-                        ultTile.ClearTile();
-                        ultTile.SetTileColor(flow.GetFlowColor());
+                        //ultTile.ClearTile();
                         flow.GetCutMovements().Remove(flow.GetCutMovements()[i]);
+                        ultTile.SetTileColor(flow.GetFlowColor());
                         flow.AddCurrentMov(ultTile);
                     }
+                    //En cuanto haya un tile cortado no se pintarán más de la cadena
+                    else break;
                 }
 
                 flow.DrawPath(FlowMovements.PathType.CURR_PATH);
@@ -1279,7 +1285,7 @@ public class BoardManager : MonoBehaviour
 
         foreach (Tile tile in cMovements[c].GetFlowPath())
         {
-            tile.ActiveBgColor(true, currTileColor);
+            tile.ActiveBgColor(true, tile.GetColor());
         }
 
         if (cMovements[c].IsConected())
