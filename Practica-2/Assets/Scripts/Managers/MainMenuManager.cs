@@ -16,12 +16,12 @@ public class MainMenuManager : MonoBehaviour
 
     [SerializeField]
     private AudioSource audioSource; 
-
+    /// <summary>
+    /// Clase para agrupar las diferentes categorias
+    /// </summary>
     [System.Serializable]
     private class Paquete 
     {
-        //[Tooltip("Inserte la categoria empaquetada")]
-        //private Category categoria;
         [Tooltip("Referencia al sprite colorido de la categoria")]
         public Image titleSprite;
         [Tooltip("Referencia al texto que indica el nombre de la categoria")]
@@ -31,7 +31,9 @@ public class MainMenuManager : MonoBehaviour
         [Tooltip("Lista de las propiedades de los niveles")]
         public List<LevelProperties> levels;
     }
-
+    /// <summary>
+    /// Elementos de cada categoria agrupados
+    /// </summary>
     [System.Serializable]
     private struct LevelProperties 
     {
@@ -69,7 +71,9 @@ public class MainMenuManager : MonoBehaviour
 
 
 
-
+    /// <summary>
+    /// Inicializa las categorias del juego
+    /// </summary>
     private void Start()
     {
         DataManager.instance.LogError("\nEntramos en MainMenu");
@@ -119,7 +123,6 @@ public class MainMenuManager : MonoBehaviour
                 paquetes[i].levels[j].levelRect.sizeDelta = aux;
             }
         }
-
         DataManager.instance.LogError("Salimos de MainMenu\n");
     }
 }

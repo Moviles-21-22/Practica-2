@@ -33,8 +33,21 @@ public class ThemeAds : MonoBehaviour
             circle = status.sprite;
         }
 
+        /// <summary>
+        /// Devuelve el tema actual
+        /// </summary>
+        /// <returns></returns>
         public ColorPack GetTheme() { return theme; }
+
+        /// <summary>
+        /// Cambia el tema
+        /// </summary>
+        /// <param name="p"></param>
         public void SetTheme(ColorPack p) { theme = p; }
+
+        /// <summary>
+        /// Callback para cambiar de tema
+        /// </summary>
         public void ThemeCallBack()
         {
             if (theme.active)
@@ -56,6 +69,10 @@ public class ThemeAds : MonoBehaviour
         ChangeShopColor();
     }
 
+    /// <summary>
+    /// Quita la marca del anterior tema
+    /// </summary>
+    /// <param name="index"></param>
     public void QuitMark(int index)
     {
         themes[index].ThemeCallBack();
@@ -65,6 +82,9 @@ public class ThemeAds : MonoBehaviour
         ChangeShopColor();
     }
 
+    /// <summary>
+    /// Cambia el color de la tienda
+    /// </summary>
     private void ChangeShopColor()
     {
         List<Color> colors = GameManager.instance.GetCurrTheme().colors;
@@ -74,6 +94,9 @@ public class ThemeAds : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Inicializa los temas disponibles
+    /// </summary>
     private void InitThemes()
     {
         var t = GameManager.instance.GetThemes();

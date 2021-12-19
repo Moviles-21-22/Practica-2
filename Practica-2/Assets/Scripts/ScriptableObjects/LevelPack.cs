@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Clase scripteable usada para representar los packs con los niveles
+/// </summary>
 [System.Serializable]
 [CreateAssetMenu(fileName ="levelpack",menuName ="Flow/level pack",order = 1)]
 public class LevelPack : ScriptableObject
@@ -23,6 +26,9 @@ public class LevelPack : ScriptableObject
     [Tooltip("Determina la forma de enumerar los niveles")]
     public bool splitLevels = true;
 
+    /// <summary>
+    /// Resetea el pack a un estado inicial
+    /// </summary>
     public void Reset()
     {
         completedLevels = 0;

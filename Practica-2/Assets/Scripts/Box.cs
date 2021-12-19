@@ -39,6 +39,10 @@ public class Box : MonoBehaviour
     /// </summary>
     private float offsetAlpha = -0.1f;
 
+    /// <summary>
+    /// Cambia el numero de un nivel
+    /// </summary>
+    /// <param name="num">Nivel</param>
     public void SetLevelNum(int num)
     {
         numText.text = num.ToString();
@@ -66,11 +70,18 @@ public class Box : MonoBehaviour
         frame.color = color;
     }
 
+    /// <summary>
+    /// Asiganar un callback a un botón
+    /// </summary>
+    /// <param name="level">nivel a cargar</param>
     public void SetCallBack(int level)
     {
         button.onClick.AddListener(() => GameManager.instance.LoadLevel(level));
     }
 
+    /// <summary>
+    /// Activar el candado del bloque
+    /// </summary>
     public void ActiveLockImage() 
     {
         var color = background.color;
@@ -86,6 +97,9 @@ public class Box : MonoBehaviour
         lockImage.enabled = true;
     }
 
+    /// <summary>
+    /// Cambio del nivel actual
+    /// </summary>
     public void CurrentLevel() 
     {
         var color = background.color;

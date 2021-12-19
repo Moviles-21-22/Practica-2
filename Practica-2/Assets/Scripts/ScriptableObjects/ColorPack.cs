@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Clase scripteable usada para representar los diferentes packs/skins
+/// </summary>
 [System.Serializable]
 [CreateAssetMenu(fileName = "skinpack", menuName = "Flow/color", order = 1)]
 public class ColorPack : ScriptableObject
@@ -15,6 +18,9 @@ public class ColorPack : ScriptableObject
     [Tooltip("Estado inicial del theme")]
     [SerializeField] public bool status;
 
+    /// <summary>
+    /// Resetea la skin a un estado inicial
+    /// </summary>
     public void Reset()
     {
         active = status;

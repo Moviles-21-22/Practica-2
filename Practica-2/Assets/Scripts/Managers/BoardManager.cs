@@ -372,9 +372,8 @@ public class BoardManager : MonoBehaviour
     [Tooltip("Referencia al GameObject del canvas que se muestra al superar el nivel")]
     [SerializeField]
     private HUDManager hud;
-
+    //  Lista de colores
     private List<Color> colors;
-
     // Determina si se está pulsadno la pantalla
     private bool inputDown = false;
     //Guarda el color lógico del último movimiento que modificó el tablero

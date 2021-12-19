@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Clase scripteable para las diferentes categorias
+/// </summary>
 [System.Serializable]
 [CreateAssetMenu(fileName = "skinpack", menuName = "Flow/skin", order = 1)]
 public class Category : ScriptableObject
@@ -13,7 +16,10 @@ public class Category : ScriptableObject
     public Color color;
     [Tooltip("fichero con los niveles")]
     public LevelPack[] levels;
-
+    
+    /// <summary>
+    /// Resetea a un estado inicial
+    /// </summary>
     public void Reset()
     {
         foreach (LevelPack level in levels)

@@ -1,8 +1,16 @@
 using System.Security.Cryptography;
 using System.Text;
 
+/// <summary>
+/// Clase creada para gestionar los hash
+/// </summary>
 public class SecureManager
 {
+    /// <summary>
+    /// Crea un hash usando SHA256 y lo devuelve
+    /// </summary>
+    /// <param name="data">Data a "hashear"</param>
+    /// <returns></returns>
     public static string Hash(string data)
     {
         SHA256Managed mySha256 = new SHA256Managed();

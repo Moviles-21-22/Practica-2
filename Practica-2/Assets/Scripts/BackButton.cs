@@ -12,6 +12,9 @@ public class BackButton : MonoBehaviour
     [SerializeField]
     private GameManager.SceneOrder sceneToLoad;
 
+    /// <summary>
+    /// Agrega el listener al botón
+    /// </summary>
     public void Start()
     {
         button.onClick.AddListener(()=> GameManager.instance.LoadScene((int)sceneToLoad));

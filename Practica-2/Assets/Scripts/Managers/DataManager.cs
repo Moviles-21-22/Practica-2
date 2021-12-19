@@ -4,9 +4,13 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
+/// <summary>
+/// Clase creada para guardar categorias
+/// </summary>
 [System.Serializable]
 public class CategoryToSave
 {
+    //  Categoria a guardar
     [SerializeField]
     Category cat;
 
@@ -16,23 +20,32 @@ public class CategoryToSave
     }
 }
 
+/// <summary>
+/// Clase para guardar datos serializables
+/// </summary>
 [System.Serializable]
 public class DataToSave
 {
+    //  Numero de pistas
     [SerializeField]
     private int numHints;
 
+    //  Para determinar si el jugador es premium
     [SerializeField]
     private bool premium;
 
+    //  Lista de skins
     [SerializeField]
     private List<ColorPack> themes;
 
+    //  Skin actual usada por el jugador
     [SerializeField]
     private ColorPack currTheme;
 
+    //  Categorias serializables
     public List<Category> categories;
     
+    //  Hash creado a partir del serializable
     [SerializeField]
     private string hash;
 
@@ -45,37 +58,63 @@ public class DataToSave
         themes = _theme;
         currTheme = _lastTheme;
     }
-
+    /// <summary>
+    /// Guarda el hash en la clase
+    /// </summary>
+    /// <param name="_hash"></param>
     public void SetHash(string _hash)
     {
         hash = _hash;
     }
 
+    /// <summary>
+    /// Devuelve el hash
+    /// </summary>
+    /// <returns>hash</returns>
     public string GetHash()
     {
         return hash;
     }
-
+    /// <summary>
+    /// Devuelve todas las categorias disponibles
+    /// </summary>
+    /// <returns></returns>
     public List<Category> GetCategories()
     {
         return categories;
     }
 
+    /// <summary>
+    /// Devuelve el número de pistas disponibles
+    /// </summary>
+    /// <returns></returns>
     public int GetNumHints()
     {
         return numHints;
     }
 
+    /// <summary>
+    /// Devuelve el estatus del jugador (premium)
+    /// </summary>
+    /// <returns></returns>
     public bool GetPremiumStatus()
     {
         return premium;
     }
 
+    /// <summary>
+    /// Devuelve todos las skins disponibles
+    /// </summary>
+    /// <returns></returns>
     public List<ColorPack> GetThemes()
     {
         return themes;
     }
 
+    /// <summary>
+    /// Devuelve la skin actualmente usada por el jugador
+    /// </summary>
+    /// <returns></returns>
     public ColorPack GetCurrentTheme()
     {
         return currTheme;
@@ -85,10 +124,9 @@ public class DataToSave
 
 public class DataManager : MonoBehaviour
 {
-    // TODO Poner algo chulo de clave 
-    private string key = "asdladawdajdw";
     //  Nombre del props
     private string fileName = "props.json";
+    //  Nombre del log
     private string errorFileName = "errorLog.txt";
     //  Ruta abs de la carpeta save
     private string routeToSave;
@@ -121,7 +159,9 @@ public class DataManager : MonoBehaviour
         }
     }
 
-    //  Guardamos en un json toda la información necesaria
+    /// <summary>
+    /// Guardamos en un json toda la información necesaria
+    /// </summary>    
     public void Save()
     {
         try
@@ -159,7 +199,9 @@ public class DataManager : MonoBehaviour
         }
     }
 
-    //  Carga el json con la información necesaria para cargar un usuario
+    /// <summary>
+    /// Carga el json con la información necesaria para cargar un usuario
+    /// </summary>
     public void Load()
     {
         // Si existe el props
@@ -208,7 +250,10 @@ public class DataManager : MonoBehaviour
         }
     }
 
-    //  Crea el json props y categorias por defecto
+    /// <summary>
+    /// Crea el json, resetea los recursos y devuelve un DataToSave con toda esta información
+    /// </summary>
+    /// <returns></returns>
     private DataToSave CreateDefaultJson()
     {
         try
@@ -240,7 +285,10 @@ public class DataManager : MonoBehaviour
         }
     }
 
-    //  Agrega una línea al log
+    /// <summary>
+    /// Agrega una línea al log
+    /// </summary>
+    /// <param name="message"></param>
     public void LogError(string message)
     {
         string log = String.Empty;
@@ -260,7 +308,9 @@ public class DataManager : MonoBehaviour
         writer.Close();
     }
 
-    //  Resetea el log
+    /// <summary>
+    /// Resetea el log
+    /// </summary>
     private void LogReset()
     {
         if (File.Exists(routeToSave + errorFileName))
@@ -272,7 +322,9 @@ public class DataManager : MonoBehaviour
         writer.Close();
     }
 
-    //  Inicializa los docs
+    /// <summary>
+    /// Inicializa los docs
+    /// </summary>
     private void Init()
     {
         //  Inicializamos el folder

@@ -16,13 +16,15 @@ public class GridManager : MonoBehaviour
     [Tooltip("Paquete que contiene el grid de los niveles")]
     [SerializeField]
     private GridPack packPrefab;
-
+    // Actual pack cargado
     private LevelPack currLevelPack;
-
+    //  Colores para los bloques
     private Color[] colors = { Color.red, Color.blue, Color.green, Color.cyan, Color.magenta };
-
+    //  Para enumerar el grid
     private bool splitLevels = false;
+    //  Para determinar si el pack está bloqueado
     private bool lockPack = false;
+    //  Niveles completados del bloque
     private int completedLevels = 0;
 
     private void Start()
@@ -53,6 +55,12 @@ public class GridManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Crea el grid de forma dinámica en función del pack cargado
+    /// </summary>
+    /// <param name="pack">Pack cargado actualmente</param>
+    /// <param name="index">Indice del pack</param>
+    /// <param name="color">Color del bloque</param>
     private void CreateGrid(LevelPack pack, int index, Color color)
     {
         GridPack currPack = Instantiate<GridPack>(packPrefab, contentScroll.transform);

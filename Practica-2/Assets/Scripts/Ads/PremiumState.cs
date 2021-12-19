@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class PremiumState : MonoBehaviour
 {
+    /// <summary>
+    /// Activa o desactiva el marco
+    /// </summary>
     void Start()
     {
         if (GameManager.instance.IsPremium())
@@ -12,6 +15,9 @@ public class PremiumState : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Desbloquea el premiun y desactiva el marco
+    /// </summary>
     public void UnlockPremium()
     {
         GameManager.instance.UnLockPremium();

@@ -40,6 +40,11 @@ public class Map
     //  Vector con el nivel pedido
     private List<Level> levels = new List<Level>();
 
+    /// <summary>
+    /// Cargado de niveles
+    /// </summary>
+    /// <param name="text"></param>
+    /// <param name="a"></param>
     public Map(string text, int a)
     {
         //  Todos los niveles por separado
@@ -54,6 +59,12 @@ public class Map
         }
     }
 
+    /// <summary>
+    /// Procesa un pack 
+    /// </summary>
+    /// <param name="level"></param>
+    /// <param name="index"></param>
+    /// <returns></returns>
     private Level ProcessLevel(string level, int index)
     {
         //  Separamos por segmentos
@@ -119,7 +130,10 @@ public class Map
         return currLevel;
     }
 
-    //  Abre y lee un txt y crea un array bidimensional con la información del tablero
+    /// <summary>
+    /// Abre y lee un txt y crea un array bidimensional con la información del tablero
+    /// </summary>
+    /// <param name="route">Ruta del pack</param>
     public Map(string route)
     {
         StreamReader reader = new StreamReader(route);
@@ -166,11 +180,20 @@ public class Map
         }
     }
 
+    /// <summary>
+    /// Devuelve todos los niveles de un pack
+    /// </summary>
+    /// <returns></returns>
     public List<Level> GetAllLevels()
     {
         return levels;
     }
-
+    
+    /// <summary>
+    /// Devueve un nivel de un pack
+    /// </summary>
+    /// <param name="lvl">Nivel que se quiere</param>
+    /// <returns></returns>
     public Level GetLevel(int lvl)
     {
         return levels[lvl];

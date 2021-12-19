@@ -10,9 +10,11 @@ public class TitleColor : MonoBehaviour
     // Start is called before the first frame update
     [Tooltip("Tiempo para mover las letras")]
     public float timeToMove = 0.5f;
+    //  Tiempo actual
     private float currTime = 0.0f;
+    //  Index de los colores
     private int index = 0;
-    private int lastIndex = 0;
+    //  Coles cargados
     private List<Color> colors;
 
     void Start()
@@ -24,7 +26,9 @@ public class TitleColor : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// Cambio de colores en función del delta time 
+    /// </summary>
     void Update()
     {
         currTime += Time.deltaTime;
