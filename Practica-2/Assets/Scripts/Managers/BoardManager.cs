@@ -839,12 +839,17 @@ public class BoardManager : MonoBehaviour
                         else if (dragedTile.Key.GetTileColor() != (int)Tile.TILE_COLOR.NONE)
                         {
                             CutFlow(dragedTile);
+
+                            // Se actualiza el porcentaje
+                            percentage += plusPercentage;
+                        }
+                        else
+                        {
+                            // Se actualiza el porcentaje
+                            percentage += plusPercentage;
                         }
 
-                        // Se actualiza el porcentaje
-                        percentage += plusPercentage;
-                        hud.ShowPercentage((int)Math.Round(percentage));
-
+                        
                         // Actualización del dragedTile
                         dragedTile.Key.SetX(dragedTile.Value.x);
                         dragedTile.Key.SetY(dragedTile.Value.y);
@@ -860,6 +865,7 @@ public class BoardManager : MonoBehaviour
                         currTile = dragedTile.Key;
                     }
 
+                        hud.ShowPercentage((int)Math.Round(percentage));
                     cMovements[c].DrawPath(FlowMovements.PathType.CURR_PATH);
                 }
             }
@@ -1018,7 +1024,7 @@ public class BoardManager : MonoBehaviour
     {
         var currFlow = cMovements[tileColor];
         var currPath = currFlow.GetCurrentMoves();
-        var cutPath = currFlow.GetCutMovements();
+        //var cutPath = currFlow.GetCutMovements();
 
         foreach (FlowMovements flow in cMovements)
         {
@@ -1036,6 +1042,8 @@ public class BoardManager : MonoBehaviour
                         flow.GetCutMovements().Remove(flow.GetCutMovements()[i]);
                         ultTile.SetTileColor(flow.GetFlowColor());
                         flow.AddCurrentMov(ultTile);
+
+                        percentage += plusPercentage;
                     }
                     //En cuanto haya un tile cortado no se pintarán más de la cadena
                     else break;
