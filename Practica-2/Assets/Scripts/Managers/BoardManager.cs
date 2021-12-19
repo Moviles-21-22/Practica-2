@@ -1182,17 +1182,17 @@ public class BoardManager : MonoBehaviour
                     Tile tile = tiles[index.y, index.x];
                     if (tile.CircleActive() && i == 0)
                     {
-                        InputDown(tile.GetLogicRect().position);
+                        InputDown(tile.GetLogicRect().center);
                         tile.ActiveStar(true);
                     }
                     else if (i == currSolution.Count - 1)
                     {
-                        InputMoving(tile.GetLogicRect().position);
+                        InputMoving(tile.GetLogicRect().center);
                         tile.ActiveStar(true);
                     }
                     else
                     {
-                        InputMoving(tile.GetLogicRect().position);
+                        InputMoving(tile.GetLogicRect().center);
                     }
                 }
 
