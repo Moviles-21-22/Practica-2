@@ -52,11 +52,24 @@ public class MainMenuManager : MonoBehaviour
         /// <param name="level">
         /// Indice para acceder al nivel correspondiente en la categoria
         /// </param>
-        public void LoadLevelCallback(Category categoria, int level) 
+        public void LoadLevelCallback(Category categoria, int level)
         {
             button.onClick.AddListener(() => GameManager.instance.LoadPackage(categoria.levels[level], categoria));
         }
+
+        public void CallBack(int lvl, int cat)
+        {
+            Category category = GameManager.instance.GetCategories()[cat];
+            LevelPack level = category.levels[lvl];
+            DataManager.instance.LogError("CallBack con " + category.categoryName + " y nivel " + level.levelName);
+            button.onClick.AddListener(() => GameManager.instance.LoadPackage(level, category));
+        }
+
     }
+
+
+
+
     private void Start()
     {
         DataManager.instance.LogError("\nEntramos en MainMenu");
@@ -93,7 +106,11 @@ public class MainMenuManager : MonoBehaviour
                 // Niveles completados
                 paquetes[i].levels[j].levels.text = cats[i].levels[j].completedLevels + "/" + cats[i].levels[j].levelsInfo.Count;
                 // Logica del boton
-                paquetes[i].levels[j].LoadLevelCallback(cats[i], j);
+                //paquetes[i].levels[j].LoadLevelCallback(cats[i], j);
+                paquetes[i].levels[j].CallBack(j, i);
+                //paquetes[i].levels[j].button.onClick.AddListener(() =>
+                //GameManager.instance.LoadPackage(GameManager.instance.GetCategories()[i].levels[j], 
+                //GameManager.instance.GetCategories()[i]));
                 paquetes[i].levels[j].button.onClick.AddListener(() => audioSource.PlayOneShot(forward));
 
                 // Tamaño común para todos

@@ -1197,7 +1197,7 @@ public class BoardManager : MonoBehaviour
                 }
 
                 gm.UseHint();
-                hud.UseHint();
+                hud.UpdateHintText();
             }
         }
     }

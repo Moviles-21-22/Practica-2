@@ -73,6 +73,9 @@ public class HUDManager : MonoBehaviour
     [Tooltip("Referencia al botón de reiniciar nivel")]
     [SerializeField]
     private Button restartButton;
+    [Tooltip("Referencia al botón para agregar pistas")]
+    [SerializeField]
+    private Button addHintsButton;
 
     private GameManager gm;
     //Mapa del nivel cargado
@@ -162,6 +165,8 @@ public class HUDManager : MonoBehaviour
     {
         // Proximo nivel
         nextLevelWin.elementButton.onClick.AddListener(() => gm.ChangeLevel(currLevel.lvl + 1));
+        addHintsButton.onClick.AddListener(() => gm.AddHints(1));
+        addHintsButton.onClick.AddListener(() => UpdateHintText());
     }
 
     /// <summary>
@@ -211,13 +216,17 @@ public class HUDManager : MonoBehaviour
     /// Cambia el texto que muestra las pistas en función de las pistas
     /// que queden en el GameManager
     /// </summary>
-    public void UseHint()
+    public void UpdateHintText()
     {
         int leftHints = gm.GetNumHints();
         hints.elementText.text = leftHints.ToString() + "x";
         if (leftHints == 0)
         {
             hints.elementImage.sprite = hints.elementSprites[0];
+        }
+        else
+        {
+            hints.elementImage.sprite = hints.elementSprites[1];
         }
     }
 

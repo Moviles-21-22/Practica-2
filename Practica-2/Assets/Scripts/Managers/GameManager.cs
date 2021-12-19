@@ -221,6 +221,8 @@ public class GameManager : MonoBehaviour
     public void LoadPackage(LevelPack level, Category cat)
     {
         DataManager.instance.LogError("Entro botón");
+        DataManager.instance.LogError("Cargando categoria: " + cat.categoryName);
+        DataManager.instance.LogError("Cargando nivel: " + level.levelName);
         currCategory = cat;
         currPack = level;
         LoadScene((int)SceneOrder.LEVEL_SELECT);
