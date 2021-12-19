@@ -74,13 +74,20 @@ public class HUDManager : MonoBehaviour
     [SerializeField]
     private Button restartButton;
 
-    private Map map;
-    private LevelPack levelPack;
-    private Level currLevel;
     private GameManager gm;
+    //Mapa del nivel cargado
+    private Map map;
+    //Paquete de niveles cargado
+    private LevelPack levelPack;
+    //Nivel cargado
+    private Level currLevel;
+    //Determina si se ha completado el tablero con el minimo de movimientos
     private bool winPerfect;
+    //Variable de tiempo usada para procesar las animaciones
     private float timer = 0.0f;
+    //Numero de tuberías conectadas
     private int currentFlows = 0;
+    //Numero de pasos
     private int currentMovs = 0;
 
     [System.Serializable]
@@ -220,7 +227,7 @@ public class HUDManager : MonoBehaviour
     /// <param name="perfect">Determina si el nivel es perfecto o no</param>
     public void LevelCompleted(bool perfect)
     {
-        winPerfect = perfect;
+        //winPerfect = perfect;
         winStar.enabled = true;
         // Si es una solución con movimientos perfectos sale una estrella grande
         if (perfect)

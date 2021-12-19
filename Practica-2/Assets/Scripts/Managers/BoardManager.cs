@@ -1108,12 +1108,15 @@ public class BoardManager : MonoBehaviour
     #endregion
 
     #region Otros
+    /// <summary>
+    /// Procesa una pista: une dos tuberías que no esten ya resueltas
+    /// </summary>
     public void GiveHint()
     {
         var gm = GameManager.instance;
         if (gm.GetNumHints() > 0)
         {
-            //  Buscamos qué elementos no están conectados como posibles candidatos a pista
+            // Buscamos qué elementos no están conectados como posibles candidatos a pista
             List<int> movs = new List<int>();
             int cont = 0;
             foreach (FlowMovements cM in cMovements)
@@ -1126,7 +1129,7 @@ public class BoardManager : MonoBehaviour
                 }
                 cont++;
             }
-            //  elegimos aleatoriamente uno
+            // Elegimos aleatoriamente uno
             if (movs.Count > 0)
             {
                 int elc = UnityEngine.Random.Range(0, movs.Count - 1);
