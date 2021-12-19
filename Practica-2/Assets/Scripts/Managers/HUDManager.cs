@@ -295,9 +295,9 @@ public class HUDManager : MonoBehaviour
     /// <summary>
     /// Añade o quita un flujo al contador de flujos completos
     /// </summary>
-    public void AddFlow(int flow)
+    public void ShowFlows(int flows)
     {
-        currentFlows += flow;
+        currentFlows = flows;
         numFlowsText.text = "flujos: " + currentFlows + "/" + currLevel.numFlow;
     }
 

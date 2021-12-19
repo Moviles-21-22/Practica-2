@@ -23,6 +23,10 @@ class FlowMovements
     /// </summary>
     int flowColor;
     /// <summary>
+    /// Color gráfico de la tubería
+    /// </summary>
+    Color color;
+    /// <summary>
     /// Lista de tiles ordenada con el camino del flujo tras soltar el dedo
     /// </summary>
     List<Tile> flowPath;
@@ -41,12 +45,14 @@ class FlowMovements
     List<KeyValuePair<Tile, int>> cutPath;
 
     /// <summary>
-    /// Construye un flujo con un color lógico
+    /// Construye un flujo con un color lógico y un color gráfico
     /// </summary>
     /// <param name="c">Color lógico del camino</param>
-    public FlowMovements(int c)
+    /// <param name="col">Color gráfico del camino</param>
+    public FlowMovements(int c, Color col)
     {
         flowColor = c;
+        color = col;
         flowPath = new List<Tile>();
         lastPath = new List<Tile>();
         cutPath = new List<KeyValuePair<Tile, int>>();
@@ -65,7 +71,6 @@ class FlowMovements
         if (drawPath.Count <= 1)
             return;
 
-        Color color = drawPath[0].GetColor();
         Vector2 dir;
         int i = 0;
         foreach (Tile t in drawPath)
@@ -216,13 +221,14 @@ class FlowMovements
     {
         // Auxiliar para aplicar el porcentaje
         int p = 0;
-        // Se limpian los tiles del flowPath
+        // Se limpian los tiles del flowPath y del currentPath
         for (int i = flowPath.Count - 1; i >= 0; i--)
         {
             p++;
             flowPath[i].ClearTile();
             flowPath.Remove(flowPath[i]);
         }
+        currentPath.Clear();
         flowPath.Clear();
 
         percentage -= p * plusPercentage;
@@ -231,6 +237,7 @@ class FlowMovements
         for (int i = 0; i < lastPath.Count; i++)
         {
             flowPath.Add(lastPath[i]);
+            flowPath[i].ActiveBgColor(true, color);
             p++;
         }
 
@@ -370,6 +377,10 @@ public class BoardManager : MonoBehaviour
 
     // Determina si se está pulsadno la pantalla
     private bool inputDown = false;
+    //Guarda el color lógico del último movimiento que modificó el tablero
+    private int lastColorMove;
+    // Contador del número de flujos conectados
+    private int connectedFlows = 0;
     // Porcentaje de tablero completo
     private float percentage = 0.0f;
     // Porcentaje que se suma al total por cada tile ocupado
@@ -404,7 +415,7 @@ public class BoardManager : MonoBehaviour
         currLevel = GameManager.instance.GetCurrLevel();
         colors = GameManager.instance.GetCurrTheme().colors;
 
-        Init();
+        InitTab();
         InitData();
     }
 
@@ -459,7 +470,7 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// Inicializa el nivel actual
     /// </summary>
-    private void Init()
+    private void InitTab()
     {
         // Creación de los tiles
         tabSize.x = currLevel.numBoardX;
@@ -534,8 +545,13 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Inicializa algunos datos generales del componente
+    /// </summary>
     private void InitData()
     {
+        lastColorMove = (int)Tile.TILE_COLOR.NONE;
+
         // Calculos para el porcentaje del nivel
         plusPercentage = 100.0f / ((tabSize.x * tabSize.y) - currLevel.numFlow - currLevel.gaps.Count);
 
@@ -566,7 +582,7 @@ public class BoardManager : MonoBehaviour
             circleTiles.Add(tiles[filaA, colA]);
 
             //Inicializamos la lista de movimientos de este color
-            FlowMovements c = new FlowMovements(i);
+            FlowMovements c = new FlowMovements(i, colors[i]);
             cMovements.Add(c);
 
             //Final de la tuberia
@@ -811,11 +827,32 @@ public class BoardManager : MonoBehaviour
                 currTile = null;
                 return;
             }
+            connectedFlows = 0;
             for (int i = 0; i < cMovements.Count; ++i)
                 ApplyMovements(i);
 
+            // El undo solo puede cambiar cuando el camino actual, que acabamos de asignar 
+            // haya modificado su propio camino
+            bool undoActive = !cMovements[c].IsEqualPath(FlowMovements.PathType.LAST_PATH,
+                FlowMovements.PathType.MAIN_PATH);
+            // Este if sirve para no desactivar el botón
+            if (undoActive)
+            {
+                // Si ha cambiado el estado del tablero, entonces se suma un movimiento
+                // Cambiar el camino del misamo color que antes no cuenta como movimiento
+                if (c != lastColorMove)
+                {
+                    currMovs++;
+                }
+
+                lastColorMove = c;
+                hud.UndoButtonBehaviour(undoActive, () => UndoMovement(c));
+            }
+
             inputTile.GetCircleRender().enabled = false;
+            hud.ShowFlows(connectedFlows);
         }
+        hud.ShowMovements(currMovs);
 
         if (IsSolution())
         {
@@ -846,7 +883,7 @@ public class BoardManager : MonoBehaviour
         {
             if (cMovements[tileColor].IsConected())
             {
-                hud.AddFlow(-1);
+                hud.ShowFlows(-1);
             }
 
             p = cMovements[tileColor].ClearUntilTile(cMovements[tileColor].GetCurrentMoves()[0]) - 1;
@@ -856,7 +893,7 @@ public class BoardManager : MonoBehaviour
         {
             if (cMovements[tileColor].IsConected())
             {
-                hud.AddFlow(-1);
+                hud.ShowFlows(-1);
             }
 
             p = cMovements[tileColor].ClearUntilTile(currTile) - 1;
@@ -983,7 +1020,7 @@ public class BoardManager : MonoBehaviour
                     break;
                 ++i;
             }
-            
+
             //Empezamos a borrar según que lado sea más largo
             int p;
 
@@ -991,7 +1028,7 @@ public class BoardManager : MonoBehaviour
                 p = cMovements[cM].ClearFirstUntilTile(dragedTile.Key);
             else
                 p = cMovements[cM].ClearUntilTile(dragedTile.Key);
-            
+
             percentage -= plusPercentage * p;
 
         }
@@ -1161,8 +1198,6 @@ public class BoardManager : MonoBehaviour
 
                 gm.UseHint();
                 hud.UseHint();
-                currMovs++;
-                hud.ShowMovements(currMovs);
             }
         }
     }
@@ -1196,10 +1231,6 @@ public class BoardManager : MonoBehaviour
             l.UpdatePaths();
         }
 
-        bool undoActive = !cMovements[c].IsEqualPath(FlowMovements.PathType.LAST_PATH,
-            FlowMovements.PathType.MAIN_PATH);
-        hud.UndoButtonBehaviour(undoActive, () => UndoMovement(c));
-
         foreach (Tile tile in cMovements[c].GetFlowPath())
         {
             tile.ActiveBgColor(true, tile.GetColor());
@@ -1207,7 +1238,7 @@ public class BoardManager : MonoBehaviour
 
         if (cMovements[c].IsConected())
         {
-            hud.AddFlow(1);
+            connectedFlows++;
         }
     }
 
@@ -1219,7 +1250,14 @@ public class BoardManager : MonoBehaviour
         // Si está conectada, entonces hay que descontar el número de flujos conectados
         if (cMovements[c].IsConected())
         {
-            hud.AddFlow(-1);
+            hud.ShowFlows(-1);
+        }
+
+        // Actualizar el camino del mismo color que antes no cuenta
+        // como movimiento, por tanto, no hace falta descontarlo
+        if (c != lastColorMove)
+        {
+            currMovs--;
         }
 
         cMovements[c].UndoMovements(ref percentage, plusPercentage);
