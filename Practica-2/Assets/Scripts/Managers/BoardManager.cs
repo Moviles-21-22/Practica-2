@@ -967,20 +967,24 @@ public class BoardManager : MonoBehaviour
             hud.ShowPercentage((int)Math.Round(percentage));
 
             currTile = dragedTile.Key;
+
+            currTile.SetTileColor(tileColor);
+            cMovements[tileColor].AddCurrentMov(dragedTile.Key);
         }
         //Es el circulo con el que comenzamos, se borra toda la tubería
         else
         {
+            BackFlowPath(dragedTile, tileColor);
+
             // Se limpia todo el camino hasta el inicial incluido
-            int p = cMovements[tileColor].ClearUntilTile(dragedTile.Key) - 1;
-            percentage -= plusPercentage * p;
-
-            hud.ShowPercentage((int)Math.Round(percentage));
-
-            currTile = dragedTile.Key;
+            //int p = cMovements[tileColor].ClearUntilTile(dragedTile.Key) - 1;
+            //percentage -= plusPercentage * p;
+            //
+            //hud.ShowPercentage((int)Math.Round(percentage));
+            //
+            //currTile = dragedTile.Key;
         }
-        currTile.SetTileColor(tileColor);
-        cMovements[tileColor].AddCurrentMov(dragedTile.Key);
+
     }
 
     /// <summary>
