@@ -154,6 +154,7 @@ public class GameManager : MonoBehaviour
     public void LoadScene(int scene)
     {
         SceneManager.LoadScene(scene);
+        DataManager.instance.LogError("Escena: " + scene + " cargada");
     }
     //  Carga un nivel en concreto de la categor�a y pack cargadoss
     public void LoadLevel(int lvl)
@@ -178,12 +179,36 @@ public class GameManager : MonoBehaviour
     //  Carga el estado del juego en funci�n del json
     public void InitDataLoaded(DataToSave objToLoad)
     {
-        print("Cargamos json");
+        DataManager.instance.LogError("Empezamos a cargar los datos...");
         categories = objToLoad.GetCategories();
+        if (categories != null)
+        {
+            foreach (Category cat in categories)
+            {
+                DataManager.instance.LogError("Categoria " + cat.categoryName + " cargada correctamente");
+            }
+        }
+        else
+        {
+            DataManager.instance.LogError("No puedo cargar las categorias en el gameManager");
+        }
         numHints = objToLoad.GetNumHints();
         isPremium = objToLoad.GetPremiumStatus();
         themes = objToLoad.GetThemes();
+        if (themes != null)
+        {
+            foreach (ColorPack cat in themes)
+            {
+                DataManager.instance.LogError("Skin " + cat.colorPackName + " cargada correctamente");
+            }
+        }
+        else
+        {
+            DataManager.instance.LogError("No puedo cargar las skins en el gameManager");
+        }
         currTheme = objToLoad.GetCurrentTheme();
+
+        DataManager.instance.LogError("Datos cargados...");
     }
 
     //  Guarda el estado del juego
@@ -195,9 +220,11 @@ public class GameManager : MonoBehaviour
     //  Carga un pack especifico de una categor�a
     public void LoadPackage(LevelPack level, Category cat)
     {
+        DataManager.instance.LogError("Entro botón");
         currCategory = cat;
         currPack = level;
         LoadScene((int)SceneOrder.LEVEL_SELECT);
+        DataManager.instance.LogError("Salgo botón");
     }
 
     /// <summary>
@@ -240,5 +267,15 @@ public class GameManager : MonoBehaviour
             }
             i++;
         }
+    }
+
+    public void CloseApp()
+    {
+        DataManager.instance.LogError("App cerrada");
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#elif UNITY_ANDROID
+    System.Diagnostics.Process.GetCurrentProcess().Kill();
+#endif        
     }
 }

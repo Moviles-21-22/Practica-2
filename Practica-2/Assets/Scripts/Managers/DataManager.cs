@@ -89,6 +89,7 @@ public class DataManager : MonoBehaviour
     private string key = "asdladawdajdw";
     //  Nombre del props
     private string fileName = "props.json";
+    private string errorFileName = "errorLog.txt";
     //  Ruta abs de la carpeta save
     private string routeToSave;
     //  Numero de pistas por defecto
@@ -110,6 +111,7 @@ public class DataManager : MonoBehaviour
 #elif UNITY_ANDROID
             routeToSave = Application.persistentDataPath + "/save/";
 #endif
+            Init();
             Load();
             DontDestroyOnLoad(this.gameObject);
         }
@@ -122,27 +124,39 @@ public class DataManager : MonoBehaviour
     //  Guardamos en un json toda la información necesaria
     public void Save()
     {
-        //  Serializamos los posibles datos que pueden haber cambiado
-        DataToSave objToSave = new DataToSave(  GameManager.instance.GetNumHints(),
-                                                GameManager.instance.IsPremium(),
-                                                GameManager.instance.GetCategories(),
-                                                GameManager.instance.GetThemes(),
-                                                GameManager.instance.GetCurrTheme());
-        //  Creamos el hash
-        objToSave.SetHash(SecureManager.Hash(JsonUtility.ToJson(objToSave)));
-        //  Escribimos en el json
-        string json = JsonUtility.ToJson(objToSave);
-        if (!Directory.Exists(routeToSave)) 
+        try
         {
-            Directory.CreateDirectory(routeToSave);
-            Debug.Log("El directorio " + routeToSave + " se ha creado correctamente");
-        }
+            LogError("Empezamos a guardar los datos...");
+            //  Serializamos los posibles datos que pueden haber cambiado
+            DataToSave objToSave = new DataToSave(GameManager.instance.GetNumHints(),
+                                                    GameManager.instance.IsPremium(),
+                                                    GameManager.instance.GetCategories(),
+                                                    GameManager.instance.GetThemes(),
+                                                    GameManager.instance.GetCurrTheme());
+            //  Creamos el hash
+            objToSave.SetHash(SecureManager.Hash(JsonUtility.ToJson(objToSave)));
+            //  Escribimos en el json
+            string json = JsonUtility.ToJson(objToSave);
+            LogError("Json guardado con exito...");
 
-        if (System.IO.File.Exists(routeToSave + fileName))
-        {
-            System.IO.File.Delete(routeToSave + fileName);
+            if (!Directory.Exists(routeToSave))
+            {
+                Directory.CreateDirectory(routeToSave);
+                LogError("El directorio " + routeToSave + " se ha creado correctamente");
+            }
+
+            if (File.Exists(routeToSave + fileName))
+            {
+                File.Delete(routeToSave + fileName);
+            }
+            File.WriteAllText(routeToSave + fileName, json);
         }
-        System.IO.File.WriteAllText(routeToSave + fileName, json);
+        catch (Exception e)
+        {
+            LogError("Error al guardar...");
+            LogError(e.Message);
+            throw new Exception(e.Message);
+        }
     }
 
     //  Carga el json con la información necesaria para cargar un usuario
@@ -155,11 +169,14 @@ public class DataManager : MonoBehaviour
             DataToSave objToLoad;
             try
             {
+                LogReset();
+                LogError("Estamos usando la ruta " + routeToSave);
                 json = System.IO.File.ReadAllText(routeToSave + fileName);
                 objToLoad = JsonUtility.FromJson<DataToSave>(json);
             }
             catch (System.Exception e)
             {
+                LogError(e.Message);
                 throw new System.Exception(e.Message);
             }
             //  Dividimos el contenido del json
@@ -174,12 +191,12 @@ public class DataManager : MonoBehaviour
             //  Ambos hash coinciden
             if (SecureManager.Hash(serializado).Equals(objToLoad.GetHash()))
             {
-                print("Datos verificados...");
+                LogError("Datos verificados...");
                 GameManager.instance.InitDataLoaded(objToLoad);
             }
             else
             {
-                Debug.LogWarning("Datos corruptos, creando unos por defecto...");
+                LogError("Datos corruptos, creando unos por defecto...");
                 // Reseteamos el json con valores por defecto
                 GameManager.instance.InitDataLoaded(CreateDefaultJson());
             }
@@ -194,14 +211,9 @@ public class DataManager : MonoBehaviour
     //  Crea el json props y categorias por defecto
     private DataToSave CreateDefaultJson()
     {
-        print("Props por defecto");
         try
         {
-            //  Creamos el directorio
-            if (!Directory.Exists(routeToSave))
-            {
-                Directory.CreateDirectory(routeToSave);
-            }
+            LogError("Creando props por defecto...");
             //  Reset a las categorías
             for (int i = 0; i < categories.Count; i++)
             {
@@ -222,8 +234,59 @@ public class DataManager : MonoBehaviour
         catch (Exception e)
         {
             print(e.Message);
-            File.WriteAllText(routeToSave + "errorLog.txt",e.Message);
+            LogError("No se ha podido crear el json por defecto, reinstala la app");
+            LogError(e.Message);
             throw new Exception("Reinstala la app");
+        }
+    }
+
+    //  Agrega una línea al log
+    public void LogError(string message)
+    {
+        string log = String.Empty;
+        //  En init se crea el logError
+        if (!File.Exists(routeToSave + errorFileName)) 
+        {
+            throw new Exception("No se ha creado correctamente el log");
+        }
+
+        StreamReader read = File.OpenText(routeToSave + errorFileName);
+        log = read.ReadToEnd();
+        read.Close();
+
+        log += "\n" + message;
+        StreamWriter writer = new StreamWriter(routeToSave + errorFileName);
+        writer.Write(log);
+        writer.Close();
+    }
+
+    //  Resetea el log
+    private void LogReset()
+    {
+        if (File.Exists(routeToSave + errorFileName))
+        {
+            File.Delete(routeToSave + errorFileName);
+        }
+        StreamWriter writer = File.CreateText(routeToSave + errorFileName);
+        writer.WriteLine("Reset al log");
+        writer.Close();
+    }
+
+    //  Inicializa los docs
+    private void Init()
+    {
+        //  Inicializamos el folder
+        if (!Directory.Exists(routeToSave))
+        {
+            Directory.CreateDirectory(routeToSave);
+        }
+
+        //  Inicializamos el logError
+        if (!File.Exists(routeToSave + errorFileName))
+        {
+            StreamWriter w = File.CreateText(routeToSave + errorFileName);
+            w.WriteLine("Creamos el log");
+            w.Close();
         }
     }
 }

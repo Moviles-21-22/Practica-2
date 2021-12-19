@@ -59,6 +59,7 @@ public class MainMenuManager : MonoBehaviour
     }
     private void Start()
     {
+        DataManager.instance.LogError("\nEntramos en MainMenu");
         GameManager gm = GameManager.instance;
         List<Category> cats = gm.GetCategories();
 
@@ -100,6 +101,8 @@ public class MainMenuManager : MonoBehaviour
                 aux.y = height;
                 paquetes[i].levels[j].levelRect.sizeDelta = aux;
             }
-        }        
+        }
+
+        DataManager.instance.LogError("Salimos de MainMenu\n");
     }
 }
