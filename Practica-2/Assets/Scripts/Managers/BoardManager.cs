@@ -17,7 +17,10 @@ class FlowMovements
         LAST_PATH = 1,
         CURR_PATH = 2
     }
-
+    /// <summary>
+    /// Para colocar la estrella en caso de que se rompa un camino hecho con pistas
+    /// </summary>
+    public bool isHint = false;
     /// <summary>
     /// Color lógico de la tubería
     /// </summary>
@@ -67,6 +70,12 @@ class FlowMovements
     {
         List<Tile> drawPath = ChoosePath(path);
 
+        //if (isHint && path.Equals(PathType.LAST_PATH))
+        //{
+        //    drawPath[0].ActiveStar(true);
+        //    drawPath[drawPath.Count - 1].ActiveStar(true);
+        //}
+
         // Dibuja el camino - Si solo está el círculo o no hay elementos, no hace falta dibujar nada
         if (drawPath.Count <= 1)
             return;
@@ -110,6 +119,7 @@ class FlowMovements
 
                 i++;
             }
+
         }
     }
 
@@ -304,6 +314,12 @@ class FlowMovements
     public List<Tile> GetFlowPath()
     {
         return flowPath;
+    }
+
+    public void ActiveStars(bool status)
+    {
+        currentPath[0].ActiveStar(status);
+        currentPath[currentPath.Count - 1].ActiveStar(status);
     }
 
     /// <summary>
@@ -932,6 +948,9 @@ public class BoardManager : MonoBehaviour
 
             currTile.SetTileColor(tileColor);
             cMovements[tileColor].AddCurrentMov(dragedTile.Key);
+
+            if (cMovements[tileColor].isHint)
+                cMovements[tileColor].ActiveStars(true);
         }
         //Es el circulo con el que comenzamos, se borra toda la tubería
         else
@@ -1011,6 +1030,12 @@ public class BoardManager : MonoBehaviour
         //Si la tubería con la que chocamos ya estaba completa, se recortará dejando el lado más largo
         if (cMovements[cM].IsConected())
         {
+            //  Si es una pista, se desactivan las estrellas
+            if (cMovements[cM].isHint)
+            {
+                cMovements[cM].ActiveStars(false);
+            }
+
             //Encontramos el lado más largo
             int i = 0;
             while (i < cMovements[cM].GetCurrentMoves().Count)
@@ -1172,6 +1197,7 @@ public class BoardManager : MonoBehaviour
                 int choice = movs[elc];
                 var d = cMovements[choice];
                 cMovements[choice] = d;
+                cMovements[choice].isHint = true;
 
                 List<int> currSolution = GameManager.instance.GetCurrLevel().solutions[choice];
 

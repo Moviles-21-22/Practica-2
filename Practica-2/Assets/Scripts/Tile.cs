@@ -160,17 +160,35 @@ public class Tile : MonoBehaviour
     }
 
     /// <summary>
+    /// Determina si la estrella está activa en el flow
+    /// </summary>
+    /// <returns></returns>
+    public bool IsStarActive()
+    {
+        return star.enabled;
+    }
+
+    /// <summary>
     /// Activa la estrella de un tile
     /// </summary>
     /// <param name="status">status de la estrella</param>
     public void ActiveStar(bool status)
     {
-        if (!status)
-            return;
+        //if (!status)
+        //    return;
 
-        star.color = Color.white;
-        star.enabled = status;
+        //star.color = Color.white;
+        //star.enabled = status;
+
+        if (status)
+        {
+            star.enabled = true;
+            star.color = Color.white;
+        }
+        else
+            star.enabled = false;
     }
+
 
     //dir == 0 → muro encima
     //dir == 1 → muro a la derecha
