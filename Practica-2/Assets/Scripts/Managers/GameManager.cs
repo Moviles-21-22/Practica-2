@@ -29,7 +29,8 @@ public class GameManager : MonoBehaviour
     //  Actual nivel en juego
     private Level currLevel;
     //  Array con todas las categor�as disponibles
-    private List<Category> categories;
+    //-------------------------CAMBIAR EL PUBLIC POR PRIVATE-----------------------------------
+    public List<Category> categories;
     //  Lista con los todos los temas
     private List<ColorPack> themes;
     //  Tema actual
@@ -230,7 +231,8 @@ public class GameManager : MonoBehaviour
     public void InitDataLoaded(DataToSave objToLoad)
     {
         DataManager.instance.LogError("Empezamos a cargar los datos...");
-        categories = objToLoad.GetCategories();
+        //-------------------------DESCOMENTAR-----------------------------------
+        //categories = objToLoad.GetCategories();
         if (categories != null)
         {
             foreach (Category cat in categories)

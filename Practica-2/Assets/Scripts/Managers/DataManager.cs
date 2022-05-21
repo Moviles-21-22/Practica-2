@@ -43,6 +43,7 @@ public class DataToSave
     private ColorPack currTheme;
 
     //  Categorias serializables
+    [SerializeField]
     public List<Category> categories;
     
     //  Hash creado a partir del serializable
