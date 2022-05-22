@@ -388,10 +388,13 @@ public class BoardManager : MonoBehaviour
     [Tooltip("Referencia al GameObject del canvas que se muestra al superar el nivel")]
     [SerializeField]
     private HUDManager hud;
+
     //  Lista de colores
     private List<Color> colors;
     // Determina si se está pulsadno la pantalla
     private bool inputDown = false;
+    // Determina si se puede editar o no el tablero
+    private bool editable = true;
     //Guarda el color lógico del último movimiento que modificó el tablero
     private int lastColorMove;
     // Contador del número de flujos conectados
@@ -436,6 +439,9 @@ public class BoardManager : MonoBehaviour
 
     public void Update()
     {
+        if (!editable) {
+            return;
+        }
 #if UNITY_EDITOR
         //  Ratón se pulsa
         if (Input.GetMouseButtonDown(0))
@@ -1115,6 +1121,7 @@ public class BoardManager : MonoBehaviour
         }
 
         //Si hemos salido es porque todos los colores tienen la solución
+        editable = false;
         return true;
     }
 
@@ -1288,6 +1295,10 @@ public class BoardManager : MonoBehaviour
         cMovements[c].UndoMovements(ref percentage, plusPercentage);
         hud.ShowPercentage((int)Math.Round(percentage));
         hud.UndoButtonBehaviour(false);
+    }
+
+    public void SetEditable(bool edit) {
+        editable = edit;
     }
 
     #endregion
