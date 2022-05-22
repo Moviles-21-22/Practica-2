@@ -34,7 +34,8 @@ public class GameManager : MonoBehaviour
     //  Lista con los todos los temas
     private List<ColorPack> themes;
     //  Tema actual
-    private ColorPack currTheme;
+    //-------------------------CAMBIAR EL PUBLIC POR PRIVATE-----------------------------------
+    public ColorPack currTheme;
     //  Actual pack cargado
     private Map currMap;
     //  N�mero de pistas disponibles
