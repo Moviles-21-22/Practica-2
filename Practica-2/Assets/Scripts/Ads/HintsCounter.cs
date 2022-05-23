@@ -9,20 +9,20 @@ public class HintsCounter : MonoBehaviour
     [SerializeField] private Text text;
 
     /// <summary>
-    /// Cambia el texto en función de las pistas
+    /// Cambia el texto en funciÃ³n de las pistas
     /// </summary>
     void Start()
     {
-        text.text = "¡Te quedan " + GameManager.instance.GetNumHints() + " pistas!";
+        text.text = "Â¡Te quedan " + GameManager.instance.GetNumHints() + " pistas!";
     }
 
     /// <summary>
-    /// Añade pistas
+    /// AÃ±ade pistas
     /// </summary>
-    /// <param name="numHints">Numero de pistas a añadir</param>
+    /// <param name="numHints">Numero de pistas a aÃ±adir</param>
     public void AddHints(int numHints)
     {
         GameManager.instance.AddHints(numHints);
-        text.text = "¡Te quedan " + GameManager.instance.GetNumHints() + " pistas!";
+        text.text = "Â¡Te quedan " + GameManager.instance.GetNumHints() + " pistas!";
     }
 }

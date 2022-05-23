@@ -1,28 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 /// <summary>
 /// Clase scripteable usada para representar los packs con los niveles
 /// </summary>
 [System.Serializable]
-[CreateAssetMenu(fileName ="levelpack",menuName ="Flow/level pack",order = 1)]
+[SuppressMessage("ReSharper", "CheckNamespace")]
+[SuppressMessage("ReSharper", "StringLiteralTypo")]
+[CreateAssetMenu(fileName = "levelpack", menuName = "Flow/level pack", order = 1)]
 public class LevelPack : ScriptableObject
 {
-    [Tooltip("Nombre del nivel")]
-    public string levelName;
-    [Tooltip("fichero del lote")]
-    public TextAsset txt;
+    [Tooltip("Nombre del nivel")] public string levelName;
+    [Tooltip("fichero del lote")] public TextAsset txt;
+
     [Tooltip("Nombre de cada grid de niveles")]
     public string[] gridNames;
+
     [Tooltip("Numero de niveles completados")]
     public int completedLevels;
-    [Tooltip("InformaciÛn de los niveles del paquete")]
+
+    [Tooltip("Informaci√≥n de los niveles del paquete")]
     public List<Levels> levelsInfo;
-    [Tooltip("Pack bloqueado")]
-    public bool lockPack;
-    [Tooltip("Record de cada nivel")]
-    public int[] records;
+
+    [Tooltip("Pack bloqueado")] public bool lockPack;
+    [Tooltip("Record de cada nivel")] public int[] records;
+
     [Tooltip("Determina la forma de enumerar los niveles")]
     public bool splitLevels = true;
 
@@ -48,8 +52,9 @@ public class Levels
     /// Para saber si se ha superado el nivel
     /// </summary>
     public bool completed;
+
     /// <summary>
-    /// Para saber si se ha superado con la puntuaciÛn m·xima
+    /// Para saber si se ha superado con la puntuaci√≥n m√°xima
     /// </summary>
     public bool perfect;
 }

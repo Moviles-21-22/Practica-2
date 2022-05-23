@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class GridManager : MonoBehaviour
 {
-    [Tooltip("Referencia al título del paquete")]
+    [Tooltip("Referencia al tÃ­tulo del paquete")]
     [SerializeField]
     private Text packTitle;
 
@@ -22,7 +22,7 @@ public class GridManager : MonoBehaviour
     private Color[] colors = { Color.red, Color.blue, Color.green, Color.cyan, Color.magenta };
     //  Para enumerar el grid
     private bool splitLevels = false;
-    //  Para determinar si el pack está bloqueado
+    //  Para determinar si el pack estÃ¡ bloqueado
     private bool lockPack = false;
     //  Niveles completados del bloque
     private int completedLevels = 0;
@@ -37,7 +37,7 @@ public class GridManager : MonoBehaviour
         lockPack = currLevelPack.lockPack;
         completedLevels = currLevelPack.completedLevels;
 
-        // Número de niveles dentro del paquete
+        // NÃºmero de niveles dentro del paquete
         int numPacks = currLevelPack.gridNames.Length;
 
         // Ancho original del contentScroll
@@ -56,7 +56,7 @@ public class GridManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Crea el grid de forma dinámica en función del pack cargado
+    /// Crea el grid de forma dinÃ¡mica en funciÃ³n del pack cargado
     /// </summary>
     /// <param name="pack">Pack cargado actualmente</param>
     /// <param name="index">Indice del pack</param>

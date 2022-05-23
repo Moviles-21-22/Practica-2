@@ -8,7 +8,7 @@ public class Box : MonoBehaviour
     [Tooltip("Referencia al componente Button del tile")]
     [SerializeField]
     private Button button;
-    [Tooltip("Referencia al componente Text que muestra el número de nivel")]
+    [Tooltip("Referencia al componente Text que muestra el nÃºmero de nivel")]
     [SerializeField]
     private Text numText;
     [Tooltip("Referencia al sprite del fondo del tile")]
@@ -35,7 +35,7 @@ public class Box : MonoBehaviour
     /// </summary>
     private Color color;
     /// <summary>
-    /// Cantidad de alpha que se va a ir aplicando para la animación
+    /// Cantidad de alpha que se va a ir aplicando para la animaciÃ³n
     /// </summary>
     private float offsetAlpha = -0.1f;
 
@@ -71,7 +71,7 @@ public class Box : MonoBehaviour
     }
 
     /// <summary>
-    /// Asiganar un callback a un botón
+    /// Asiganar un callback a un botÃ³n
     /// </summary>
     /// <param name="level">nivel a cargar</param>
     public void SetCallBack(int level)
@@ -114,7 +114,7 @@ public class Box : MonoBehaviour
     }
 
     /// <summary>
-    /// Animación del frame brillando del nivel que toca
+    /// AnimaciÃ³n del frame brillando del nivel que toca
     /// </summary>
     private void CurrentLevelAnim() 
     {

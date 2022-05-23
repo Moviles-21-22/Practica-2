@@ -4,7 +4,7 @@ using UnityEngine.Advertisements;
 
 public class AdsManager : MonoBehaviour
 {
-    [Tooltip("Posición del banner")]
+    [Tooltip("PosiciÃ³n del banner")]
     [SerializeField] BannerPosition _bannerPosition = BannerPosition.BOTTOM_CENTER;
 
     [Tooltip("Unidad de banner para Android")]
