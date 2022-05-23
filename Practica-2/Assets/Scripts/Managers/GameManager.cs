@@ -82,7 +82,7 @@ public class GameManager : MonoBehaviour
             if (instance.mainMenu) instance.mainMenu.Init(categories, currTheme.colors);  
             // ShopScene
             instance.shop = shop;
-            if (instance.shop) instance.shop.Init(isPremium, currTheme.colors, numHints);
+            if (instance.shop) instance.shop.Init(isPremium, colorThemes, currTheme, numHints);
             // SelectLevelScene
             instance.selectLevelSelectLevel = selectLevelSelectLevel;
             if (instance.selectLevelSelectLevel) instance.selectLevelSelectLevel.Init();
@@ -103,7 +103,7 @@ public class GameManager : MonoBehaviour
             // MainMenuScene
             if (mainMenu) mainMenu.Init(categories, currTheme.colors);
             // ShopScene
-            if (shop) shop.Init(isPremium, currTheme.colors, numHints);
+            if (shop) shop.Init(isPremium, colorThemes, currTheme, numHints);
             //SelectLevelScene
             if (selectLevelSelectLevel) selectLevelSelectLevel.Init();
             // GameScene
@@ -262,7 +262,6 @@ public class GameManager : MonoBehaviour
         var v = colorThemes[colorThemes.IndexOf(t)];
         v.active = true;
         SetTheme(v);
-        SaveGame();
     }
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -327,7 +326,7 @@ public class GameManager : MonoBehaviour
     /// Cambia el tema
     /// </summary>
     /// <param name="t">El tema a cambiar</param>
-    internal void SetTheme(ColorPack t)
+    public void SetTheme(ColorPack t)
     {
         currTheme = t;
         SaveGame();

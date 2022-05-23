@@ -150,7 +150,7 @@ public class Tile : MonoBehaviour
     /// <summary>
     /// Activa el color de fondo del tile
     /// </summary>
-    /// <param name="status">status del backgroud</param>
+    /// <param name="status">selectedImage del backgroud</param>
     /// <param name="_color">color del tile</param>
     public void ActiveBgColor(bool status, Color _color)
     {
@@ -171,14 +171,14 @@ public class Tile : MonoBehaviour
     /// <summary>
     /// Activa la estrella de un tile
     /// </summary>
-    /// <param name="status">status de la estrella</param>
+    /// <param name="status">selectedImage de la estrella</param>
     public void ActiveStar(bool status)
     {
-        //if (!status)
+        //if (!selectedImage)
         //    return;
 
         //star.color = Color.white;
-        //star.enabled = status;
+        //star.enabled = selectedImage;
 
         if (status)
         {
