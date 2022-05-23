@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class GridPack : MonoBehaviour
 {
     [SerializeField]
-    public Box[] boxs;
+    public CellLevel[] boxs;
 
     [SerializeField]
     private Text title;
@@ -26,7 +26,7 @@ public class GridPack : MonoBehaviour
     /// </summary>
     /// <param name="index">Index de la caja del grid</param>
     /// <returns></returns>
-    public Box GetBox(int index)
+    public CellLevel GetBox(int index)
     {
         return boxs[index];
     }
@@ -35,7 +35,7 @@ public class GridPack : MonoBehaviour
     /// Devuelve todas las cajas del grid
     /// </summary>
     /// <returns></returns>
-    public Box[] GetAllBoxes()
+    public CellLevel[] GetAllBoxes()
     {
         return boxs;
     }

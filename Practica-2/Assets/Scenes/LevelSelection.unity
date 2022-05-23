@@ -585,9 +585,69 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: currPack
+      value: 
+      objectReference: {fileID: 11400000, guid: 3c93c9465356ae349b6c8bb479d66001, type: 2}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: currTheme
+      value: 
+      objectReference: {fileID: 11400000, guid: 30b3347c126ef954d8d24336c3fde2ce, type: 2}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: currCategory
+      value: 
+      objectReference: {fileID: 11400000, guid: e0654b64e5519d54b902550dc30109f9, type: 2}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: selectLevelGrid
+      value: 
+      objectReference: {fileID: 947705193}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: categories.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: colorThemes.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: categories.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: e0654b64e5519d54b902550dc30109f9, type: 2}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: categories.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 14e41d866031a2749b450e0ccabb96af, type: 2}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: categories.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: ad1975f958b7ef64893a9c5647145511, type: 2}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: colorThemes.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 30b3347c126ef954d8d24336c3fde2ce, type: 2}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: colorThemes.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: c19dc87640dcaf842838d0fbe358843c, type: 2}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: colorThemes.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: 946ef7b456620c548bd725d0190bd894, type: 2}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: colorThemes.Array.data[3]
+      value: 
+      objectReference: {fileID: 11400000, guid: 56572ea752a3c6243b69b2b34fa26c0a, type: 2}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: colorThemes.Array.data[4]
+      value: 
+      objectReference: {fileID: 11400000, guid: f0e602a3e3b1b774bad0246bc9bb9aeb, type: 2}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: colorThemes.Array.data[5]
+      value: 
+      objectReference: {fileID: 11400000, guid: bd9e5ab2158bd3042870837e7c3f82ef, type: 2}
     - target: {fileID: 4075807167624887494, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4075807167624887494, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
       propertyPath: m_LocalPosition.x
@@ -764,12 +824,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 947705192}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_Father: {fileID: 1914590474}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1133383252
 PrefabInstance:
@@ -1872,3 +1932,34 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &1914590473
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1914590474}
+  m_Layer: 0
+  m_Name: Managers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1914590474
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1914590473}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 947705194}
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

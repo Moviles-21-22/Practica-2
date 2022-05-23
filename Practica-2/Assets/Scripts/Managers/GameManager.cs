@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Enumerado que representa las escenas del juego
     /// </summary>
-    [System.Serializable]
+    [Serializable]
     public enum SceneOrder
     {
         MAIN_MENU = 0,
@@ -27,41 +27,42 @@ public class GameManager : MonoBehaviour
 
     public static GameManager instance;
 
+    [Header("Seccion de Managers")]
     [Tooltip("Referencia al MainMenuManager")]
     public MainMenuManager mainMenu;
 
+    [Tooltip("Referencia al AdsManager")]
+    public AdsManager adsManager;
+    
+    [Tooltip("Referencia al GridManager")]
+    public GridManager selectLevelGrid;
+    
 //-------------------------------------------ATRIBUTOS-EDITOR---------------------------------------------------------//
-    // TODO: Mirar que esto si deba ir aquí o se pueda delegar trabajo
+    [Header("Categorias y temas del juego")]
     [Tooltip("Lista de los paquetes de las categorías del juego")] [SerializeField]
     private List<Category> categories;
 
     [Tooltip("Lista de los paquetes de temas del juego")] [SerializeField]
     private List<ColorPack> colorThemes;
 
-    // TODO: Esto va en otro lado. Category para el selector de nivel y Level para la gameScene
-    // [Tooltip("Categoria que se inicializa por defecto")] [SerializeField]
-    // private Category defaultCategory;
-    //
-    // [Tooltip("Nivel que se inicializa por defecto")] [SerializeField]
-    // private Level defaultLevel;
-//------------------------------------------ATRIBUTOS-PRIVADOS--------------------------------------------------------//
-
-    //  Categoría acutal escogida
+    [Header("Atributos que se quieren iniciar por defecto")]
+    [Tooltip("Categoría actual escogida")] [SerializeField]
     private Category currCategory;
-
-    //  Actual pack dentro de la categor�a usada
+    
+    [Tooltip("Paquete de niveles actual escogido")] [SerializeField]
     private LevelPack currPack;
+    
+    [Tooltip("Tema actual escogido")] [SerializeField]
+    private ColorPack currTheme;
+//------------------------------------------ATRIBUTOS-PRIVADOS--------------------------------------------------------//
 
     //  Actual nivel en juego
     private Level currLevel;
 
-    //  Tema actual
-    private ColorPack currTheme;
-
     //  Actual pack cargado
     private Map currMap;
 
-    //  N�mero de pistas disponibles
+    //  Numero de pistas disponibles
     private int numHints;
 
     //  Tiene premium el jugador
@@ -73,11 +74,18 @@ public class GameManager : MonoBehaviour
         if (instance)
         {
             // Delegación de los managers del GameManager de la escena
-            // 1. Inicializacion mainMenu
+            // Inicializacion en caso de que existan
+            // MainMenu
             instance.mainMenu = mainMenu;
-            if (instance.mainMenu) instance.mainMenu.Init();
+            if (instance.mainMenu) instance.mainMenu.Init();  
+            // Ads
+            instance.adsManager = adsManager;
+            if (instance.adsManager) instance.adsManager.Init();
+            // SelectLevel
+            instance.selectLevelGrid = selectLevelGrid;
+            if (instance.selectLevelGrid) instance.selectLevelGrid.Init();
 
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
         else
         {
@@ -85,11 +93,16 @@ public class GameManager : MonoBehaviour
             instance = this;
             // 1. Inicializacion de los datos
             DataManager.Init(categories, colorThemes);
-
-            // 2. Inicializacion mainMenu
+            
+            // 2. Inicializacion de los managers en caso de que existan
+            // MainMenu
             if (mainMenu) mainMenu.Init();
-
-            DontDestroyOnLoad(this.gameObject);
+            // Ads
+            if (adsManager) adsManager.Init();
+            //SelectLevel
+            if (selectLevelGrid) selectLevelGrid.Init();
+            
+            DontDestroyOnLoad(gameObject);
         }
     }
 
@@ -233,7 +246,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
     /// <summary>
     /// Desbloquea un tema
     /// </summary>
@@ -264,7 +276,7 @@ public class GameManager : MonoBehaviour
     {
         isPremium = true;
         SaveGame();
-        AdsManager.instance.HideBanner();
+        adsManager.HideBanner();
     }
 
     /// <summary>

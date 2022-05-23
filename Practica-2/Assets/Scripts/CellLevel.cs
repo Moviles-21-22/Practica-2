@@ -1,17 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Box : MonoBehaviour
+[SuppressMessage("ReSharper", "StringLiteralTypo")]
+public class CellLevel : MonoBehaviour
 {
-    [Tooltip("Referencia al componente Button del tile")]
+    [Tooltip("Referencia al componente Button de la celda")]
     [SerializeField]
     private Button button;
     [Tooltip("Referencia al componente Text que muestra el número de nivel")]
     [SerializeField]
     private Text numText;
-    [Tooltip("Referencia al sprite del fondo del tile")]
+    [Tooltip("Referencia al sprite del fondo de la celda")]
     [SerializeField]
     private RawImage background;
 
@@ -31,7 +33,7 @@ public class Box : MonoBehaviour
     private RawImage lockImage;
 
     /// <summary>
-    /// color actual del tile
+    /// Color actual del tile
     /// </summary>
     private Color color;
     /// <summary>
@@ -49,29 +51,32 @@ public class Box : MonoBehaviour
     }
 
     /// <summary>
-    /// Inicializa el tile de forma normal
+    /// Inicializa la celda del grid de niveles
     /// </summary>
-    /// <param name="_color">Color que le corresponde al tile</param>
-    public void InitBox(Color _color, bool perfect, bool completed)
+    /// <param name="newColor">Color que le corresponde al tile</param>
+    /// <param name="isPerfect">¿El nivel es perfecto?</param>
+    /// <param name="isCompleted">¿El nivel está completado?</param>
+    public void InitBox(Color newColor, bool isPerfect, bool isCompleted)
     {
-        color = _color;
+        color = newColor;
 
-        if (perfect)
+        if (isPerfect)
         {
             starImage.enabled = true;
         }
-        else if (completed)
+        else if (isCompleted)
         {
             completedImage.enabled = true;
         }
 
-        color.a = completed ? 1.0f : 0.2f;
+        color.a = isCompleted ? 1.0f : 0.2f;
         background.color = color;
         frame.color = color;
     }
 
     /// <summary>
-    /// Asiganar un callback a un botón
+    /// Asigna el callback para cargar el nivel que corresponda
+    /// a la celda
     /// </summary>
     /// <param name="level">nivel a cargar</param>
     public void SetCallBack(int level)
@@ -84,16 +89,15 @@ public class Box : MonoBehaviour
     /// </summary>
     public void ActiveLockImage() 
     {
-        var color = background.color;
-        color.a = 0.0f;
-        background.color = color;
+        var colorAux = background.color;
+        colorAux.a = 0.0f;
+        background.color = colorAux;
 
-        color = frame.color;
-        color = Color.white;
-        frame.color = color;
+        colorAux = Color.white;
+        frame.color = colorAux;
 
-        color = Color.gray;
-        numText.color = color;
+        colorAux = Color.gray;
+        numText.color = colorAux;
         lockImage.enabled = true;
     }
 
@@ -102,13 +106,11 @@ public class Box : MonoBehaviour
     /// </summary>
     public void CurrentLevel() 
     {
-        var color = background.color;
-        color = Color.grey;
-        background.color = color;
+        var colorAux = Color.grey;
+        background.color = colorAux;
 
-        color = frame.color;
-        color = Color.white;
-        frame.color = color;
+        colorAux = Color.white;
+        frame.color = colorAux;
 
         InvokeRepeating(nameof(CurrentLevelAnim), 0.0f, 0.1f);
     }
@@ -123,9 +125,9 @@ public class Box : MonoBehaviour
             offsetAlpha = 0.1f;
         }
         
-        var color = frame.color;
-        color.a += offsetAlpha;
-        frame.color = color;
+        var colorAux = frame.color;
+        colorAux.a += offsetAlpha;
+        frame.color = colorAux;
 
         if (frame.color.a >= 1.0f) 
         {

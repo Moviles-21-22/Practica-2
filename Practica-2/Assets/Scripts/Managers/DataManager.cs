@@ -126,6 +126,7 @@ public static class DataManager
         // 1. ¿Existe el archivo con datos guardados?
         if (File.Exists(Path + FileName))
         {
+            // 1.1 Si existe se intenta recoger sus datos
             string json;
             DataToSave objToLoad;
             try
@@ -143,9 +144,9 @@ public static class DataManager
 
             //  Dividimos el contenido del json
             //  El ultimo elemento del hashGenerated va a ser el hash
-            string[] hashGenerated = json.Split(',');
-            string serializado = string.Empty;
-            for (int i = 0; i < hashGenerated.Length - 1; i++)
+            var hashGenerated = json.Split(',');
+            var serializado = string.Empty;
+            for (var i = 0; i < hashGenerated.Length - 1; i++)
             {
                 serializado += hashGenerated[i] + ",";
             }
@@ -182,21 +183,20 @@ public static class DataManager
         {
             DebugLogs("Creando props por defecto...");
             // 1. Se parte de catergorías base
-            for (int i = 0; i < _categories.Count; i++)
+            foreach (var cat in _categories)
             {
-                _categories[i].Reset();
+                cat.Reset();
             }
 
             // 2. Se parte de temas base
-            foreach (ColorPack lP in _colorThemes)
+            foreach (var theme in _colorThemes)
             {
-                lP.Reset();
+                theme.Reset();
             }
 
             // 3. Se guarda el json
             _currData = new DataToSave(NumHintsDefault, false, _categories, _colorThemes, _colorThemes[0]);
             _currData.SetHash(SecureManager.Hash(JsonUtility.ToJson(_currData)));
-            var a = _currData;
             string json = JsonUtility.ToJson(_currData);
             File.WriteAllText(Path + FileName, json);
         }
@@ -210,7 +210,7 @@ public static class DataManager
     }
 
     /// <summary>
-    /// Agrega una línea al log
+    /// Agrega una línea al archivo de logs
     /// </summary>
     /// <param name="message"></param>
     public static void DebugLogs(string message)
@@ -235,7 +235,7 @@ public static class DataManager
     }
 
     /// <summary>
-    /// Resetea el log
+    /// Resetea el archivo de logs
     /// </summary>
     private static void LogReset()
     {

@@ -5,7 +5,7 @@ using UnityEngine.Advertisements;
 public class AdsManager : MonoBehaviour
 {
     [Tooltip("Posición del banner")]
-    [SerializeField] BannerPosition _bannerPosition = BannerPosition.BOTTOM_CENTER;
+    [SerializeField] BannerPosition bannerPosition = BannerPosition.BOTTOM_CENTER;
 
     [Tooltip("Unidad de banner para Android")]
     [SerializeField] string bannerAndroidUnit = "Banner_Android";
@@ -22,24 +22,11 @@ public class AdsManager : MonoBehaviour
     [Tooltip("Test status")]
     [SerializeField]  public bool testMode;
 
-    public static AdsManager instance;
-
-    private void Awake()
+    private bool isPremium;
+    public void Init()
     {
-        if (instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(this.gameObject);
-        }
-        else
-        {
-            Destroy(this.gameObject);
-        }
-    }
-
-    void Start()
-    {
-        if (!GameManager.instance.IsPremium())
+        isPremium = GameManager.instance.IsPremium();
+        if (!isPremium)
         {
             Advertisement.Initialize(androidGameId, testMode);
             ShowBanner();
@@ -52,7 +39,7 @@ public class AdsManager : MonoBehaviour
 
     public void ShowBanner()
     {
-        Advertisement.Banner.SetPosition(_bannerPosition);
+        Advertisement.Banner.SetPosition(bannerPosition);
         Advertisement.Banner.Show(androidGameId);
     }
 
@@ -70,7 +57,7 @@ public class AdsManager : MonoBehaviour
 
     public void HideBanner()
     {
-        if (GameManager.instance.IsPremium())
+        if (isPremium)
         {
             Advertisement.Banner.Hide();
         }

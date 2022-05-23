@@ -1,42 +1,54 @@
-using System.Collections;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using UnityEngine.UI;
 
+[SuppressMessage("ReSharper", "CheckNamespace")]
+[SuppressMessage("ReSharper", "StringLiteralTypo")]
 public class GridManager : MonoBehaviour
 {
-    [Tooltip("Referencia al título del paquete")]
-    [SerializeField]
+    [Tooltip("Referencia al título del paquete")] [SerializeField]
     private Text packTitle;
 
-    [Tooltip("Referencia al contenido del scroll")]
-    [SerializeField]
+    [Tooltip("Referencia al contenido del scroll")] [SerializeField]
     private RectTransform contentScroll;
 
-    [Tooltip("Paquete que contiene el grid de los niveles")]
-    [SerializeField]
+    [Tooltip("Paquete que contiene el grid de los niveles")] [SerializeField]
     private GridPack packPrefab;
+
     // Actual pack cargado
     private LevelPack currLevelPack;
-    //  Colores para los bloques
-    private Color[] colors = { Color.red, Color.blue, Color.green, Color.cyan, Color.magenta };
-    //  Para enumerar el grid
-    private bool splitLevels = false;
-    //  Para determinar si el pack está bloqueado
-    private bool lockPack = false;
-    //  Niveles completados del bloque
-    private int completedLevels = 0;
 
-    private void Start()
+    //  Colores para los bloques
+    private readonly Color[] colors = {Color.red, Color.blue, Color.green, Color.cyan, Color.magenta};
+
+    //  Para enumerar el grid
+    private bool splitLevels;
+
+    //  Para determinar si el pack está bloqueado
+    private bool lockPack;
+
+    //  Niveles completados del bloque
+    private int completedLevels;
+
+    public void Init()
     {
-        // Paquete de niveles que se va a cargar
+        InitGridData();
+        GeneratePackageLevels();
+    }
+
+    private void InitGridData()
+    {
         currLevelPack = GameManager.instance.GetCurrentPack();
         packTitle.color = GameManager.instance.GetCurrentCategory().color;
+
         packTitle.text = currLevelPack.levelName;
         splitLevels = currLevelPack.splitLevels;
         lockPack = currLevelPack.lockPack;
         completedLevels = currLevelPack.completedLevels;
+    }
 
+    private void GeneratePackageLevels()
+    {
         // Número de niveles dentro del paquete
         int numPacks = currLevelPack.gridNames.Length;
 
@@ -63,9 +75,9 @@ public class GridManager : MonoBehaviour
     /// <param name="color">Color del bloque</param>
     private void CreateGrid(LevelPack pack, int index, Color color)
     {
-        GridPack currPack = Instantiate<GridPack>(packPrefab, contentScroll.transform);
+        GridPack currPack = Instantiate(packPrefab, contentScroll.transform);
         currPack.SetText(pack.gridNames[index]);
-        Box[] boxes = currPack.GetAllBoxes();
+        CellLevel[] boxes = currPack.GetAllBoxes();
 
         for (int i = 0; i < boxes.Length; i++)
         {
@@ -83,7 +95,9 @@ public class GridManager : MonoBehaviour
 
             boxes[i].InitBox(color, perfect, completed);
 
-            if (!lockPack || lockPack && (index * boxes.Length) + i <= completedLevels)   // Desbloquea los niveles hasta dejar el primero sin hacer desbloqueado
+            if (!lockPack ||
+                lockPack && (index * boxes.Length) + i <=
+                completedLevels) // Desbloquea los niveles hasta dejar el primero sin hacer desbloqueado
             {
                 boxes[i].SetCallBack((index * boxes.Length) + i);
                 if ((index * boxes.Length) + i == completedLevels)
