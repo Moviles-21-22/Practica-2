@@ -39,7 +39,7 @@ public class HUDManager : MonoBehaviour
     [SerializeField]
     private HUD_Element hints;
 
-    [Tooltip("Referencia al botÛn de prÛximo nivel al ganar el juego")]
+    [Tooltip("Referencia al bot√≥n de pr√≥ximo nivel al ganar el juego")]
     [SerializeField]
     private HUD_Element nextLevelWin;
 
@@ -47,13 +47,13 @@ public class HUDManager : MonoBehaviour
     [Tooltip("Referencia al texto que muestra el nivel actual")]
     [SerializeField]
     private Text numLevelText;
-    [Tooltip("Referencia al texto que muestra el tamaÒo del grid")]
+    [Tooltip("Referencia al texto que muestra el tama√±o del grid")]
     [SerializeField]
     private Text numFlowsText;
-    [Tooltip("Referencia al texto que muestra el n˙mero de movimientos")]
+    [Tooltip("Referencia al texto que muestra el n√∫mero de movimientos")]
     [SerializeField]
     private Text numPasosText;
-    [Tooltip("Referencia al texto que muestra el rÈcord actual")]
+    [Tooltip("Referencia al texto que muestra el r√©cord actual")]
     [SerializeField]
     private Text recordText;
     [Tooltip("Referencia al texto que muestra el porcentaje completado")]
@@ -62,18 +62,18 @@ public class HUDManager : MonoBehaviour
     [Tooltip("Referencia al titulo del texto que se muestra al ganar")]
     [SerializeField]
     private Text winTitle;
-    [Tooltip("Referencia al texto final que muestra el n˙mero de movimientos")]
+    [Tooltip("Referencia al texto final que muestra el n√∫mero de movimientos")]
     [SerializeField]
     private Text finalMovsText;
 
     [Header("Botones")]
-    [Tooltip("Referencia al botÛn de volver atr·s")]
+    [Tooltip("Referencia al bot√≥n de volver atr√°s")]
     [SerializeField]
     private Button backButton;
-    [Tooltip("Referencia al botÛn de reiniciar nivel")]
+    [Tooltip("Referencia al bot√≥n de reiniciar nivel")]
     [SerializeField]
     private Button restartButton;
-    [Tooltip("Referencia al botÛn para agregar pistas")]
+    [Tooltip("Referencia al bot√≥n para agregar pistas")]
     [SerializeField]
     private Button addHintsButton;
 
@@ -88,7 +88,7 @@ public class HUDManager : MonoBehaviour
     private bool winPerfect;
     //Variable de tiempo usada para procesar las animaciones
     private float timer = 0.0f;
-    //Numero de tuberÌas conectadas
+    //Numero de tuber√≠as conectadas
     private int currentFlows = 0;
     //Numero de pasos
     private int currentMovs = 0;
@@ -155,7 +155,7 @@ public class HUDManager : MonoBehaviour
         //============TABLERO-INFO===================//
         numFlowsText.text = "flujos: " + 0 + "/" + currLevel.numFlow;
         numPasosText.text = "pasos: " + 0;
-        recordText.text = "rÈcord: " + levelPack.records[currLevel.lvl];
+        recordText.text = "r√©cord: " + levelPack.records[currLevel.lvl];
     }
 
     /// <summary>
@@ -213,7 +213,7 @@ public class HUDManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Cambia el texto que muestra las pistas en funciÛn de las pistas
+    /// Cambia el texto que muestra las pistas en funci√≥n de las pistas
     /// que queden en el GameManager
     /// </summary>
     public void UpdateHintText()
@@ -231,44 +231,44 @@ public class HUDManager : MonoBehaviour
     }
 
     /// <summary>
-    /// LÛgica que procesa el comportamiento al completar un nivel
+    /// L√≥gica que procesa el comportamiento al completar un nivel
     /// </summary>
     /// <param name="perfect">Determina si el nivel es perfecto o no</param>
     public void LevelCompleted(bool perfect)
     {
         //winPerfect = perfect;
         winStar.enabled = true;
-        // Si es una soluciÛn con movimientos perfectos sale una estrella grande
+        // Si es una soluci√≥n con movimientos perfectos sale una estrella grande
         if (perfect)
         {
             winStar.texture = winSprites[0];
-            winTitle.text = "°Perfecto!";
+            winTitle.text = "¬°Perfecto!";
         }
         else
         {
-            // Si es una soluciÛn normal aparece un tic
+            // Si es una soluci√≥n normal aparece un tic
             winStar.texture = winSprites[1];
-            winTitle.text = "°Completado!";
+            winTitle.text = "¬°Completado!";
         }
         finalMovsText.text = "Completaste el nivel\n" + "con " + currentMovs + " pasos";
 
-        // El ˙ltimo nivel
+        // El √∫ltimo nivel
         if (currLevel.lvl + 1 == levelPack.levelsInfo.Count)
         {
-            winTitle.text = "°Felicitaciones!";
+            winTitle.text = "¬°Felicitaciones!";
             finalMovsText.text = "Has llegado al final del\n" + levelPack.name;
 
             // Nos lleva al mainMenu
             nextLevelWin.elementButton.onClick.RemoveAllListeners();
             nextLevelWin.elementButton.onClick.AddListener(() => gm.LoadScene((int)GameManager.SceneOrder.MAIN_MENU));
-            nextLevelWin.elementText.text = "elige el prÛximo paquete";
+            nextLevelWin.elementText.text = "elige el pr√≥ximo paquete";
         }
 
         InvokeRepeating(nameof(WinAnimation), 0.0f, 0.05f);
     }
 
     /// <summary>
-    /// AnimaciÛn de apariciÛn de la estrella al ganar
+    /// Animaci√≥n de aparici√≥n de la estrella al ganar
     /// </summary>
     private void WinAnimation()
     {
@@ -298,11 +298,11 @@ public class HUDManager : MonoBehaviour
     /// </summary>
     public void ShowPercentage(int percentage)
     {
-        percentageText.text = "tuberÌa: " + (percentage).ToString() + "%";
+        percentageText.text = "tuber√≠a: " + (percentage).ToString() + "%";
     }
 
     /// <summary>
-    /// AÒade o quita un flujo al contador de flujos completos
+    /// A√±ade o quita un flujo al contador de flujos completos
     /// </summary>
     public void ShowFlows(int flows)
     {
@@ -311,7 +311,7 @@ public class HUDManager : MonoBehaviour
     }
 
     /// <summary>
-    /// AÒade un nuevo movimiento al contador de pasos del canvas
+    /// A√±ade un nuevo movimiento al contador de pasos del canvas
     /// </summary>
     public void ShowMovements(int movs)
     {
@@ -320,15 +320,15 @@ public class HUDManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Aplica el comportamiento del botÛn de deshacer en funciÛn de si est· activo o no
+    /// Aplica el comportamiento del bot√≥n de deshacer en funci√≥n de si est√° activo o no
     /// </summary>
-    /// <param name="active">Determina si el elemento est· activo o no</param>
+    /// <param name="active">Determina si el elemento est√° activo o no</param>
     /// <param name="action">Callback del comportamiento del boton undo</param>
     public void UndoButtonBehaviour(bool active, UnityAction action = null)
     {
         undoElement.elementButton.onClick.RemoveAllListeners();
 
-        // Si est· activo se ve blanco, sino, gris
+        // Si est√° activo se ve blanco, sino, gris
         var color = active ? Color.white : Color.grey;
         undoElement.elementImage.color = color;
 

@@ -13,7 +13,7 @@ public class BackButton : MonoBehaviour
     private GameManager.SceneOrder sceneToLoad;
 
     /// <summary>
-    /// Agrega el listener al botón
+    /// Agrega el listener al botÃ³n
     /// </summary>
     public void Start()
     {

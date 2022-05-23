@@ -1,8 +1,10 @@
 ﻿using System.IO;
 using System.Collections.Generic;
-
+using System.Diagnostics.CodeAnalysis;
 
 //  struct para cada nivel cargado
+[System.Serializable]
+[SuppressMessage("ReSharper", "CheckNamespace")]
 public struct Level
 {
     //  tamaño del tablero
@@ -21,13 +23,13 @@ public struct Level
     public List<List<int>> walls;
     //  Vector con huecos
     public List<int> gaps;
-    public Level(int _numBoardX, int _lvl, int _numFlow, int _numBoardY, bool _closed = false)
+    public Level(int tamX, int newLevel, int newNumFlows, int tamY, bool wallsAround = false)
     {
-        numBoardX = _numBoardX;
-        numBoardY = _numBoardY;
-        lvl = _lvl;
-        numFlow = _numFlow;
-        closed = _closed;
+        numBoardX = tamX;
+        numBoardY = tamY;
+        lvl = newLevel;
+        numFlow = newNumFlows;
+        closed = wallsAround;
         solutions = new List<List<int>>();
         walls = new List<List<int>>();
         gaps = new List<int>();
@@ -38,7 +40,7 @@ public struct Level
 public class Map
 {
     //  Vector con el nivel pedido
-    private List<Level> levels = new List<Level>();
+    private readonly List<Level> levels = new List<Level>();
 
     /// <summary>
     /// Cargado de niveles
@@ -48,9 +50,9 @@ public class Map
     public Map(string text, int a)
     {
         //  Todos los niveles por separado
-        string[] lvls = text.Split('\n');
+        var lvls = text.Split('\n');
 
-        for (int i = 0; i < lvls.Length; i++)
+        for (var i = 0; i < lvls.Length; i++)
         {
             if (lvls[i] != "")
             {
@@ -68,10 +70,10 @@ public class Map
     private Level ProcessLevel(string level, int index)
     {
         //  Separamos por segmentos
-        string[] seg = level.Split(';');
-        string[] subChain = seg[0].Split(',');
-        string[] numBoard = subChain[0].Split(':');
-        bool closed = false;
+        var seg = level.Split(';');
+        var subChain = seg[0].Split(',');
+        var numBoard = subChain[0].Split(':');
+        var closed = false;
         int numBoardX, numBoardY;
         if (numBoard.Length >= 2)   //No es cuadrado
         {

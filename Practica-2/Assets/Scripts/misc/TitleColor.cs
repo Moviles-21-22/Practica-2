@@ -27,7 +27,7 @@ public class TitleColor : MonoBehaviour
     }
 
     /// <summary>
-    /// Cambio de colores en función del delta time 
+    /// Cambio de colores en funciÃ³n del delta time 
     /// </summary>
     void Update()
     {
