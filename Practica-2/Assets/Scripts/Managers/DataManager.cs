@@ -77,17 +77,13 @@ public static class DataManager
     /// <summary>
     /// Guarda todos los datos del juego en un json
     /// </summary>    
-    public static void Save()
+    public static void Save(int numHints, bool isPremium, List<Category> categories, List<ColorPack> themes, ColorPack currTheme)
     {
         try
         {
             DebugLogs("Empezando a guardar datos...");
             //  Serializamos los posibles datos que pueden haber cambiado
-            DataToSave objToSave = new DataToSave(GameManager.instance.GetNumHints(),
-                GameManager.instance.IsPremium(),
-                GameManager.instance.GetCategories(),
-                GameManager.instance.GetThemes(),
-                GameManager.instance.GetCurrTheme());
+            DataToSave objToSave = new DataToSave(numHints, isPremium, categories, themes, currTheme);
             //  Creamos el hash
             objToSave.SetHash(SecureManager.Hash(JsonUtility.ToJson(objToSave)));
             //  Escribimos en el json

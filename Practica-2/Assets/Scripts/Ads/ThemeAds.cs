@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class ThemeAds : MonoBehaviour
 {
+    //TODO: Gestionar con ShopManager
     [SerializeField]
     public List<ThemeComposition> themes;
 
@@ -63,7 +64,7 @@ public class ThemeAds : MonoBehaviour
         }
     }
 
-    void Start()
+    void Init()
     {
         InitThemes();
         ChangeShopColor();
@@ -87,11 +88,11 @@ public class ThemeAds : MonoBehaviour
     /// </summary>
     private void ChangeShopColor()
     {
-        List<Color> colors = GameManager.instance.GetCurrTheme().colors;
-        for (int i = 0; i < menu.Count; i++)
-        {
-            menu[i].color = colors[i];
-        }
+        //List<Color> colors = GameManager.instance.GetCurrTheme().colors;
+        //for (int i = 0; i < menu.Count; i++)
+        //{
+        //    menu[i].color = colors[i];
+        //}
     }
 
     /// <summary>
@@ -99,34 +100,34 @@ public class ThemeAds : MonoBehaviour
     /// </summary>
     private void InitThemes()
     {
-        var t = GameManager.instance.GetThemes();
-        var cT = GameManager.instance.GetCurrTheme();
-        for (int i = 0; i < t.Count; i++)
-        {
-            var cp = themes[i];
-            cp.SetCircle();
-            cp.SetTheme(t[i]);
-            if(t[i] == cT)
-            {
-                cp.status.enabled = true;
-                currMark = cp.status;
-            }
-            themes[i].button.onClick.AddListener(() => cp.ThemeCallBack());
-            themes[i] = cp;
-
-            if (!t[i].active)
-            {
-                themes[i].status.sprite = lockImage;
-                themes[i].status.rectTransform.sizeDelta.Set(50.0f,50.0f);
-                themes[i].status.enabled = true;
-            }
-
-            themes[i].themeName.text = t[i].colorPackName;
-
-            for (int j = 0; j < themes[i].Samples.Count; j++)
-            {
-                themes[i].Samples[j].color = t[i].colors[j];
-            }
-        }
+        // var t = GameManager.instance.GetThemes();
+        // var cT = GameManager.instance.GetCurrTheme();
+        // for (int i = 0; i < t.Count; i++)
+        // {
+        //     var cp = themes[i];
+        //     cp.SetCircle();
+        //     cp.SetTheme(t[i]);
+        //     if(t[i] == cT)
+        //     {
+        //         cp.status.enabled = true;
+        //         currMark = cp.status;
+        //     }
+        //     themes[i].button.onClick.AddListener(() => cp.ThemeCallBack());
+        //     themes[i] = cp;
+        //
+        //     if (!t[i].active)
+        //     {
+        //         themes[i].status.sprite = lockImage;
+        //         themes[i].status.rectTransform.sizeDelta.Set(50.0f,50.0f);
+        //         themes[i].status.enabled = true;
+        //     }
+        //
+        //     themes[i].themeName.text = t[i].colorPackName;
+        //
+        //     for (int j = 0; j < themes[i].Samples.Count; j++)
+        //     {
+        //         themes[i].Samples[j].color = t[i].colors[j];
+        //     }
+        // }
     }
 }

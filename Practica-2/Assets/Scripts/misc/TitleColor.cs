@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using UnityEngine.UI;
 
+[SuppressMessage("ReSharper", "CheckNamespace")]
 public class TitleColor : MonoBehaviour
 {
     [Tooltip("Letras del titulo")]
@@ -17,10 +19,10 @@ public class TitleColor : MonoBehaviour
     //  Coles cargados
     private List<Color> colors;
 
-    void Start()
+    public void Init(List<Color> themeColors)
     {
-        colors = GameManager.instance.GetCurrTheme().colors;
-        for (int i = 0; i < letters.Length; i++)
+        colors = themeColors;
+        for (var i = 0; i < letters.Length; i++)
         {
             letters[i].color = colors[i];
         }
@@ -34,7 +36,6 @@ public class TitleColor : MonoBehaviour
         currTime += Time.deltaTime;
         if (currTime >= timeToMove)
         {
-            colors = GameManager.instance.GetCurrTheme().colors;
             for (int i = 0; i < letters.Length; i++)
             {
                 letters[i].color = colors[index];

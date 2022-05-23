@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 [SuppressMessage("ReSharper", "CheckNamespace")]
 [SuppressMessage("ReSharper", "StringLiteralTypo")]
-public class GridManager : MonoBehaviour
+public class SelectLevelManager : MonoBehaviour
 {
     [Tooltip("Referencia al título del paquete")] [SerializeField]
     private Text packTitle;

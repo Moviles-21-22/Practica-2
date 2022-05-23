@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
+[SuppressMessage("ReSharper", "StringLiteralTypo")]
 public class HUDManager : MonoBehaviour
 {
     [Tooltip("Referencia al objeto que muestra si el nivel se ha completado")]
@@ -77,15 +79,18 @@ public class HUDManager : MonoBehaviour
     [SerializeField]
     private Button addHintsButton;
 
-    private GameManager gm;
+    // Referencia al LevelManager
+    private LevelManager lvlMan;
+    
+    
     //Mapa del nivel cargado
     private Map map;
+    // Numero de pistas disponibles
+    private int currHints;
     //Paquete de niveles cargado
     private LevelPack levelPack;
     //Nivel cargado
     private Level currLevel;
-    //Determina si se ha completado el tablero con el minimo de movimientos
-    private bool winPerfect;
     //Variable de tiempo usada para procesar las animaciones
     private float timer = 0.0f;
     //Numero de tuberías conectadas
@@ -109,9 +114,11 @@ public class HUDManager : MonoBehaviour
         public Button elementButton;
     }
 
-    private void Start()
+    public void Init(Map currMap, Level lvl, LevelPack package,  int numHints, LevelManager lvlManager)
     {
-        InitData();
+        lvlMan = lvlManager;
+        currHints = numHints;
+        InitHudData(currMap, lvl, package);
 
         InitTopElements();
         InitMidElements();
@@ -121,13 +128,11 @@ public class HUDManager : MonoBehaviour
     /// <summary>
     /// Inicializa los datos generales del juego
     /// </summary>
-    private void InitData()
+    private void InitHudData(Map currMap, Level lvl, LevelPack package)
     {
-        // TODO : Organizar esto
-        gm = GameManager.instance;
-        map = gm.GetMap();
-        currLevel = gm.GetCurrLevel();
-        levelPack = gm.GetCurrentPack();
+        map = currMap;
+        currLevel = lvl;
+        levelPack = package;
         numLevelText.text = "Nivel " + (currLevel.lvl + 1);
     }
 
@@ -150,7 +155,7 @@ public class HUDManager : MonoBehaviour
         }
 
         //============VOLVER===================//
-        backButton.onClick.AddListener(() => gm.LoadScene((int)GameManager.SceneOrder.LEVEL_SELECT));
+        backButton.onClick.AddListener(() => lvlMan.LoadScene(GameManager.SceneOrder.LEVEL_SELECT));
 
         //============TABLERO-INFO===================//
         numFlowsText.text = "flujos: " + 0 + "/" + currLevel.numFlow;
@@ -164,9 +169,9 @@ public class HUDManager : MonoBehaviour
     private void InitMidElements()
     {
         // Proximo nivel
-        nextLevelWin.elementButton.onClick.AddListener(() => gm.ChangeLevel(currLevel.lvl + 1));
-        addHintsButton.onClick.AddListener(() => gm.AddHints(1));
-        addHintsButton.onClick.AddListener(() => UpdateHintText());
+        nextLevelWin.elementButton.onClick.AddListener(() => lvlMan.ChangeLevel(currLevel.lvl + 1));
+        addHintsButton.onClick.AddListener(() => lvlMan.AddHints(1));
+        addHintsButton.onClick.AddListener(UpdateHintText);
     }
 
     /// <summary>
@@ -175,12 +180,11 @@ public class HUDManager : MonoBehaviour
     private void InitBotElements()
     {
         // Reinicia el nivel
-        restartButton.onClick.AddListener(() => gm.LoadScene((int)GameManager.SceneOrder.GAME_SCENE));
+        restartButton.onClick.AddListener(() => lvlMan.LoadScene(GameManager.SceneOrder.GAME_SCENE));
 
         //============PISTAS===================//
-        int numHints = gm.GetNumHints();
-        hints.elementText.text = numHints + "x";
-        if (gm.GetNumHints() == 0)
+        hints.elementText.text = currHints + "x";
+        if (currHints == 0)
         {
             hints.elementImage.sprite = hints.elementSprites[0];
         }
@@ -197,7 +201,7 @@ public class HUDManager : MonoBehaviour
         else
         {
             prevLevel.elementImage.sprite = prevLevel.elementSprites[1];
-            prevLevel.elementButton.onClick.AddListener(() => gm.ChangeLevel(currLevel.lvl - 1));
+            prevLevel.elementButton.onClick.AddListener(() => lvlMan.ChangeLevel(currLevel.lvl - 1));
         }
 
         //============NIVEL-POSTERIOR===================//
@@ -208,19 +212,17 @@ public class HUDManager : MonoBehaviour
         else
         {
             nextLevel.elementImage.sprite = nextLevel.elementSprites[1];
-            nextLevel.elementButton.onClick.AddListener(() => gm.ChangeLevel(currLevel.lvl + 1));
+            nextLevel.elementButton.onClick.AddListener(() => lvlMan.ChangeLevel(currLevel.lvl + 1));
         }
     }
 
     /// <summary>
-    /// Cambia el texto que muestra las pistas en función de las pistas
-    /// que queden en el GameManager
+    /// Cambia el texto que muestra las pistas en función de las pistas que queden
     /// </summary>
     public void UpdateHintText()
     {
-        int leftHints = gm.GetNumHints();
-        hints.elementText.text = leftHints.ToString() + "x";
-        if (leftHints == 0)
+        hints.elementText.text = currHints.ToString() + "x";
+        if (currHints == 0)
         {
             hints.elementImage.sprite = hints.elementSprites[0];
         }
@@ -260,7 +262,7 @@ public class HUDManager : MonoBehaviour
 
             // Nos lleva al mainMenu
             nextLevelWin.elementButton.onClick.RemoveAllListeners();
-            nextLevelWin.elementButton.onClick.AddListener(() => gm.LoadScene((int)GameManager.SceneOrder.MAIN_MENU));
+            nextLevelWin.elementButton.onClick.AddListener(() => lvlMan.LoadScene((int)GameManager.SceneOrder.MAIN_MENU));
             nextLevelWin.elementText.text = "elige el próximo paquete";
         }
 

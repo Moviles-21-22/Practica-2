@@ -23,9 +23,9 @@ public class AdsManager : MonoBehaviour
     [SerializeField]  public bool testMode;
 
     private bool isPremium;
-    public void Init()
+    public void Init(bool premium)
     {
-        isPremium = GameManager.instance.IsPremium();
+        isPremium = premium;
         if (!isPremium)
         {
             Advertisement.Initialize(androidGameId, testMode);
