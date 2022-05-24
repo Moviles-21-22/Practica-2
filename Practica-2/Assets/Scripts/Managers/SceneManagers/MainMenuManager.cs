@@ -2,78 +2,47 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-// ReSharper disable All
-
 public class MainMenuManager : MonoBehaviour
 {
     [Tooltip("Referencia al titulo de colores NIVELES")]
     public TitleColor title;
-    
-    [SerializeField] [Tooltip("Lista de los paquetes de niveles que existen en el juego")]
-    private List<Paquete> paquetes;
-
-    [SerializeField] [Tooltip("Referencia al Rect Transform del objeto padre de Categorías en MainMenu")]
-    private RectTransform categRT;
 
     [SerializeField] private AudioClip forward;
 
     [SerializeField] private AudioSource audioSource;
 
+    [Tooltip("Prefab del GO del titulo de las categorias que se quiere instanciar")]
+    [SerializeField]
+    private CategoryTitle catTitlePrefab;
+
+    [Tooltip("Prefab del GO de los paquetes de nivel que se quiere instanciar")]
+    [SerializeField]
+    private LevelPackMenu levelPackPrefab;
+
+    [Tooltip("RectTransform usado como base para el tamaño de las categorías")]
+    [SerializeField]
+    private RectTransform baseRect;
+
+    [Tooltip("Sección de las categorías")]
+    [SerializeField]
+    private RectTransform categorySection;
+
+    [Tooltip("Referencia al contenido del scroll")]
+    [SerializeField]
+    private RectTransform contentScroll;
+
+
+    [Tooltip("Parte superior del Menu")]
+    [SerializeField]
+    private RectTransform topMenu;
+
     private GameManager gm;
-    
+
     /// <summary>
     /// Lista de categorías disponibles
     /// </summary>
     private List<Category> categoriesList;
-    
-    /// <summary>
-    /// Clase para agrupar las diferentes categorias
-    /// </summary>
-    [System.Serializable]
-    private class Paquete
-    {
-        [Tooltip("Referencia al sprite colorido de la categoria")]
-        public Image titleSprite;
 
-        [Tooltip("Referencia al texto que indica el nombre de la categoria")]
-        public Text titleText;
-
-        [Tooltip("Referencia al RectTransform del título")]
-        public RectTransform titleRect;
-
-        [Tooltip("Lista de las propiedades de los niveles")]
-        public List<LevelProperties> levels;
-    }
-
-    /// <summary>
-    /// Elementos de cada categoria agrupados
-    /// </summary>
-    [System.Serializable]
-    private struct LevelProperties
-    {
-        [Tooltip("Referencia al boton para elegir un nivel")]
-        public Button button;
-
-        [Tooltip("Referencia al texto del nombre del nivel")]
-        public Text name;
-
-        [Tooltip("Referencia al texto que muestra los niveles completados")]
-        public Text levels;
-
-        [Tooltip("Referencia al RectTransform del objeto correspondiente")]
-        public RectTransform levelRect;
-
-        public void CallBack(int lvl, int cat, AudioSource audioSource, AudioClip forward, MainMenuManager menu)
-        {
-            // El botón le comunica al mainMenu que se quiere cargar un nuevo paquete de niveles
-            // de manera que sea el mainMenu quien se lo diga al GameManager
-            Category category = menu.GetCategoriesList()[cat];
-            LevelPack level = category.levels[lvl];
-            button.onClick.AddListener(() => menu.LoadPackage(level, category));
-            audioSource.PlayOneShot(forward);
-        }
-    }
-    
     /// <summary>
     /// Inicializa las categorias del juego
     /// </summary>
@@ -81,8 +50,8 @@ public class MainMenuManager : MonoBehaviour
     {
         gm = GameManager.instance;
         categoriesList = categories;
-        
-        InitPackages();
+
+        InitCategories();
 
         title.Init(theme);
     }
@@ -92,9 +61,9 @@ public class MainMenuManager : MonoBehaviour
     /// al espacio que muestra las diferentes categorías y niveles
     /// </summary>
     /// <returns>Devuelve la altura</returns>
-    private float CalculateHeightUI()
+    private float CalculateHeightCategories()
     {
-        int numElems = paquetes.Count;
+        int numElems = categoriesList.Count;
         if (numElems == 0)
         {
             Debug.LogError("No se han encontrado objetos asignados al componente");
@@ -102,54 +71,79 @@ public class MainMenuManager : MonoBehaviour
 
         for (int i = 0; i < categoriesList.Count; i++)
         {
-            numElems += paquetes[i].levels.Count;
+            numElems += categoriesList[i].levels.Length;
         }
 
-        return categRT.rect.height / numElems;
+        return numElems * baseRect.rect.height;
     }
 
-    private void InitPackages()
+    /// <summary>
+    /// Inicializa la información de cada una de las categorías de forma dinámica
+    /// en función de los paquetes quue haya cargados en el GameManager
+    /// </summary>
+    private void InitCategories()
     {
-        float canvasH = CalculateHeightUI();
+        // Número de niveles dentro del paquete
+        int numCategories = categoriesList.Count;
 
-        // Inicializa toda la informaci�n correspondiente a cada paquete y a cada nivel para mostrarla en el Canvas
-        for (int i = 0; i < categoriesList.Count; i++)
+        // Transformación del ContentScroll
+        float originalH = categorySection.rect.height;
+        var finalH = CalculateHeightCategories() - originalH;
+        contentScroll.sizeDelta = new Vector2(0, finalH);
+        Vector3 pos = contentScroll.position;
+        pos.y = 0;
+        contentScroll.position = pos;
+
+        for (int i = 0; i < numCategories; i++)
         {
-            // Nombre y color de cada paquete
-            paquetes[i].titleText.text = categoriesList[i].categoryName;
-            paquetes[i].titleSprite.color = categoriesList[i].color;
-            
-            // Tamaño común para todos
-            var newSize = paquetes[i].titleRect.sizeDelta;
-            newSize.y = canvasH;
-            paquetes[i].titleRect.sizeDelta = newSize;
+            var title = Instantiate(catTitlePrefab, categorySection.transform);
 
-            InitLevels(i, newSize, canvasH);
+            // Nombre y color de cada paquete
+            title.SetText(categoriesList[i].categoryName);
+            title.SetCategoryColor(categoriesList[i].color);
+
+            InitLevels(i);
         }
+
+        baseRect.gameObject.SetActive(false);
+
+        // Transformación de la parte superior del Menu
+        originalH = topMenu.rect.height;
+        topMenu.SetParent(contentScroll, false);
+        var anchor = topMenu.anchorMin;
+        anchor.y = 1.0f - (originalH / contentScroll.rect.height);
+        topMenu.anchorMin = anchor;
+
+        // Transformación de la sección de categorías
+        categorySection.SetParent(contentScroll, false);
+        anchor.x = 1;
+        categorySection.anchorMax = anchor;
     }
 
-    private void InitLevels(int i_cat, Vector2 newSize, float canvasH)
+    /// <summary>
+    /// Inicializa la información de los paquetes de niveles de cada una de las categorías
+    /// </summary>
+    /// <param name="i_cat">Índice de la categoría dentro de la lista de categorías</param>
+    private void InitLevels(int i_cat)
     {
         // Inicializaci�n de cada nivel dentro de la categor�a
         for (int j = 0; j < categoriesList[i_cat].levels.Length; j++)
         {
-            // Color del nivel
-            paquetes[i_cat].levels[j].name.color = categoriesList[i_cat].color;
-            
-            // Nombre del nivel
-            paquetes[i_cat].levels[j].name.text = categoriesList[i_cat].levels[j].levelName;
-            
-            // Niveles completados
-            paquetes[i_cat].levels[j].levels.text =
-                categoriesList[i_cat].levels[j].completedLevels + "/" + categoriesList[i_cat].levels[j].levelsInfo.Count;
-            
-            // Logica del boton
-            paquetes[i_cat].levels[j].CallBack(j, i_cat, audioSource, forward, this);
+            var levelPack = Instantiate(levelPackPrefab, categorySection.transform);
 
-            // Tamaño común para todos
-            newSize = paquetes[i_cat].levels[j].levelRect.sizeDelta;
-            newSize.y = canvasH;
-            paquetes[i_cat].levels[j].levelRect.sizeDelta = newSize;
+            // Color del nivel
+            levelPack.SetPackColor(categoriesList[i_cat].color);
+
+            // Nombre del nivel
+            levelPack.SetPackName(categoriesList[i_cat].levels[j].levelName);
+
+            // Niveles completados
+            var newText = categoriesList[i_cat].levels[j].completedLevels +
+                "/" + categoriesList[i_cat].levels[j].levelsInfo.Count;
+            levelPack.SetCompletedLevels(newText);
+
+            // Logica del boton
+            levelPack.AddCallBack(j, i_cat, audioSource, forward, this);
         }
     }
 

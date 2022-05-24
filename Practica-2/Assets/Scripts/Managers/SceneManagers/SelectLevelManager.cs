@@ -2,24 +2,25 @@ using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using UnityEngine.UI;
 
-[SuppressMessage("ReSharper", "CheckNamespace")]
-[SuppressMessage("ReSharper", "StringLiteralTypo")]
 public class SelectLevelManager : MonoBehaviour
 {
-    [Tooltip("Referencia al título del paquete")] [SerializeField]
+    [Tooltip("Referencia al título del paquete")]
+    [SerializeField]
     private Text packTitle;
 
-    [Tooltip("Referencia al contenido del scroll")] [SerializeField]
+    [Tooltip("Referencia al contenido del scroll")]
+    [SerializeField]
     private RectTransform contentScroll;
 
-    [Tooltip("Paquete que contiene el grid de los niveles")] [SerializeField]
+    [Tooltip("Paquete que contiene el grid de los niveles")]
+    [SerializeField]
     private GridPack packPrefab;
 
     // Actual pack cargado
     private LevelPack currLevelPack;
 
     //  Colores para los bloques
-    private readonly Color[] colors = {Color.red, Color.blue, Color.green, Color.cyan, Color.magenta};
+    private readonly Color[] colors = { Color.red, Color.blue, Color.green, Color.cyan, Color.magenta };
 
     //  Para enumerar el grid
     private bool splitLevels;
@@ -31,7 +32,7 @@ public class SelectLevelManager : MonoBehaviour
     private int completedLevels;
 
     private GameManager gm;
-    
+
     /// <summary>
     /// Inicializa el gestor del SelectLevelScene
     /// </summary>
@@ -118,10 +119,10 @@ public class SelectLevelManager : MonoBehaviour
             }
         }
     }
-    
+
     public void BackToMainMenu()
     {
-        gm.LoadScene((int) GameManager.SceneOrder.MAIN_MENU);
+        gm.LoadScene((int)GameManager.SceneOrder.MAIN_MENU);
     }
 
     public void LoadLevel(int scene)

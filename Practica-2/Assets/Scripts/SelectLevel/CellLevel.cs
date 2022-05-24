@@ -2,8 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using UnityEngine.UI;
 
-[SuppressMessage("ReSharper", "StringLiteralTypo")]
-[SuppressMessage("ReSharper", "CheckNamespace")]
 public class CellLevel : MonoBehaviour
 {
     [Tooltip("Referencia al componente Button de la celda")]
