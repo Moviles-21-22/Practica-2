@@ -1377,7 +1377,7 @@ GameObject:
   - component: {fileID: 399888571}
   - component: {fileID: 399888570}
   m_Layer: 5
-  m_Name: Title
+  m_Name: PremiumTitle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1773,7 +1773,7 @@ GameObject:
   - component: {fileID: 503284341}
   - component: {fileID: 503284340}
   m_Layer: 5
-  m_Name: Description
+  m_Name: PremiumDescription
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1942,7 +1942,10 @@ MonoBehaviour:
     - {fileID: 1631091592}
     - {fileID: 1028972365}
     - {fileID: 1170515433}
-  menu: []
+  menu:
+  - {fileID: 1712724316}
+  - {fileID: 1401102961}
+  - {fileID: 944542903}
   lockSprite: {fileID: 21300000, guid: bff0354a8b3460147a489d6df17042ea, type: 3}
   unlockSprite: {fileID: 21300000, guid: 30dba30081967904396b3de7d3f130b5, type: 3}
 --- !u!1 &528700404
@@ -3975,7 +3978,7 @@ GameObject:
   - component: {fileID: 1047875889}
   - component: {fileID: 1047875888}
   m_Layer: 5
-  m_Name: Text
+  m_Name: PremiumTitleText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5703,7 +5706,7 @@ GameObject:
   - component: {fileID: 1312366131}
   - component: {fileID: 1312366130}
   m_Layer: 5
-  m_Name: Perfil
+  m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7485,7 +7488,7 @@ GameObject:
   - component: {fileID: 1712724317}
   - component: {fileID: 1712724316}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: PremiumFrame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8165,6 +8168,10 @@ PrefabInstance:
       propertyPath: adsManager
       value: 
       objectReference: {fileID: 7869540305992442476}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: defaultTheme
+      value: 
+      objectReference: {fileID: 11400000, guid: c19dc87640dcaf842838d0fbe358843c, type: 2}
     - target: {fileID: 4075807167624887494, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
       propertyPath: m_RootOrder
       value: 1

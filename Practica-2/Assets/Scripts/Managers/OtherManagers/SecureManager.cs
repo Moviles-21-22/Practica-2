@@ -4,7 +4,7 @@ using System.Text;
 /// <summary>
 /// Clase creada para gestionar los hash
 /// </summary>
-public class SecureManager
+public static class SecureManager
 {
     /// <summary>
     /// Crea un hash usando SHA256 y lo devuelve

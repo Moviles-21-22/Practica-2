@@ -5,6 +5,10 @@ using UnityEngine;
 
 [SuppressMessage("ReSharper", "IdentifierTypo")]
 [SuppressMessage("ReSharper", "CheckNamespace")]
+[SuppressMessage("ReSharper", "PossibleNullReferenceException")]
+[SuppressMessage("ReSharper", "StringLiteralTypo")]
+[SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
+[SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
 public class BoardManager : MonoBehaviour
 {
     [Tooltip("Referencia al objeto padre donde se van a instanciar los tiles")]
@@ -13,12 +17,6 @@ public class BoardManager : MonoBehaviour
     [Tooltip("Referencia al prefab de los tiles que se van a crear")]
     [SerializeField]
     private Tile tilePrefab;
-    [Tooltip("Referencia a los objetos del HUD")]
-    [SerializeField]
-    private RectTransform[] hudRegion;
-    [Tooltip("Referencia al GameObject del canvas que se muestra al superar el nivel")]
-    [SerializeField]
-    private HUDManager hud;
 
     //Pistas
     private int currHints;
@@ -26,17 +24,17 @@ public class BoardManager : MonoBehaviour
     //  Lista de colores
     private List<Color> currTheme;
     // Determina si se está pulsadno la pantalla
-    private bool inputDown = false;
+    private bool inputDown;
     // Determina si se puede editar o no el tablero
     private bool editable = true;
     //Guarda el color lógico del último movimiento que modificó el tablero
     private int lastColorMove;
     // Contador del número de flujos conectados
-    private int connectedFlows = 0;
+    private int connectedFlows;
     // Porcentaje de tablero completo
-    private float percentage = 0.0f;
+    private float percentage;
     // Porcentaje que se suma al total por cada tile ocupado
-    private float plusPercentage = 0.0f;
+    private float plusPercentage;
     // Color del tile tocado
     private Color currTileColor;
     // Poisición donde se ha pulsado la primera vez
@@ -59,74 +57,26 @@ public class BoardManager : MonoBehaviour
     // Lista con los movimientos de cada uno de los flujos
     private List<FlowMovements> cMovements = new List<FlowMovements>();
     // Contador de movimientos
-    private int currMovs = 0;
+    private int currMovs;
+
+    private LevelManager levelManager;
+    #region Inits
 
     //  Setea al board y activa el puntero
-    public void Init(Level level, List<Color> theme, int numHints)
+    public void Init(Level level, List<Color> theme, int numHints, RectTransform[] hudRegion, LevelManager lvlMan)
     {
         currLevel = level;
         currTheme = theme;
         currHints = numHints;
+        levelManager = lvlMan;
         
-        InitTab();
+        InitTab(hudRegion);
         InitData();
     }
-
-    public void Update()
-    {
-        if (!editable) {
-            return;
-        }
-#if UNITY_EDITOR
-        //  Ratón se pulsa
-        if (Input.GetMouseButtonDown(0))
-        {
-            inputDown = true;
-            initPosInput = Input.mousePosition;
-            InputDown(Input.mousePosition);
-            DrawCirclePointer(Input.mousePosition);
-        }
-        //  El ratón se ha levantado
-        else if (Input.GetMouseButtonUp(0))
-        {
-            inputDown = false;
-            InputUp();
-        }
-        //  El ratón se está moviendo
-        else if (inputDown && initPosInput != Input.mousePosition)
-        {
-            InputMoving(Input.mousePosition);
-            DrawCirclePointer(Input.mousePosition);
-        }
-#elif UNITY_ANDROID
-
-        for (int i = 0; i < Input.touchCount; i++)
-        {
-            //  Toque empieza            
-            if (Input.GetTouch(i).phase == TouchPhase.Began)
-            {
-                InputDown(Input.GetTouch(i).position);
-            }
-            //  Toque sale
-            else if (Input.GetTouch(i).phase == TouchPhase.Ended)
-            {
-                InputUp();
-            }
-            //  Arrastrando el dedo por la pantalla
-            else if (Input.GetTouch(i).phase == TouchPhase.Moved)
-            {
-                InputMoving(Input.GetTouch(i).position);
-                DrawCirclePointer(Input.GetTouch(i).position);
-            }
-        }
-#endif
-    }
-
-    #region Inits
     /// <summary>
     /// Inicializa el nivel actual
     /// </summary>
-    private void InitTab()
+    private void InitTab(RectTransform[] hudRegion)
     {
         // Creación de los tiles
         tabSize.x = currLevel.numBoardX;
@@ -146,17 +96,13 @@ public class BoardManager : MonoBehaviour
             initPos.y -= 1;
         }
 
-        InitCircles(currLevel);
-        InitGaps(currLevel);
-        InitWalls(currLevel);
+        InitCircles();
+        InitGaps();
+        InitWalls();
 
         //==============ESCALADO-TABLERO===================//
         // Auxiliar de la cámara principal
         var cam = Camera.main;
-
-        // Está en unidades de Unity
-        var a = hudRegion[0].sizeDelta;
-        var b = hudRegion[1].sizeDelta;
 
         // Dimensiones de la cámara, sin tener en cuenta el hud
         float camH = cam.orthographicSize * 2.0f;
@@ -165,7 +111,7 @@ public class BoardManager : MonoBehaviour
         // Hay que tener en cuenta la altura del hud - Está en píxeles
         float hudOffsetY = (hudRegion[0].rect.height + 10) + (hudRegion[1].rect.height + 10);
         // Conversión a la proporción
-        hudOffsetY = hudOffsetY / cam.pixelHeight;
+        hudOffsetY /= cam.pixelHeight;
 
         camH *= (1 - hudOffsetY - 0.05f);    // 0.05f de margen
         float tileH = camH / tabSize.y;
@@ -220,7 +166,7 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// Inicializa los círculos de los flujos
     /// </summary>
-    private void InitCircles(Level currLevel)
+    private void InitCircles()
     {
         for (int i = 0; i < currLevel.solutions.Count; i++)
         {
@@ -258,7 +204,7 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// Inicializa los muros de los tiles que lo requieran
     /// </summary>
-    private void InitWalls(Level currLevel)
+    private void InitWalls()
     {
         for (int i = 0; i < currLevel.walls.Count; i++)
         {
@@ -320,16 +266,13 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// Inicializa los huecos de los tiles que lo requieran
     /// </summary>
-    private void InitGaps(Level currLevel)
+    private void InitGaps()
     {
         //Cambiamos la var empty de cada tile si es hueco
-        for (int i = 0; i < currLevel.gaps.Count; i++)
+        foreach (var elem in currLevel.gaps)
         {
-            //Cogemos el tile hueco
-            int elem = currLevel.gaps[i];
-
-            int fila = (int)((elem + 1) / currLevel.numBoardX);
-            int colm = (int)((elem + 1) % currLevel.numBoardX) - 1;
+            int fila = (elem + 1) / currLevel.numBoardX;
+            int colm = (elem + 1) % currLevel.numBoardX - 1;
             if (colm < 0)
             {
                 colm = currLevel.numBoardX - 1;
@@ -339,13 +282,10 @@ public class BoardManager : MonoBehaviour
         }
 
         //Recorremos de nuevo los huecos para ponerles los muros necesarios
-        for (int i = 0; i < currLevel.gaps.Count; i++)
+        foreach (var elem in currLevel.gaps)
         {
-            //Cogemos el tile hueco
-            int elem = currLevel.gaps[i];
-
-            int fila = (int)((elem + 1) / currLevel.numBoardX);
-            int colm = (int)((elem + 1) % currLevel.numBoardX) - 1;
+            int fila = (elem + 1) / currLevel.numBoardX;
+            int colm = (elem + 1) % currLevel.numBoardX - 1;
             if (colm < 0)
             {
                 colm = currLevel.numBoardX - 1;
@@ -363,6 +303,56 @@ public class BoardManager : MonoBehaviour
         }
     }
     #endregion
+    
+    public void Update()
+    {
+        if (!editable) {
+            return;
+        }
+#if UNITY_EDITOR
+        //  Ratón se pulsa
+        if (Input.GetMouseButtonDown(0))
+        {
+            inputDown = true;
+            initPosInput = Input.mousePosition;
+            InputDown(Input.mousePosition);
+            DrawCirclePointer(Input.mousePosition);
+        }
+        //  El ratón se ha levantado
+        else if (Input.GetMouseButtonUp(0))
+        {
+            inputDown = false;
+            InputUp();
+        }
+        //  El ratón se está moviendo
+        else if (inputDown && initPosInput != Input.mousePosition)
+        {
+            InputMoving(Input.mousePosition);
+            DrawCirclePointer(Input.mousePosition);
+        }
+#elif UNITY_ANDROID
+
+        for (int i = 0; i < Input.touchCount; i++)
+        {
+            //  Toque empieza            
+            if (Input.GetTouch(i).phase == TouchPhase.Began)
+            {
+                InputDown(Input.GetTouch(i).position);
+            }
+            //  Toque sale
+            else if (Input.GetTouch(i).phase == TouchPhase.Ended)
+            {
+                InputUp();
+            }
+            //  Arrastrando el dedo por la pantalla
+            else if (Input.GetTouch(i).phase == TouchPhase.Moved)
+            {
+                InputMoving(Input.GetTouch(i).position);
+                DrawCirclePointer(Input.GetTouch(i).position);
+            }
+        }
+#endif
+    }
 
     #region InputLogic
     /// <summary>
@@ -463,7 +453,7 @@ public class BoardManager : MonoBehaviour
                         currTile = dragedTile.Key;
                     }
 
-                    hud.ShowPercentage((int)Math.Round(percentage));
+                    levelManager.UpdatePercentage((int)Math.Round(percentage));
                     cMovements[c].DrawPath(FlowMovements.PathType.CURR_PATH);
                 }
             }
@@ -502,19 +492,20 @@ public class BoardManager : MonoBehaviour
                 }
 
                 lastColorMove = c;
-                hud.UndoButtonBehaviour(undoActive, () => UndoMovement(c));
+                levelManager.UpdateUndoButtonBehaviour(true, () => UndoMovement(c));
             }
 
             inputTile.GetCircleRender().enabled = false;
-            hud.ShowFlows(connectedFlows);
+            levelManager.UpdateFlowsCounter(connectedFlows);
         }
-        hud.ShowMovements(currMovs);
+
+        levelManager.UpdateMovements(currMovs);
 
         if (IsSolution())
         {
             bool perfect = currMovs == currLevel.numFlow;
-            GameManager.instance.AddSolutionLevel(perfect, currMovs);
-            hud.LevelCompleted(perfect);
+            levelManager.AddSolutionLevel(perfect, currMovs);
+            levelManager.LevelCompleted(perfect);
         }
 
         currTile = null;
@@ -539,7 +530,7 @@ public class BoardManager : MonoBehaviour
         {
             if (cMovements[tileColor].IsConected())
             {
-                hud.ShowFlows(-1);
+                levelManager.UpdateFlowsCounter(-1);
             }
 
             p = cMovements[tileColor].ClearUntilTile(cMovements[tileColor].GetCurrentMoves()[0]) - 1;
@@ -549,7 +540,7 @@ public class BoardManager : MonoBehaviour
         {
             if (cMovements[tileColor].IsConected())
             {
-                hud.ShowFlows(-1);
+                levelManager.UpdateFlowsCounter(-1);
             }
 
             p = cMovements[tileColor].ClearUntilTile(currTile) - 1;
@@ -557,7 +548,7 @@ public class BoardManager : MonoBehaviour
 
         // Se actualiza el porcentaje
         percentage -= p > 0 ? plusPercentage * p : 0;
-        hud.ShowPercentage((int)Mathf.Round(percentage));
+        levelManager.UpdatePercentage((int)Mathf.Round(percentage));
 
         // Se actualiza el tile actual pulsado
         currTile.SetTileColor(tileColor);
@@ -605,7 +596,6 @@ public class BoardManager : MonoBehaviour
     /// </summary>
     /// <param name="dragedTile">El nuevo tile que ha detectado el InputMoving</param>
     /// <param name="tileColor">Color del tile</param>
-    /// <param name="dir">Dirección del input</param>
     private void BackFlowPath(KeyValuePair<Tile, Vector2Int> dragedTile, int tileColor)
     {
         int p = cMovements[tileColor].ClearUntilTile(dragedTile.Key) - 1;
@@ -766,8 +756,8 @@ public class BoardManager : MonoBehaviour
     /// </summary>
     private Vector2Int ConvertIndex(int index)
     {
-        int x = (int)((index + 1) % currLevel.numBoardX) - 1;
-        int y = (int)((index + 1) / currLevel.numBoardX);
+        int x = (index + 1) % currLevel.numBoardX - 1;
+        int y = (index + 1) / currLevel.numBoardX;
         if (x < 0)
         {
             x = currLevel.numBoardX - 1;
@@ -816,7 +806,6 @@ public class BoardManager : MonoBehaviour
     /// </summary>
     public void GiveHint()
     {
-        var gm = GameManager.instance;
         if (currHints > 0)
         {
             // Buscamos qué elementos no están conectados como posibles candidatos a pista
@@ -863,8 +852,7 @@ public class BoardManager : MonoBehaviour
                     }
                 }
 
-                gm.UseHint();
-                hud.UpdateHintText();
+                levelManager.UpdateHints();
             }
         }
     }
@@ -917,7 +905,7 @@ public class BoardManager : MonoBehaviour
         // Si está conectada, entonces hay que descontar el número de flujos conectados
         if (cMovements[c].IsConected())
         {
-            hud.ShowFlows(-1);
+            levelManager.UpdateFlowsCounter(-1);
         }
 
         // Actualizar el camino del mismo color que antes no cuenta
@@ -928,8 +916,8 @@ public class BoardManager : MonoBehaviour
         }
 
         cMovements[c].UndoMovements(ref percentage, plusPercentage);
-        hud.ShowPercentage((int)Math.Round(percentage));
-        hud.UndoButtonBehaviour(false);
+        levelManager.UpdatePercentage((int)Math.Round(percentage));
+        levelManager.UpdateUndoButtonBehaviour(false);
     }
 
     public void SetEditable(bool edit) {

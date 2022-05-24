@@ -221,7 +221,7 @@ public class HUDManager : MonoBehaviour
     /// </summary>
     public void UpdateHintText()
     {
-        hints.elementText.text = currHints.ToString() + "x";
+        hints.elementText.text = currHints + "x";
         if (currHints == 0)
         {
             hints.elementImage.sprite = hints.elementSprites[0];

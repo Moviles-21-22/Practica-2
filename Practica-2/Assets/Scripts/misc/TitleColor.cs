@@ -17,17 +17,22 @@ public class TitleColor : MonoBehaviour
     //  Index de los colores
     private int index = 0;
     //  Coles cargados
-    private List<Color> colors;
+    private List<Color> currThemeColors;
 
     public void Init(List<Color> themeColors)
     {
-        colors = themeColors;
+        currThemeColors = themeColors;
         for (var i = 0; i < letters.Length; i++)
         {
-            letters[i].color = colors[i];
+            letters[i].color = currThemeColors[i];
         }
     }
 
+    public void ChangeTheme(List<Color> newTheme)
+    {
+        currThemeColors = newTheme;
+    }
+    
     /// <summary>
     /// Cambio de colores en función del delta time 
     /// </summary>
@@ -38,9 +43,9 @@ public class TitleColor : MonoBehaviour
         {
             for (int i = 0; i < letters.Length; i++)
             {
-                letters[i].color = colors[index];
+                letters[i].color = currThemeColors[index];
                 index++;
-                if (index >= colors.Count)
+                if (index >= currThemeColors.Count)
                 {
                     index = 0;
                 }
@@ -49,7 +54,7 @@ public class TitleColor : MonoBehaviour
             index -= letters.Length - 1;
             if (index < 0)
             {
-                index = colors.Count - 1;
+                index = currThemeColors.Count - 1;
             }
         }
     }

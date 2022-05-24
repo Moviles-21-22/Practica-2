@@ -159,7 +159,7 @@ public class MainMenuManager : MonoBehaviour
     /// <param name="scene"></param>
     public void ChangeScene(int scene)
     {
-        GameManager.instance.LoadScene(scene);
+        gm.LoadScene(scene);
     }
 
     /// <summary>
@@ -169,7 +169,7 @@ public class MainMenuManager : MonoBehaviour
     /// <param name="category"></param>
     public void LoadPackage(LevelPack level, Category category)
     {
-        GameManager.instance.LoadPackage(level, category);
+        gm.LoadPackage(level, category);
     }
 
     public List<Category> GetCategoriesList()

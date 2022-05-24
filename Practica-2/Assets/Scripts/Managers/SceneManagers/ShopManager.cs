@@ -38,9 +38,11 @@ public class ShopManager : MonoBehaviour
     private List<ColorPack> themesList;
     private ColorPack currTheme;
     private Image currThemeShop;
+    private GameManager gm;
     
     public void Init(bool premium, List<ColorPack> themes, ColorPack theme, int numHints)
     {
+        gm = GameManager.instance;
         isPremium = premium;
         currHints = numHints;
         themesList = themes;
@@ -75,7 +77,7 @@ public class ShopManager : MonoBehaviour
     /// </summary>
     public void UnlockPremium()
     {
-        GameManager.instance.UnLockPremium();
+        gm.UnLockPremium();
         premiumBox.SetActive(false);
     }
 
@@ -87,13 +89,13 @@ public class ShopManager : MonoBehaviour
     public void AddHints(int numHints)
     {
         currHints += numHints;
-        GameManager.instance.AddHints(currHints);
+        gm.AddHints(currHints);
         hintsText.text = "¡Te quedan " + currHints + " pistas!";
     }
 
     public void BackToMainMenu()
     {
-        GameManager.instance.LoadScene((int) GameManager.SceneOrder.MAIN_MENU);
+        gm.LoadScene((int) GameManager.SceneOrder.MAIN_MENU);
     }
 
     [System.Serializable]
@@ -111,16 +113,16 @@ public class ShopManager : MonoBehaviour
     /// <param name="index">Tema que se escocge</param>
     public void ChangeTheme(int index)
     {
-        var newTheme = themesFeatures[index].theme;
+        currTheme = themesFeatures[index].theme;
         var selectedImage = themesFeatures[index].selectedImage;
 
-        if (newTheme.active)
+        if (currTheme.active)
         {
-            GameManager.instance.SetTheme(newTheme);
+            gm.SetTheme(currTheme);
         }
         else
         {
-            GameManager.instance.UnlockTheme(newTheme);
+            gm.UnlockTheme(currTheme);
         }
 
         currThemeShop.enabled = false;
@@ -128,6 +130,7 @@ public class ShopManager : MonoBehaviour
         currThemeShop.sprite = unlockSprite;
         currThemeShop.enabled = true;
         ChangeShopColor();
+        title.ChangeTheme(currTheme.colors);
     }
 
     /// <summary>
@@ -135,7 +138,6 @@ public class ShopManager : MonoBehaviour
     /// </summary>
     private void ChangeShopColor()
     {
-        //List<Color> colors = GameManager.instance.GetCurrTheme().colors;
         for (var i = 0; i < menu.Count; i++)
         {
             menu[i].color = currTheme.colors[i];

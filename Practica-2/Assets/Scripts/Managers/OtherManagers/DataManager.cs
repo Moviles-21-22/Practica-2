@@ -46,11 +46,8 @@ public static class DataManager
     /// </summary>
     /// <param name="catList">Lista de categorías del juego</param>
     /// <param name="themes">Lista de temas del juego</param>
-    public static void Init(List<Category> catList, List<ColorPack> themes)
+    public static DataToSave Init(List<Category> catList, List<ColorPack> themes)
     {
-        if (_categories.Count > 0)
-            return;
-
         _categories = catList;
         _colorThemes = themes;
 
@@ -70,14 +67,15 @@ public static class DataManager
             w.Close();
         }
 #endif
-        
-        Load();
+
+        return Load();
     }
 
     /// <summary>
     /// Guarda todos los datos del juego en un json
     /// </summary>    
-    public static void Save(int numHints, bool isPremium, List<Category> categories, List<ColorPack> themes, ColorPack currTheme)
+    public static void Save(int numHints, bool isPremium, List<Category> categories, List<ColorPack> themes,
+        ColorPack currTheme)
     {
         try
         {
@@ -116,21 +114,26 @@ public static class DataManager
     /// <summary>
     /// Carga el json con la información necesaria para cargar un usuario
     /// </summary>
-    private static void Load()
+    private static DataToSave Load()
     {
         //var a = Path + FileName;
         // 1. ¿Existe el archivo con datos guardados?
-        if (File.Exists(Path + FileName))
+        // 1.1 Si no existe el archivo, se crea uno por defecto
+        if (!File.Exists(Path + FileName))
         {
-            // 1.1 Si existe se intenta recoger sus datos
+            CreateDefaultJson();
+        }
+        else
+        {
+            // 1.2 Si existe se intenta recoger sus datos
             string json;
-            DataToSave objToLoad;
+            // DataToSave objToLoad;
             try
             {
                 LogReset();
                 DebugLogs("Estamos usando la ruta " + Path);
                 json = File.ReadAllText(Path + FileName);
-                objToLoad = JsonUtility.FromJson<DataToSave>(json);
+                _currData = JsonUtility.FromJson<DataToSave>(json);
             }
             catch (System.Exception e)
             {
@@ -149,24 +152,19 @@ public static class DataManager
 
             serializado += "\"hash\":\"\"}";
             //  Ambos hash coinciden
-            if (SecureManager.Hash(serializado).Equals(objToLoad.GetHash()))
+            if (SecureManager.Hash(serializado).Equals(_currData.GetHash()))
             {
                 DebugLogs("Datos verificados...");
-                GameManager.instance.LoadData(objToLoad);
             }
             else
             {
                 DebugLogs("Datos corruptos, creando unos por defecto...");
                 // Reseteamos el json con valores por defecto
                 CreateDefaultJson();
-                GameManager.instance.LoadData(_currData);
             }
         }
-        //1.2 Si no existe el archivo, se crea uno por defecto
-        else
-        {
-            CreateDefaultJson();
-        }
+
+        return _currData;
     }
 
     /// <summary>
@@ -185,9 +183,11 @@ public static class DataManager
             }
 
             // 2. Se parte de temas base
-            foreach (var theme in _colorThemes)
+            _colorThemes[0].Reset();
+            _colorThemes[0].active = true;
+            for (var i = 1; i < _colorThemes.Count; i++)
             {
-                theme.Reset();
+                _colorThemes[i].Reset();
             }
 
             // 3. Se guarda el json

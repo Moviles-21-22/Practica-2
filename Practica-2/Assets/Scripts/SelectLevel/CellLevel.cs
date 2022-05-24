@@ -1,10 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using UnityEngine.UI;
 
 [SuppressMessage("ReSharper", "StringLiteralTypo")]
+[SuppressMessage("ReSharper", "CheckNamespace")]
 public class CellLevel : MonoBehaviour
 {
     [Tooltip("Referencia al componente Button de la celda")]
@@ -41,23 +40,18 @@ public class CellLevel : MonoBehaviour
     /// </summary>
     private float offsetAlpha = -0.1f;
 
-    /// <summary>
-    /// Cambia el numero de un nivel
-    /// </summary>
-    /// <param name="num">Nivel</param>
-    public void SetLevelNum(int num)
-    {
-        numText.text = num.ToString();
-    }
-
+    private SelectLevelManager selectLevelManager;
+    
+    
     /// <summary>
     /// Inicializa la celda del grid de niveles
     /// </summary>
     /// <param name="newColor">Color que le corresponde al tile</param>
     /// <param name="isPerfect">¿El nivel es perfecto?</param>
     /// <param name="isCompleted">¿El nivel está completado?</param>
-    public void InitBox(Color newColor, bool isPerfect, bool isCompleted)
+    public void InitBox(Color newColor, bool isPerfect, bool isCompleted, SelectLevelManager manager)
     {
+        selectLevelManager = manager;
         color = newColor;
 
         if (isPerfect)
@@ -81,9 +75,18 @@ public class CellLevel : MonoBehaviour
     /// <param name="level">nivel a cargar</param>
     public void SetCallBack(int level)
     {
-        button.onClick.AddListener(() => GameManager.instance.LoadLevel(level));
+        button.onClick.AddListener(() => selectLevelManager.LoadLevel(level));
     }
 
+    /// <summary>
+    /// Cambia el numero de un nivel
+    /// </summary>
+    /// <param name="num">Nivel</param>
+    public void SetLevelNum(int num)
+    {
+        numText.text = num.ToString();
+    }
+    
     /// <summary>
     /// Activar el candado del bloque
     /// </summary>

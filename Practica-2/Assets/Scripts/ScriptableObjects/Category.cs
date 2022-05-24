@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 /// <summary>
@@ -8,6 +9,8 @@ using UnityEngine;
 /// </summary>
 [System.Serializable]
 [CreateAssetMenu(fileName = "skinpack", menuName = "Flow/skin", order = 1)]
+[SuppressMessage("ReSharper", "CheckNamespace")]
+[SuppressMessage("ReSharper", "StringLiteralTypo")]
 public class Category : ScriptableObject
 {
     [Tooltip("Nombre de la categoria")]
