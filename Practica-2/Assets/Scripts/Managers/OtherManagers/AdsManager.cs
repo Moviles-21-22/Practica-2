@@ -19,13 +19,13 @@ public class AdsManager : MonoBehaviour
     [Tooltip("Game id de android")]
     [SerializeField] public string androidGameId;
 
-    [Tooltip("Test status")]
+    [Tooltip("Test selectedImage")]
     [SerializeField]  public bool testMode;
 
     private bool isPremium;
-    public void Init()
+    public void Init(bool premium)
     {
-        isPremium = GameManager.instance.IsPremium();
+        isPremium = premium;
         if (!isPremium)
         {
             Advertisement.Initialize(androidGameId, testMode);

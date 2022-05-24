@@ -4,8 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-//TODO: Buscar todos los datamanager.LogError y mirar si se pueden borrar
-
 [SuppressMessage("ReSharper", "CheckNamespace")]
 [SuppressMessage("ReSharper", "IdentifierTypo")]
 [SuppressMessage("ReSharper", "StringLiteralTypo")]
@@ -19,7 +17,7 @@ public class GameManager : MonoBehaviour
     {
         MAIN_MENU = 0,
         LEVEL_SELECT = 1,
-        ADS = 2,
+        SHOP = 2,
         GAME_SCENE = 3
     }
 
@@ -27,34 +25,52 @@ public class GameManager : MonoBehaviour
 
     public static GameManager instance;
 
-    [Header("Seccion de Managers")]
-    [Tooltip("Referencia al MainMenuManager")]
+    [Header("Seccion de Managers")] [Tooltip("Referencia al MainMenuManager")]
     public MainMenuManager mainMenu;
 
-    [Tooltip("Referencia al AdsManager")]
-    public AdsManager adsManager;
-    
-    [Tooltip("Referencia al GridManager")]
-    public GridManager selectLevelGrid;
-    
+    [Tooltip("Referencia al AdsManager")] public ShopManager shop;
+
+    [Tooltip("Referencia al SelectLevelManager")]
+    public SelectLevelManager selectLevelSelectLevel;
+
+    [Tooltip("Referencia al LevelManager")]
+    public LevelManager levelManager;
+
 //-------------------------------------------ATRIBUTOS-EDITOR---------------------------------------------------------//
     [Header("Categorias y temas del juego")]
-    [Tooltip("Lista de los paquetes de las categorías del juego")] [SerializeField]
+    [Tooltip("Lista de los paquetes de las categorías del juego")]
+    [SerializeField]
     private List<Category> categories;
 
     [Tooltip("Lista de los paquetes de temas del juego")] [SerializeField]
     private List<ColorPack> colorThemes;
 
     [Header("Atributos que se quieren iniciar por defecto")]
+    
     [Tooltip("Categoría actual escogida")] [SerializeField]
-    private Category currCategory;
+    private Category defaultCategory;
+
+    [SerializeField] private bool useDefaultCat;
+
+    [Tooltip("Paquete de niveles por defecto")] [SerializeField]
+    private LevelPack defaultLevelPack;
+    [SerializeField] private bool useDefaultLevelPack;
     
-    [Tooltip("Paquete de niveles actual escogido")] [SerializeField]
-    private LevelPack currPack;
+    [Tooltip("Nivel del paquete por defecto")] [SerializeField]
+    private int defaultLevel = 1;
+    [SerializeField] private bool useDefaultLevel;
     
-    [Tooltip("Tema actual escogido")] [SerializeField]
-    private ColorPack currTheme;
+    [Tooltip("Tema inicial por defecto")] [SerializeField]
+    private ColorPack defaultTheme;
+
+    [SerializeField] private bool useDefaultTheme;
 //------------------------------------------ATRIBUTOS-PRIVADOS--------------------------------------------------------//
+
+    private Category currCategory;
+
+    private LevelPack currPack;
+
+    private ColorPack currTheme;
 
     //  Actual nivel en juego
     private Level currLevel;
@@ -75,15 +91,28 @@ public class GameManager : MonoBehaviour
         {
             // Delegación de los managers del GameManager de la escena
             // Inicializacion en caso de que existan
-            // MainMenu
+
+            // MainMenuScene
             instance.mainMenu = mainMenu;
-            if (instance.mainMenu) instance.mainMenu.Init();  
-            // Ads
-            instance.adsManager = adsManager;
-            if (instance.adsManager) instance.adsManager.Init();
-            // SelectLevel
-            instance.selectLevelGrid = selectLevelGrid;
-            if (instance.selectLevelGrid) instance.selectLevelGrid.Init();
+            if (instance.mainMenu)
+                instance.mainMenu.Init(instance.categories, instance.currTheme.colors);
+
+            // ShopScene
+            instance.shop = shop;
+            if (instance.shop)
+                instance.shop.Init(instance.isPremium, instance.colorThemes,
+                    instance.currTheme, instance.numHints);
+
+            // SelectLevelScene
+            instance.selectLevelSelectLevel = selectLevelSelectLevel;
+            if (instance.selectLevelSelectLevel) 
+                instance.selectLevelSelectLevel.Init(instance.currPack, instance.currCategory.color);
+
+            // GameScene
+            instance.levelManager = levelManager;
+            if (instance.levelManager)
+                instance.levelManager.Init(instance.currMap, instance.currLevel, instance.currPack,
+                    instance.currTheme.colors, instance.numHints);
 
             Destroy(gameObject);
         }
@@ -92,16 +121,32 @@ public class GameManager : MonoBehaviour
             // Instancia única
             instance = this;
             // 1. Inicializacion de los datos
-            DataManager.Init(categories, colorThemes);
-            
+            var currData = DataManager.Init(categories, colorThemes);
+            LoadData(currData);
+
+            if (useDefaultCat)
+                currCategory = defaultCategory;
+            if (useDefaultLevelPack)
+                currPack = defaultLevelPack;
+            if (useDefaultTheme)
+                currTheme = defaultTheme;
+            if (useDefaultLevel)
+                LoadLevel(defaultLevel);
+
             // 2. Inicializacion de los managers en caso de que existan
-            // MainMenu
-            if (mainMenu) mainMenu.Init();
-            // Ads
-            if (adsManager) adsManager.Init();
-            //SelectLevel
-            if (selectLevelGrid) selectLevelGrid.Init();
-            
+            // MainMenuScene
+            if (mainMenu)
+                mainMenu.Init(categories, currTheme.colors);
+            // ShopScene
+            if (shop)
+                shop.Init(isPremium, colorThemes, currTheme, numHints);
+            //SelectLevelScene
+            if (selectLevelSelectLevel)
+                selectLevelSelectLevel.Init(currPack, currCategory.color);
+            // GameScene
+            if (levelManager)
+                levelManager.Init(currMap, currLevel, currPack, currTheme.colors, numHints);
+
             DontDestroyOnLoad(gameObject);
         }
     }
@@ -120,7 +165,7 @@ public class GameManager : MonoBehaviour
         Application.Quit();
 #endif
     }
-    
+
 //--------------------------------------------GESTION-LOAD-SAVE-------------------------------------------------------//
 
     /// <summary>
@@ -139,7 +184,7 @@ public class GameManager : MonoBehaviour
     /// <param name="lvl">Nivel que se quiere cargar</param>
     public void LoadLevel(int lvl)
     {
-        currMap = new Map(currPack.txt.ToString(), 1);
+        currMap = new Map(currPack.txt.ToString());
         currLevel = currMap.GetLevel(lvl);
         LoadScene((int) SceneOrder.GAME_SCENE);
     }
@@ -148,11 +193,10 @@ public class GameManager : MonoBehaviour
     /// Carga el estado del juego en función del json
     /// </summary>
     /// <param name="objToLoad">Data con toda la información</param>
-    public void LoadData(DataToSave objToLoad)
+    private void LoadData(DataToSave objToLoad)
     {
         DataManager.DebugLogs("Empezamos a cargar los datos...");
 
-        // 
         categories = objToLoad.GetCategories();
 
         foreach (Category cat in categories)
@@ -182,7 +226,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void SaveGame()
     {
-        //dataManager.Save();
+        DataManager.Save(numHints, isPremium, categories, colorThemes, currTheme);
     }
 
     /// <summary>
@@ -252,22 +296,12 @@ public class GameManager : MonoBehaviour
     /// <param name="t">El tema a desbloquear</param>
     public void UnlockTheme(ColorPack t)
     {
-        //  TODO hacerlo sobre el que se guarda, no sobre la copia original
         var v = colorThemes[colorThemes.IndexOf(t)];
         v.active = true;
         SetTheme(v);
-        SaveGame();
     }
 
 //--------------------------------------------------------------------------------------------------------------------//
-
-    /// <summary>
-    /// Devuelve si el usuario es premium o no
-    /// </summary>
-    public bool IsPremium()
-    {
-        return isPremium;
-    }
 
     /// <summary>
     /// Desbloquea el acceso premium del usuario
@@ -276,7 +310,7 @@ public class GameManager : MonoBehaviour
     {
         isPremium = true;
         SaveGame();
-        adsManager.HideBanner();
+        shop.HideBanner();
     }
 
     /// <summary>
@@ -306,73 +340,12 @@ public class GameManager : MonoBehaviour
         SaveGame();
     }
 
-    /// <summary>
-    /// Devuelve el número de pistas restantes
-    /// </summary>
-    /// <returns></returns>
-    public int GetNumHints()
-    {
-        return numHints;
-    }
-
-    /// <summary>
-    /// Devuelve el actual pack en juego
-    /// </summary>
-    /// <returns></returns>
-    public LevelPack GetCurrentPack()
-    {
-        return currPack;
-    }
-
-    /// <summary>
-    /// Devuelve el nivel actual cargado en gameManager
-    /// </summary>
-    /// <returns></returns>
-    public Level GetCurrLevel()
-    {
-        return currLevel;
-    }
-
-    /// <summary>
-    /// Devuelve la categoría usada
-    /// </summary>
-    /// <returns></returns>
-    public Category GetCurrentCategory()
-    {
-        return currCategory;
-    }
-
-    /// <summary>
-    /// Devuelve el mapa actual cargado
-    /// </summary>
-    public Map GetMap()
-    {
-        return currMap;
-    }
-
-    /// <summary>
-    /// Devuelve todos las skins de colores disponibles en el gameManager
-    /// </summary>
-    /// <returns></returns>
-    public List<ColorPack> GetThemes()
-    {
-        return colorThemes;
-    }
-
-    /// <summary>
-    /// Devuelve el tema usado actualmente
-    /// </summary>
-    /// <returns></returns>
-    public ColorPack GetCurrTheme()
-    {
-        return currTheme;
-    }
 
     /// <summary>
     /// Cambia el tema
     /// </summary>
     /// <param name="t">El tema a cambiar</param>
-    internal void SetTheme(ColorPack t)
+    public void SetTheme(ColorPack t)
     {
         currTheme = t;
         SaveGame();
@@ -387,14 +360,4 @@ public class GameManager : MonoBehaviour
         currLevel = currMap.GetLevel(lvl);
         LoadScene((int) SceneOrder.GAME_SCENE);
     }
-
-    /// <summary>
-    /// Devuelve todas las categorías correspondientes
-    /// </summary>
-    /// <returns></returns>
-    public List<Category> GetCategories()
-    {
-        return categories;
-    }
-    
 }

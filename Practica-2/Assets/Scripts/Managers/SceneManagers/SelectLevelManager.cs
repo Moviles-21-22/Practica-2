@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 [SuppressMessage("ReSharper", "CheckNamespace")]
 [SuppressMessage("ReSharper", "StringLiteralTypo")]
-public class GridManager : MonoBehaviour
+public class SelectLevelManager : MonoBehaviour
 {
     [Tooltip("Referencia al título del paquete")] [SerializeField]
     private Text packTitle;
@@ -30,17 +30,24 @@ public class GridManager : MonoBehaviour
     //  Niveles completados del bloque
     private int completedLevels;
 
-    public void Init()
+    private GameManager gm;
+    
+    /// <summary>
+    /// Inicializa el gestor del SelectLevelScene
+    /// </summary>
+    /// <param name="lvlPack">Paquete de niveles que se va a cargar</param>
+    /// <param name="catColor">Color del texto que muestra la categoría</param>
+    public void Init(LevelPack lvlPack, Color catColor)
     {
+        gm = GameManager.instance;
+        currLevelPack = lvlPack;
+        packTitle.color = catColor;
         InitGridData();
         GeneratePackageLevels();
     }
 
     private void InitGridData()
     {
-        currLevelPack = GameManager.instance.GetCurrentPack();
-        packTitle.color = GameManager.instance.GetCurrentCategory().color;
-
         packTitle.text = currLevelPack.levelName;
         splitLevels = currLevelPack.splitLevels;
         lockPack = currLevelPack.lockPack;
@@ -93,7 +100,7 @@ public class GridManager : MonoBehaviour
             bool perfect = currLevelPack.levelsInfo[(index * boxes.Length) + i].perfect;
             bool completed = currLevelPack.levelsInfo[(index * boxes.Length) + i].completed;
 
-            boxes[i].InitBox(color, perfect, completed);
+            boxes[i].InitBox(color, perfect, completed, this);
 
             if (!lockPack ||
                 lockPack && (index * boxes.Length) + i <=
@@ -110,5 +117,15 @@ public class GridManager : MonoBehaviour
                 boxes[i].ActiveLockImage();
             }
         }
+    }
+    
+    public void BackToMainMenu()
+    {
+        gm.LoadScene((int) GameManager.SceneOrder.MAIN_MENU);
+    }
+
+    public void LoadLevel(int scene)
+    {
+        gm.LoadLevel(scene);
     }
 }

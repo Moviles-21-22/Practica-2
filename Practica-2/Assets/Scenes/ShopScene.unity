@@ -205,33 +205,37 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 842892316}
     m_Modifications:
-    - target: {fileID: 6322887835042086268, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
-      propertyPath: button
-      value: 
-      objectReference: {fileID: 30329520}
-    - target: {fileID: 6322887835042086268, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
-      propertyPath: sceneToLoad
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8370638751146021697, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8370638751146021697, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8370638751146021697, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
+      objectReference: {fileID: 508353148}
+    - target: {fileID: 8370638751146021697, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8370638751146021697, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: 
+      value: BackToMainMenu
+      objectReference: {fileID: 0}
+    - target: {fileID: 8370638751146021697, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: ShopManager, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 8370638751146021697, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
-      value: 1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8370638751146021697, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 8370638751146021702, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
       propertyPath: m_Pivot.x
@@ -328,17 +332,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8370638751146021702, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
   m_PrefabInstance: {fileID: 30329518}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &30329520 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8370638751146021697, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
-  m_PrefabInstance: {fileID: 30329518}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &34438774
 GameObject:
   m_ObjectHideFlags: 0
@@ -426,7 +419,7 @@ GameObject:
   - component: {fileID: 120403337}
   - component: {fileID: 120403336}
   m_Layer: 5
-  m_Name: Perfil
+  m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -906,7 +899,7 @@ GameObject:
   - component: {fileID: 227936368}
   - component: {fileID: 227936367}
   m_Layer: 5
-  m_Name: Classic (3)
+  m_Name: Panal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -978,9 +971,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1409262235}
-        m_TargetAssemblyTypeName: ThemeAds, Assembly-CSharp
-        m_MethodName: QuitMark
+      - m_Target: {fileID: 508353148}
+        m_TargetAssemblyTypeName: ShopManager, Assembly-CSharp
+        m_MethodName: ChangeTheme
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1062,7 +1055,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &308181515
 GameObject:
@@ -1384,7 +1377,7 @@ GameObject:
   - component: {fileID: 399888571}
   - component: {fileID: 399888570}
   m_Layer: 5
-  m_Name: Title
+  m_Name: PremiumTitle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1676,7 +1669,7 @@ GameObject:
   - component: {fileID: 491780690}
   - component: {fileID: 491780689}
   m_Layer: 5
-  m_Name: Classic (4)
+  m_Name: Pastel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1748,9 +1741,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1409262235}
-        m_TargetAssemblyTypeName: ThemeAds, Assembly-CSharp
-        m_MethodName: QuitMark
+      - m_Target: {fileID: 508353148}
+        m_TargetAssemblyTypeName: ShopManager, Assembly-CSharp
+        m_MethodName: ChangeTheme
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1780,7 +1773,7 @@ GameObject:
   - component: {fileID: 503284341}
   - component: {fileID: 503284340}
   m_Layer: 5
-  m_Name: Description
+  m_Name: PremiumDescription
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1847,6 +1840,114 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 503284338}
   m_CullTransparentMesh: 1
+--- !u!1 &508353146
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 508353147}
+  - component: {fileID: 508353148}
+  m_Layer: 0
+  m_Name: ShopManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &508353147
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 508353146}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1191540993}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &508353148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 508353146}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f003d39a7e2048b40a68544e2c616f99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ads: {fileID: 7869540305992442476}
+  title: {fileID: 1414888144}
+  premiumBox: {fileID: 1733139959}
+  hintsText: {fileID: 1641436538}
+  themesFeatures:
+  - selectedImage: {fileID: 1742019219}
+    themeName: {fileID: 1469216340}
+    theme: {fileID: 11400000, guid: 30b3347c126ef954d8d24336c3fde2ce, type: 2}
+    samples:
+    - {fileID: 2131747465}
+    - {fileID: 1041287989}
+    - {fileID: 597561865}
+    - {fileID: 436358958}
+    - {fileID: 604674447}
+  - selectedImage: {fileID: 1130259830}
+    themeName: {fileID: 992567346}
+    theme: {fileID: 11400000, guid: c19dc87640dcaf842838d0fbe358843c, type: 2}
+    samples:
+    - {fileID: 137617056}
+    - {fileID: 1485759347}
+    - {fileID: 371669219}
+    - {fileID: 211300381}
+    - {fileID: 34438776}
+  - selectedImage: {fileID: 1141344372}
+    themeName: {fileID: 1665569104}
+    theme: {fileID: 11400000, guid: 946ef7b456620c548bd725d0190bd894, type: 2}
+    samples:
+    - {fileID: 1623222283}
+    - {fileID: 1205242868}
+    - {fileID: 1062765050}
+    - {fileID: 1267814768}
+    - {fileID: 998996605}
+  - selectedImage: {fileID: 2091075840}
+    themeName: {fileID: 1086283147}
+    theme: {fileID: 11400000, guid: 56572ea752a3c6243b69b2b34fa26c0a, type: 2}
+    samples:
+    - {fileID: 1165836099}
+    - {fileID: 1510420971}
+    - {fileID: 1078450498}
+    - {fileID: 2044877575}
+    - {fileID: 19482396}
+  - selectedImage: {fileID: 1518615778}
+    themeName: {fileID: 1028431904}
+    theme: {fileID: 11400000, guid: f0e602a3e3b1b774bad0246bc9bb9aeb, type: 2}
+    samples:
+    - {fileID: 1212501115}
+    - {fileID: 174709026}
+    - {fileID: 1185370989}
+    - {fileID: 2074248254}
+    - {fileID: 1100596224}
+  - selectedImage: {fileID: 1278060519}
+    themeName: {fileID: 843714153}
+    theme: {fileID: 11400000, guid: bd9e5ab2158bd3042870837e7c3f82ef, type: 2}
+    samples:
+    - {fileID: 388931621}
+    - {fileID: 749477059}
+    - {fileID: 1631091592}
+    - {fileID: 1028972365}
+    - {fileID: 1170515433}
+  menu:
+  - {fileID: 1712724316}
+  - {fileID: 1401102961}
+  - {fileID: 944542903}
+  lockSprite: {fileID: 21300000, guid: bff0354a8b3460147a489d6df17042ea, type: 3}
+  unlockSprite: {fileID: 21300000, guid: 30dba30081967904396b3de7d3f130b5, type: 3}
 --- !u!1 &528700404
 GameObject:
   m_ObjectHideFlags: 0
@@ -2279,7 +2380,7 @@ GameObject:
   - component: {fileID: 616016759}
   - component: {fileID: 616016760}
   m_Layer: 5
-  m_Name: Sample
+  m_Name: PanalSample
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2346,7 +2447,7 @@ GameObject:
   - component: {fileID: 626009109}
   - component: {fileID: 626009110}
   m_Layer: 5
-  m_Name: Sample
+  m_Name: VivosSample
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2647,7 +2748,7 @@ GameObject:
   - component: {fileID: 801981944}
   - component: {fileID: 801981943}
   m_Layer: 5
-  m_Name: Title
+  m_Name: ThemeTitle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2795,8 +2896,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1360443602}
-        m_TargetAssemblyTypeName: HintsCounter, Assembly-CSharp
+      - m_Target: {fileID: 508353148}
+        m_TargetAssemblyTypeName: ShopManager, Assembly-CSharp
         m_MethodName: AddHints
         m_Mode: 3
         m_Arguments:
@@ -2894,7 +2995,7 @@ GameObject:
   - component: {fileID: 843714154}
   - component: {fileID: 843714153}
   m_Layer: 5
-  m_Name: Name
+  m_Name: VivosName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3131,7 +3232,7 @@ GameObject:
   - component: {fileID: 944542904}
   - component: {fileID: 944542903}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: ThemeFrame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3279,9 +3380,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1409262235}
-        m_TargetAssemblyTypeName: ThemeAds, Assembly-CSharp
-        m_MethodName: QuitMark
+      - m_Target: {fileID: 508353148}
+        m_TargetAssemblyTypeName: ShopManager, Assembly-CSharp
+        m_MethodName: ChangeTheme
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3311,7 +3412,7 @@ GameObject:
   - component: {fileID: 983246763}
   - component: {fileID: 983246762}
   m_Layer: 5
-  m_Name: Classic (2)
+  m_Name: Oscuro
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3383,9 +3484,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1409262235}
-        m_TargetAssemblyTypeName: ThemeAds, Assembly-CSharp
-        m_MethodName: QuitMark
+      - m_Target: {fileID: 508353148}
+        m_TargetAssemblyTypeName: ShopManager, Assembly-CSharp
+        m_MethodName: ChangeTheme
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3415,7 +3516,7 @@ GameObject:
   - component: {fileID: 992567347}
   - component: {fileID: 992567346}
   m_Layer: 5
-  m_Name: Name
+  m_Name: ArtiName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3648,7 +3749,7 @@ GameObject:
   - component: {fileID: 1028431905}
   - component: {fileID: 1028431904}
   m_Layer: 5
-  m_Name: Name
+  m_Name: PastelName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3877,7 +3978,7 @@ GameObject:
   - component: {fileID: 1047875889}
   - component: {fileID: 1047875888}
   m_Layer: 5
-  m_Name: Text
+  m_Name: PremiumTitleText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4180,7 +4281,7 @@ GameObject:
   - component: {fileID: 1082056098}
   - component: {fileID: 1082056099}
   m_Layer: 5
-  m_Name: Sample
+  m_Name: PastelSample
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4248,7 +4349,7 @@ GameObject:
   - component: {fileID: 1086283148}
   - component: {fileID: 1086283147}
   m_Layer: 5
-  m_Name: Name
+  m_Name: PanalName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4402,7 +4503,7 @@ GameObject:
   - component: {fileID: 1107480249}
   - component: {fileID: 1107480248}
   m_Layer: 5
-  m_Name: Classic (5)
+  m_Name: Vivos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4474,9 +4575,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1409262235}
-        m_TargetAssemblyTypeName: ThemeAds, Assembly-CSharp
-        m_MethodName: QuitMark
+      - m_Target: {fileID: 508353148}
+        m_TargetAssemblyTypeName: ShopManager, Assembly-CSharp
+        m_MethodName: ChangeTheme
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4506,7 +4607,7 @@ GameObject:
   - component: {fileID: 1130259831}
   - component: {fileID: 1130259830}
   m_Layer: 5
-  m_Name: Status2
+  m_Name: ArticSelected
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4581,7 +4682,7 @@ GameObject:
   - component: {fileID: 1141344373}
   - component: {fileID: 1141344372}
   m_Layer: 5
-  m_Name: Status3
+  m_Name: OscuroSelected
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5016,6 +5117,38 @@ MonoBehaviour:
   m_ChildScaleWidth: 1
   m_ChildScaleHeight: 1
   m_ReverseArrangement: 0
+--- !u!1 &1191540992
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1191540993}
+  m_Layer: 0
+  m_Name: Managers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1191540993
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1191540992}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 508353147}
+  - {fileID: 7869540305992442475}
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1205242866
 GameObject:
   m_ObjectHideFlags: 0
@@ -5328,7 +5461,7 @@ GameObject:
   - component: {fileID: 1278060520}
   - component: {fileID: 1278060519}
   m_Layer: 5
-  m_Name: Status6
+  m_Name: VivosSelected
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5474,8 +5607,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1360443602}
-        m_TargetAssemblyTypeName: HintsCounter, Assembly-CSharp
+      - m_Target: {fileID: 508353148}
+        m_TargetAssemblyTypeName: ShopManager, Assembly-CSharp
         m_MethodName: AddHints
         m_Mode: 3
         m_Arguments:
@@ -5573,7 +5706,7 @@ GameObject:
   - component: {fileID: 1312366131}
   - component: {fileID: 1312366130}
   m_Layer: 5
-  m_Name: Perfil
+  m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5728,7 +5861,7 @@ GameObject:
   - component: {fileID: 1360443600}
   - component: {fileID: 1360443602}
   m_Layer: 5
-  m_Name: Title
+  m_Name: HintsTitle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5805,7 +5938,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74f1196410607744f8fd11504d6103f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: {fileID: 1641436538}
 --- !u!1 &1401102959
 GameObject:
   m_ObjectHideFlags: 0
@@ -5818,7 +5950,7 @@ GameObject:
   - component: {fileID: 1401102962}
   - component: {fileID: 1401102961}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: HintsFrame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5893,7 +6025,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1409262234}
-  - component: {fileID: 1409262235}
   m_Layer: 5
   m_Name: ThemeBox
   m_TagString: Untagged
@@ -5922,78 +6053,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0}
---- !u!114 &1409262235
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1409262233}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b00224aff5343742bb690c73dc0aa5c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  themes:
-  - status: {fileID: 1742019219}
-    themeName: {fileID: 1469216340}
-    Samples:
-    - {fileID: 2131747465}
-    - {fileID: 1041287989}
-    - {fileID: 597561865}
-    - {fileID: 436358958}
-    - {fileID: 604674447}
-    button: {fileID: 969765964}
-  - status: {fileID: 1130259830}
-    themeName: {fileID: 992567346}
-    Samples:
-    - {fileID: 137617056}
-    - {fileID: 1485759347}
-    - {fileID: 371669219}
-    - {fileID: 211300381}
-    - {fileID: 34438776}
-    button: {fileID: 1526127956}
-  - status: {fileID: 1141344372}
-    themeName: {fileID: 1665569104}
-    Samples:
-    - {fileID: 1623222283}
-    - {fileID: 1205242868}
-    - {fileID: 1062765050}
-    - {fileID: 1267814768}
-    - {fileID: 998996605}
-    button: {fileID: 983246762}
-  - status: {fileID: 2091075840}
-    themeName: {fileID: 1086283147}
-    Samples:
-    - {fileID: 1165836099}
-    - {fileID: 1510420971}
-    - {fileID: 1078450498}
-    - {fileID: 2044877575}
-    - {fileID: 19482396}
-    button: {fileID: 227936367}
-  - status: {fileID: 1518615778}
-    themeName: {fileID: 1028431904}
-    Samples:
-    - {fileID: 1212501115}
-    - {fileID: 174709026}
-    - {fileID: 1185370989}
-    - {fileID: 2074248254}
-    - {fileID: 1100596224}
-    button: {fileID: 491780689}
-  - status: {fileID: 1278060519}
-    themeName: {fileID: 843714153}
-    Samples:
-    - {fileID: 388931621}
-    - {fileID: 749477059}
-    - {fileID: 1631091592}
-    - {fileID: 1028972365}
-    - {fileID: 1170515433}
-    button: {fileID: 1107480248}
-  menu:
-  - {fileID: 1712724316}
-  - {fileID: 1401102961}
-  - {fileID: 944542903}
-  lockImage: {fileID: 21300000, guid: bff0354a8b3460147a489d6df17042ea, type: 3}
 --- !u!1 &1414888141
 GameObject:
   m_ObjectHideFlags: 0
@@ -6095,7 +6154,7 @@ GameObject:
   - component: {fileID: 1469216341}
   - component: {fileID: 1469216340}
   m_Layer: 5
-  m_Name: Name
+  m_Name: ClassicName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6403,7 +6462,7 @@ GameObject:
   - component: {fileID: 1518615779}
   - component: {fileID: 1518615778}
   m_Layer: 5
-  m_Name: Status5
+  m_Name: PastelSelected
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6478,7 +6537,7 @@ GameObject:
   - component: {fileID: 1526127957}
   - component: {fileID: 1526127956}
   m_Layer: 5
-  m_Name: Classic (1)
+  m_Name: Artic
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6550,9 +6609,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1409262235}
-        m_TargetAssemblyTypeName: ThemeAds, Assembly-CSharp
-        m_MethodName: QuitMark
+      - m_Target: {fileID: 508353148}
+        m_TargetAssemblyTypeName: ShopManager, Assembly-CSharp
+        m_MethodName: ChangeTheme
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6664,7 +6723,7 @@ RectTransform:
   m_Children:
   - {fileID: 2003686209}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -7017,7 +7076,7 @@ GameObject:
   - component: {fileID: 1641436539}
   - component: {fileID: 1641436538}
   m_Layer: 5
-  m_Name: Text
+  m_Name: HintsText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7096,7 +7155,7 @@ GameObject:
   - component: {fileID: 1665569105}
   - component: {fileID: 1665569104}
   m_Layer: 5
-  m_Name: Name
+  m_Name: OscuroName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7246,8 +7305,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1360443602}
-        m_TargetAssemblyTypeName: HintsCounter, Assembly-CSharp
+      - m_Target: {fileID: 508353148}
+        m_TargetAssemblyTypeName: ShopManager, Assembly-CSharp
         m_MethodName: AddHints
         m_Mode: 3
         m_Arguments:
@@ -7429,7 +7488,7 @@ GameObject:
   - component: {fileID: 1712724317}
   - component: {fileID: 1712724316}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: PremiumFrame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7503,7 +7562,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1733139960}
-  - component: {fileID: 1733139961}
   m_Layer: 5
   m_Name: PremiumBox
   m_TagString: Untagged
@@ -7533,18 +7591,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1733139961
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1733139959}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b001dfb85b5b6134987bef441a10876e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1742019217
 GameObject:
   m_ObjectHideFlags: 0
@@ -7557,7 +7603,7 @@ GameObject:
   - component: {fileID: 1742019220}
   - component: {fileID: 1742019219}
   m_Layer: 5
-  m_Name: Status1
+  m_Name: ClassicSelected
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7703,8 +7749,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1733139961}
-        m_TargetAssemblyTypeName: PremiumState, Assembly-CSharp
+      - m_Target: {fileID: 508353148}
+        m_TargetAssemblyTypeName: ShopManager, Assembly-CSharp
         m_MethodName: UnlockPremium
         m_Mode: 1
         m_Arguments:
@@ -7802,7 +7848,7 @@ GameObject:
   - component: {fileID: 1779872344}
   - component: {fileID: 1779872345}
   m_Layer: 5
-  m_Name: Sample
+  m_Name: ArticSample
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7944,7 +7990,7 @@ GameObject:
   - component: {fileID: 1845012643}
   - component: {fileID: 1845012644}
   m_Layer: 5
-  m_Name: Sample
+  m_Name: ClassicSample
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8115,12 +8161,20 @@ PrefabInstance:
       value: GameManager
       objectReference: {fileID: 0}
     - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: shop
+      value: 
+      objectReference: {fileID: 508353148}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
       propertyPath: adsManager
       value: 
       objectReference: {fileID: 7869540305992442476}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: defaultTheme
+      value: 
+      objectReference: {fileID: 11400000, guid: c19dc87640dcaf842838d0fbe358843c, type: 2}
     - target: {fileID: 4075807167624887494, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4075807167624887494, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8370,7 +8424,7 @@ GameObject:
   - component: {fileID: 2027890993}
   - component: {fileID: 2027890994}
   m_Layer: 5
-  m_Name: Sample
+  m_Name: OscuroSample
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8588,7 +8642,7 @@ GameObject:
   - component: {fileID: 2091075841}
   - component: {fileID: 2091075840}
   m_Layer: 5
-  m_Name: Status4
+  m_Name: PanalSelected
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8737,7 +8791,7 @@ GameObject:
   - component: {fileID: 7869540305992442475}
   - component: {fileID: 7869540305992442476}
   m_Layer: 0
-  m_Name: Ads
+  m_Name: AdsManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8750,12 +8804,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7869540305992442474}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 1.5767204, y: 0.436823, z: -0.76150274}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_Father: {fileID: 1191540993}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7869540305992442476
 MonoBehaviour:

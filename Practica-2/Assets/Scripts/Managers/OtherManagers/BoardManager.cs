@@ -1,379 +1,14 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
-/// <summary>
-/// Clase auxiliar para controlar el color del tile en función de los movimientos
-/// </summary>
-class FlowMovements
-{
-    /// <summary>
-    /// Tipos de caminos que se guardan
-    /// </summary>
-    public enum PathType
-    {
-        MAIN_PATH = 0,
-        LAST_PATH = 1,
-        CURR_PATH = 2
-    }
-    /// <summary>
-    /// Para colocar la estrella en caso de que se rompa un camino hecho con pistas
-    /// </summary>
-    public bool isHint = false;
-    /// <summary>
-    /// Color lógico de la tubería
-    /// </summary>
-    int flowColor;
-    /// <summary>
-    /// Color gráfico de la tubería
-    /// </summary>
-    Color color;
-    /// <summary>
-    /// Lista de tiles ordenada con el camino del flujo tras soltar el dedo
-    /// </summary>
-    List<Tile> flowPath;
-    /// <summary>
-    /// Lista de tiles que se están usando durante el InputMoving
-    /// </summary>
-    List<Tile> currentPath;
-    /// <summary>
-    /// Lista del último movimiento que se puede deshacer
-    /// </summary>
-    List<Tile> lastPath;
-    /// <summary>
-    /// Lista de los tiles que han sido borrados en un corte junto con su
-    /// correspondiente color lógico antes de ser cortado
-    /// </summary>
-    List<KeyValuePair<Tile, int>> cutPath;
-
-    /// <summary>
-    /// Construye un flujo con un color lógico y un color gráfico
-    /// </summary>
-    /// <param name="c">Color lógico del camino</param>
-    /// <param name="col">Color gráfico del camino</param>
-    public FlowMovements(int c, Color col)
-    {
-        flowColor = c;
-        color = col;
-        flowPath = new List<Tile>();
-        lastPath = new List<Tile>();
-        cutPath = new List<KeyValuePair<Tile, int>>();
-        currentPath = new List<Tile>();
-    }
-
-    /// <summary>
-    /// Dibuja el flujo en función de un camino
-    /// </summary>
-    /// <param name="path">Tipo de camino que se quiere dibujar</param>
-    public void DrawPath(PathType path)
-    {
-        List<Tile> drawPath = ChoosePath(path);
-
-        //if (isHint && path.Equals(PathType.LAST_PATH))
-        //{
-        //    drawPath[0].ActiveStar(true);
-        //    drawPath[drawPath.Count - 1].ActiveStar(true);
-        //}
-
-        // Dibuja el camino - Si solo está el círculo o no hay elementos, no hace falta dibujar nada
-        if (drawPath.Count <= 1)
-            return;
-
-        Vector2 dir;
-        int i = 0;
-        foreach (Tile t in drawPath)
-        {
-            // Este siempre va a ser o el primer elemento o el último
-            if (t.CircleActive())
-            {
-                int index = t == drawPath[0] ? 1 : drawPath.Count - 2;
-                dir = new Vector2(t.GetX() - drawPath[index].GetX(), t.GetY() - drawPath[index].GetY());
-                t.ActiveTail(dir, color);
-            }
-            else
-            {
-                // Dirección con el anterior
-                dir = new Vector2(t.GetX() - drawPath[i].GetX(), t.GetY() - drawPath[i].GetY());
-                // Si es el último
-                if (t == drawPath[drawPath.Count - 1])
-                {
-                    t.ActiveTail(dir, color);
-                }
-                else // Se podría dibujar un bridge o un codo
-                {
-                    // Dirección con el siguiente
-                    Vector2 nextDir = new Vector2(drawPath[i + 2].GetX() - t.GetX(), drawPath[i + 2].GetY() - t.GetY());
-
-                    // Si se mantiene la misma direcicción
-                    if (dir == nextDir)
-                    {
-                        t.ActiveTail(dir, color);
-                        t.ActiveBridge(color);
-                    }
-                    else
-                    {
-                        t.ActiveElbow(color, dir, nextDir);
-                    }
-                }
-
-                i++;
-            }
-
-        }
-    }
-
-    #region ChangePath
-    /// <summary>
-    /// Actualiza las listas de movimientos al levantar el dedo
-    /// </summary>
-    public void UpdatePaths()
-    {
-        cutPath.Clear();
-
-        // Si no ha cambiado el estado de los movimientos, entonces, se deja como estaba
-        if (IsEqualPath(PathType.CURR_PATH, PathType.MAIN_PATH))
-            return;
-
-        lastPath.Clear();
-        int max = flowPath.Count;
-        for (int i = 0; i < max; i++)
-        {
-            lastPath.Add(flowPath[i]);
-        }
-
-        flowPath.Clear();
-        for (int i = 0; i < currentPath.Count; i++)
-        {
-            flowPath.Add(currentPath[i]);
-        }
-
-        DrawPath(PathType.MAIN_PATH);
-    }
-
-    /// <summary>
-    /// Actualiza la lista de movimientos actuales
-    /// a partir de la lista de movimientos flowPath.
-    /// Sirve para usarse al aplicar pistas
-    /// </summary>
-    public void UpdateCurrentMovs()
-    {
-        currentPath.Clear();
-        for (int i = 0; i < flowPath.Count; i++)
-        {
-            flowPath[i].SetTileColor(flowColor);
-            currentPath.Add(flowPath[i]);
-        }
-    }
-
-    /// <summary>
-    /// Añade un nuevo movimiento a currMovemets
-    /// </summary>
-    public void AddCurrentMov(Tile t)
-    {
-        if (!currentPath.Contains(t))
-        {
-            currentPath.Add(t);
-        }
-    }
-
-    /// <summary>
-    /// Borra todos los elementos de la lista de movimientos actuales, incluido Tile t
-    /// Devuelve el numero de elementos borrados
-    /// </summary>
-    public int ClearUntilTile(Tile t)
-    {
-        int p = 0;
-        bool rem = true;
-
-        while (rem && currentPath.Count > 0)
-        {
-            Tile ultTile = currentPath[currentPath.Count - 1];
-
-            //Hemos encontrado el tile desde el que queremos mantener el camino
-            if (ultTile == t)
-            {
-                rem = false;
-            }
-
-            p++;
-            var aux = new KeyValuePair<Tile, int>(ultTile, ultTile.GetTileColor());
-            if (!cutPath.Contains(aux))
-            {
-                cutPath.Add(aux);
-            }
-
-            ultTile.ClearTile();
-            currentPath.Remove(ultTile);
-        }
-
-        return p;
-    }
-
-    /// <summary>
-    /// Borra todos los elementos de la lista desde el primero hasta t incluido
-    /// Devuelve el numero de elementos borrados
-    /// </summary>
-    public int ClearFirstUntilTile(Tile t)
-    {
-        currentPath.Reverse();
-
-        return ClearUntilTile(t);
-    }
-
-    /// <summary>
-    /// Deshace el último movimiento realizado y calcular el porcentaje total
-    /// correspondiente al movimiento
-    /// </summary>
-    /// <param name="percentage">porcentaje del juego antes de deshacer</param>
-    /// <returns></returns>
-    public void UndoMovements(ref float percentage, float plusPercentage)
-    {
-        // Auxiliar para aplicar el porcentaje
-        int p = 0;
-        // Se limpian los tiles del flowPath y del currentPath
-        for (int i = flowPath.Count - 1; i >= 0; i--)
-        {
-            p++;
-            flowPath[i].ClearTile();
-            flowPath.Remove(flowPath[i]);
-        }
-        currentPath.Clear();
-        flowPath.Clear();
-
-        percentage -= p * plusPercentage;
-        p = 0;
-
-        for (int i = 0; i < lastPath.Count; i++)
-        {
-            flowPath.Add(lastPath[i]);
-            flowPath[i].ActiveBgColor(true, color);
-            p++;
-        }
-
-        percentage += p * plusPercentage;
-        DrawPath(PathType.MAIN_PATH);
-    }
-
-    /// <summary>
-    /// Resetea el camino de cortes
-    /// </summary>
-    public void ClearCutMovements()
-    {
-        cutPath.Clear();
-    }
-    #endregion
-
-    #region Getters
-    /// <summary>
-    /// Determina si dos caminos son iguales
-    /// </summary>
-    /// <param name="pathA">Camino A de la comparación</param>
-    /// <param name="pathB">Camino B de la comparación</param>
-    public bool IsEqualPath(PathType pathA, PathType pathB)
-    {
-        List<Tile> a = ChoosePath(pathA);
-        List<Tile> b = ChoosePath(pathB);
-
-        if (a.Count != b.Count)
-        {
-            return false;
-        }
-
-        // Tienen la misma dimensión
-        for (int i = 0; i < a.Count; i++)
-        {
-            // En el momento en el que uno sea distinto a otro, lo retornamos
-            if (a[i] != b[i])
-                return false;
-        }
-
-        return true;
-    }
-
-    /// <summary>
-    /// Determina si el flujo está conectado o no
-    /// </summary>
-    public bool IsConected()
-    {
-        return flowPath.Count > 1 && flowPath[flowPath.Count - 1].CircleActive();
-    }
-
-    /// <summary>
-    /// Devuelve el color lógico de la tubería
-    /// </summary>
-    public int GetFlowColor()
-    {
-        return flowColor;
-    }
-
-    /// <summary>
-    /// Devuelve el camino del fujo consolidado tras levantar el Input
-    /// </summary>
-    /// <returns></returns>
-    public List<Tile> GetFlowPath()
-    {
-        return flowPath;
-    }
-
-    public void ActiveStars(bool status)
-    {
-        currentPath[0].ActiveStar(status);
-        currentPath[currentPath.Count - 1].ActiveStar(status);
-    }
-
-    /// <summary>
-    /// Devuelve la lista de los movimientos cortados
-    /// </summary>
-    /// <returns></returns>
-    public List<KeyValuePair<Tile, int>> GetCutMovements()
-    {
-        return cutPath;
-    }
-
-    /// <summary>
-    /// Devuelve la lista de los últimos movimientos realizados
-    /// </summary>
-    /// <returns></returns>
-    public List<Tile> GetLastMovs()
-    {
-        return lastPath;
-    }
-
-    /// <summary>
-    /// Devuelve el camino actual del flujo
-    /// </summary>
-    /// <returns></returns>
-    public List<Tile> GetCurrentMoves()
-    {
-        return currentPath;
-    }
-
-    /// <summary>
-    /// Devuelve una lista auxiliar de tiles en función del camino que se
-    /// quiere obtener
-    /// </summary>
-    private List<Tile> ChoosePath(PathType path)
-    {
-        List<Tile> a = new List<Tile>();
-        switch (path)
-        {
-            case PathType.MAIN_PATH:
-                a = flowPath;
-                break;
-            case PathType.LAST_PATH:
-                a = lastPath;
-                break;
-            case PathType.CURR_PATH:
-                a = currentPath;
-                break;
-        }
-
-        return a;
-    }
-    #endregion
-}
-
+[SuppressMessage("ReSharper", "IdentifierTypo")]
+[SuppressMessage("ReSharper", "CheckNamespace")]
+[SuppressMessage("ReSharper", "PossibleNullReferenceException")]
+[SuppressMessage("ReSharper", "StringLiteralTypo")]
+[SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
+[SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
 public class BoardManager : MonoBehaviour
 {
     [Tooltip("Referencia al objeto padre donde se van a instanciar los tiles")]
@@ -382,27 +17,24 @@ public class BoardManager : MonoBehaviour
     [Tooltip("Referencia al prefab de los tiles que se van a crear")]
     [SerializeField]
     private Tile tilePrefab;
-    [Tooltip("Referencia a los objetos del HUD")]
-    [SerializeField]
-    private RectTransform[] hudRegion;
-    [Tooltip("Referencia al GameObject del canvas que se muestra al superar el nivel")]
-    [SerializeField]
-    private HUDManager hud;
 
+    //Pistas
+    private int currHints;
+    
     //  Lista de colores
-    private List<Color> colors;
+    private List<Color> currTheme;
     // Determina si se está pulsadno la pantalla
-    private bool inputDown = false;
+    private bool inputDown;
     // Determina si se puede editar o no el tablero
     private bool editable = true;
     //Guarda el color lógico del último movimiento que modificó el tablero
     private int lastColorMove;
     // Contador del número de flujos conectados
-    private int connectedFlows = 0;
+    private int connectedFlows;
     // Porcentaje de tablero completo
-    private float percentage = 0.0f;
+    private float percentage;
     // Porcentaje que se suma al total por cada tile ocupado
-    private float plusPercentage = 0.0f;
+    private float plusPercentage;
     // Color del tile tocado
     private Color currTileColor;
     // Poisición donde se ha pulsado la primera vez
@@ -425,73 +57,26 @@ public class BoardManager : MonoBehaviour
     // Lista con los movimientos de cada uno de los flujos
     private List<FlowMovements> cMovements = new List<FlowMovements>();
     // Contador de movimientos
-    private int currMovs = 0;
+    private int currMovs;
+
+    private LevelManager levelManager;
+    #region Inits
 
     //  Setea al board y activa el puntero
-    public void Start()
+    public void Init(Level level, List<Color> theme, int numHints, RectTransform[] hudRegion, LevelManager lvlMan)
     {
-        currLevel = GameManager.instance.GetCurrLevel();
-        colors = GameManager.instance.GetCurrTheme().colors;
-
-        InitTab();
+        currLevel = level;
+        currTheme = theme;
+        currHints = numHints;
+        levelManager = lvlMan;
+        
+        InitTab(hudRegion);
         InitData();
     }
-
-    public void Update()
-    {
-        if (!editable) {
-            return;
-        }
-#if UNITY_EDITOR
-        //  Ratón se pulsa
-        if (Input.GetMouseButtonDown(0))
-        {
-            inputDown = true;
-            initPosInput = Input.mousePosition;
-            InputDown(Input.mousePosition);
-            DrawCirclePointer(Input.mousePosition);
-        }
-        //  El ratón se ha levantado
-        else if (Input.GetMouseButtonUp(0))
-        {
-            inputDown = false;
-            InputUp();
-        }
-        //  El ratón se está moviendo
-        else if (inputDown && initPosInput != Input.mousePosition)
-        {
-            InputMoving(Input.mousePosition);
-            DrawCirclePointer(Input.mousePosition);
-        }
-#elif UNITY_ANDROID
-
-        for (int i = 0; i < Input.touchCount; i++)
-        {
-            //  Toque empieza            
-            if (Input.GetTouch(i).phase == TouchPhase.Began)
-            {
-                InputDown(Input.GetTouch(i).position);
-            }
-            //  Toque sale
-            else if (Input.GetTouch(i).phase == TouchPhase.Ended)
-            {
-                InputUp();
-            }
-            //  Arrastrando el dedo por la pantalla
-            else if (Input.GetTouch(i).phase == TouchPhase.Moved)
-            {
-                InputMoving(Input.GetTouch(i).position);
-                DrawCirclePointer(Input.GetTouch(i).position);
-            }
-        }
-#endif
-    }
-
-    #region Inits
     /// <summary>
     /// Inicializa el nivel actual
     /// </summary>
-    private void InitTab()
+    private void InitTab(RectTransform[] hudRegion)
     {
         // Creación de los tiles
         tabSize.x = currLevel.numBoardX;
@@ -511,17 +96,13 @@ public class BoardManager : MonoBehaviour
             initPos.y -= 1;
         }
 
-        InitCircles(currLevel);
-        InitGaps(currLevel);
-        InitWalls(currLevel);
+        InitCircles();
+        InitGaps();
+        InitWalls();
 
         //==============ESCALADO-TABLERO===================//
         // Auxiliar de la cámara principal
         var cam = Camera.main;
-
-        // Está en unidades de Unity
-        var a = hudRegion[0].sizeDelta;
-        var b = hudRegion[1].sizeDelta;
 
         // Dimensiones de la cámara, sin tener en cuenta el hud
         float camH = cam.orthographicSize * 2.0f;
@@ -530,7 +111,7 @@ public class BoardManager : MonoBehaviour
         // Hay que tener en cuenta la altura del hud - Está en píxeles
         float hudOffsetY = (hudRegion[0].rect.height + 10) + (hudRegion[1].rect.height + 10);
         // Conversión a la proporción
-        hudOffsetY = hudOffsetY / cam.pixelHeight;
+        hudOffsetY /= cam.pixelHeight;
 
         camH *= (1 - hudOffsetY - 0.05f);    // 0.05f de margen
         float tileH = camH / tabSize.y;
@@ -585,7 +166,7 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// Inicializa los círculos de los flujos
     /// </summary>
-    private void InitCircles(Level currLevel)
+    private void InitCircles()
     {
         for (int i = 0; i < currLevel.solutions.Count; i++)
         {
@@ -599,11 +180,11 @@ public class BoardManager : MonoBehaviour
                 filaA -= 1;
             }
             //print("colA: " + colA + " filaA: " + filaA);
-            tiles[filaA, colA].InitTile(i, colors[i], colA, filaA);
+            tiles[filaA, colA].InitTile(i, currTheme[i], colA, filaA);
             circleTiles.Add(tiles[filaA, colA]);
 
             //Inicializamos la lista de movimientos de este color
-            FlowMovements c = new FlowMovements(i, colors[i]);
+            FlowMovements c = new FlowMovements(i, currTheme[i]);
             cMovements.Add(c);
 
             //Final de la tuberia
@@ -615,7 +196,7 @@ public class BoardManager : MonoBehaviour
                 colB = currLevel.numBoardX - 1;
                 filaB -= 1;
             }
-            tiles[filaB, colB].InitTile(i, colors[i], colB, filaB);
+            tiles[filaB, colB].InitTile(i, currTheme[i], colB, filaB);
             circleTiles.Add(tiles[filaB, colB]);
         }
     }
@@ -623,7 +204,7 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// Inicializa los muros de los tiles que lo requieran
     /// </summary>
-    private void InitWalls(Level currLevel)
+    private void InitWalls()
     {
         for (int i = 0; i < currLevel.walls.Count; i++)
         {
@@ -685,16 +266,13 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// Inicializa los huecos de los tiles que lo requieran
     /// </summary>
-    private void InitGaps(Level currLevel)
+    private void InitGaps()
     {
         //Cambiamos la var empty de cada tile si es hueco
-        for (int i = 0; i < currLevel.gaps.Count; i++)
+        foreach (var elem in currLevel.gaps)
         {
-            //Cogemos el tile hueco
-            int elem = currLevel.gaps[i];
-
-            int fila = (int)((elem + 1) / currLevel.numBoardX);
-            int colm = (int)((elem + 1) % currLevel.numBoardX) - 1;
+            int fila = (elem + 1) / currLevel.numBoardX;
+            int colm = (elem + 1) % currLevel.numBoardX - 1;
             if (colm < 0)
             {
                 colm = currLevel.numBoardX - 1;
@@ -704,13 +282,10 @@ public class BoardManager : MonoBehaviour
         }
 
         //Recorremos de nuevo los huecos para ponerles los muros necesarios
-        for (int i = 0; i < currLevel.gaps.Count; i++)
+        foreach (var elem in currLevel.gaps)
         {
-            //Cogemos el tile hueco
-            int elem = currLevel.gaps[i];
-
-            int fila = (int)((elem + 1) / currLevel.numBoardX);
-            int colm = (int)((elem + 1) % currLevel.numBoardX) - 1;
+            int fila = (elem + 1) / currLevel.numBoardX;
+            int colm = (elem + 1) % currLevel.numBoardX - 1;
             if (colm < 0)
             {
                 colm = currLevel.numBoardX - 1;
@@ -728,6 +303,56 @@ public class BoardManager : MonoBehaviour
         }
     }
     #endregion
+    
+    public void Update()
+    {
+        if (!editable) {
+            return;
+        }
+#if UNITY_EDITOR
+        //  Ratón se pulsa
+        if (Input.GetMouseButtonDown(0))
+        {
+            inputDown = true;
+            initPosInput = Input.mousePosition;
+            InputDown(Input.mousePosition);
+            DrawCirclePointer(Input.mousePosition);
+        }
+        //  El ratón se ha levantado
+        else if (Input.GetMouseButtonUp(0))
+        {
+            inputDown = false;
+            InputUp();
+        }
+        //  El ratón se está moviendo
+        else if (inputDown && initPosInput != Input.mousePosition)
+        {
+            InputMoving(Input.mousePosition);
+            DrawCirclePointer(Input.mousePosition);
+        }
+#elif UNITY_ANDROID
+
+        for (int i = 0; i < Input.touchCount; i++)
+        {
+            //  Toque empieza            
+            if (Input.GetTouch(i).phase == TouchPhase.Began)
+            {
+                InputDown(Input.GetTouch(i).position);
+            }
+            //  Toque sale
+            else if (Input.GetTouch(i).phase == TouchPhase.Ended)
+            {
+                InputUp();
+            }
+            //  Arrastrando el dedo por la pantalla
+            else if (Input.GetTouch(i).phase == TouchPhase.Moved)
+            {
+                InputMoving(Input.GetTouch(i).position);
+                DrawCirclePointer(Input.GetTouch(i).position);
+            }
+        }
+#endif
+    }
 
     #region InputLogic
     /// <summary>
@@ -828,7 +453,7 @@ public class BoardManager : MonoBehaviour
                         currTile = dragedTile.Key;
                     }
 
-                    hud.ShowPercentage((int)Math.Round(percentage));
+                    levelManager.UpdatePercentage((int)Math.Round(percentage));
                     cMovements[c].DrawPath(FlowMovements.PathType.CURR_PATH);
                 }
             }
@@ -867,19 +492,20 @@ public class BoardManager : MonoBehaviour
                 }
 
                 lastColorMove = c;
-                hud.UndoButtonBehaviour(undoActive, () => UndoMovement(c));
+                levelManager.UpdateUndoButtonBehaviour(true, () => UndoMovement(c));
             }
 
             inputTile.GetCircleRender().enabled = false;
-            hud.ShowFlows(connectedFlows);
+            levelManager.UpdateFlowsCounter(connectedFlows);
         }
-        hud.ShowMovements(currMovs);
+
+        levelManager.UpdateMovements(currMovs);
 
         if (IsSolution())
         {
             bool perfect = currMovs == currLevel.numFlow;
-            GameManager.instance.AddSolutionLevel(perfect, currMovs);
-            hud.LevelCompleted(perfect);
+            levelManager.AddSolutionLevel(perfect, currMovs);
+            levelManager.LevelCompleted(perfect);
         }
 
         currTile = null;
@@ -904,7 +530,7 @@ public class BoardManager : MonoBehaviour
         {
             if (cMovements[tileColor].IsConected())
             {
-                hud.ShowFlows(-1);
+                levelManager.UpdateFlowsCounter(-1);
             }
 
             p = cMovements[tileColor].ClearUntilTile(cMovements[tileColor].GetCurrentMoves()[0]) - 1;
@@ -914,7 +540,7 @@ public class BoardManager : MonoBehaviour
         {
             if (cMovements[tileColor].IsConected())
             {
-                hud.ShowFlows(-1);
+                levelManager.UpdateFlowsCounter(-1);
             }
 
             p = cMovements[tileColor].ClearUntilTile(currTile) - 1;
@@ -922,7 +548,7 @@ public class BoardManager : MonoBehaviour
 
         // Se actualiza el porcentaje
         percentage -= p > 0 ? plusPercentage * p : 0;
-        hud.ShowPercentage((int)Mathf.Round(percentage));
+        levelManager.UpdatePercentage((int)Mathf.Round(percentage));
 
         // Se actualiza el tile actual pulsado
         currTile.SetTileColor(tileColor);
@@ -970,7 +596,6 @@ public class BoardManager : MonoBehaviour
     /// </summary>
     /// <param name="dragedTile">El nuevo tile que ha detectado el InputMoving</param>
     /// <param name="tileColor">Color del tile</param>
-    /// <param name="dir">Dirección del input</param>
     private void BackFlowPath(KeyValuePair<Tile, Vector2Int> dragedTile, int tileColor)
     {
         int p = cMovements[tileColor].ClearUntilTile(dragedTile.Key) - 1;
@@ -1078,7 +703,7 @@ public class BoardManager : MonoBehaviour
         // se dibuja el camino actual del flujo que se acaba de cortar
         cMovements[cM].DrawPath(FlowMovements.PathType.CURR_PATH);
 
-        dragedTile.Key.ActiveBgColor(true, colors[cM]);
+        dragedTile.Key.ActiveBgColor(true, currTheme[cM]);
     }
     #endregion
 
@@ -1131,8 +756,8 @@ public class BoardManager : MonoBehaviour
     /// </summary>
     private Vector2Int ConvertIndex(int index)
     {
-        int x = (int)((index + 1) % currLevel.numBoardX) - 1;
-        int y = (int)((index + 1) / currLevel.numBoardX);
+        int x = (index + 1) % currLevel.numBoardX - 1;
+        int y = (index + 1) / currLevel.numBoardX;
         if (x < 0)
         {
             x = currLevel.numBoardX - 1;
@@ -1181,8 +806,7 @@ public class BoardManager : MonoBehaviour
     /// </summary>
     public void GiveHint()
     {
-        var gm = GameManager.instance;
-        if (gm.GetNumHints() > 0)
+        if (currHints > 0)
         {
             // Buscamos qué elementos no están conectados como posibles candidatos a pista
             List<int> movs = new List<int>();
@@ -1206,7 +830,7 @@ public class BoardManager : MonoBehaviour
                 cMovements[choice] = d;
                 cMovements[choice].isHint = true;
 
-                List<int> currSolution = GameManager.instance.GetCurrLevel().solutions[choice];
+                List<int> currSolution = currLevel.solutions[choice];
 
                 for (int i = 0; i < currSolution.Count; i++)
                 {
@@ -1228,8 +852,7 @@ public class BoardManager : MonoBehaviour
                     }
                 }
 
-                gm.UseHint();
-                hud.UpdateHintText();
+                levelManager.UpdateHints();
             }
         }
     }
@@ -1282,7 +905,7 @@ public class BoardManager : MonoBehaviour
         // Si está conectada, entonces hay que descontar el número de flujos conectados
         if (cMovements[c].IsConected())
         {
-            hud.ShowFlows(-1);
+            levelManager.UpdateFlowsCounter(-1);
         }
 
         // Actualizar el camino del mismo color que antes no cuenta
@@ -1293,8 +916,8 @@ public class BoardManager : MonoBehaviour
         }
 
         cMovements[c].UndoMovements(ref percentage, plusPercentage);
-        hud.ShowPercentage((int)Math.Round(percentage));
-        hud.UndoButtonBehaviour(false);
+        levelManager.UpdatePercentage((int)Math.Round(percentage));
+        levelManager.UpdateUndoButtonBehaviour(false);
     }
 
     public void SetEditable(bool edit) {

@@ -1,9 +1,10 @@
-﻿using System.IO;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 
 //  struct para cada nivel cargado
-[System.Serializable]
+[Serializable]
 [SuppressMessage("ReSharper", "CheckNamespace")]
 public struct Level
 {
@@ -36,7 +37,6 @@ public struct Level
     }
 }
 
-
 public class Map
 {
     //  Vector con el nivel pedido
@@ -46,9 +46,9 @@ public class Map
     /// Cargado de niveles
     /// </summary>
     /// <param name="text"></param>
-    /// <param name="a"></param>
-    public Map(string text, int a)
+    public Map([NotNull] string text)
     {
+        if (text == null) throw new ArgumentNullException(nameof(text));
         //  Todos los niveles por separado
         var lvls = text.Split('\n');
 
@@ -67,8 +67,9 @@ public class Map
     /// <param name="level"></param>
     /// <param name="index"></param>
     /// <returns></returns>
-    private Level ProcessLevel(string level, int index)
+    private Level ProcessLevel([NotNull] string level, int index)
     {
+        if (level == null) throw new ArgumentNullException(nameof(level));
         //  Separamos por segmentos
         var seg = level.Split(';');
         var subChain = seg[0].Split(',');
@@ -77,20 +78,19 @@ public class Map
         int numBoardX, numBoardY;
         if (numBoard.Length >= 2)   //No es cuadrado
         {
-            numBoardX = int.Parse(numBoard[0].ToString());
+            numBoardX = int.Parse(numBoard[0]);
             string[] plusB = numBoard[1].Split('+');    //Para los ficheros que tienen "+B"
             if (plusB.Length > 1)                       //A esos tableros los rodearemos de muros
                 closed = true;
-            numBoardY = int.Parse(plusB[0].ToString());
+            numBoardY = int.Parse(plusB[0]);
         }
         else
         {
-            numBoardX = int.Parse(subChain[0].ToString());
-            numBoardY = int.Parse(subChain[0].ToString());
+            numBoardX = int.Parse(subChain[0]);
+            numBoardY = int.Parse(subChain[0]);
         }
 
-        int lvl = int.Parse(subChain[2].ToString());
-        int numFlow = int.Parse(subChain[3].ToString());
+        int numFlow = int.Parse(subChain[3]);
         Level currLevel = new Level(numBoardX, index, numFlow, numBoardY, closed);
 
         //Miramos a ver si hay muros o huecos
@@ -132,65 +132,6 @@ public class Map
         return currLevel;
     }
 
-    /// <summary>
-    /// Abre y lee un txt y crea un array bidimensional con la información del tablero
-    /// </summary>
-    /// <param name="route">Ruta del pack</param>
-    public Map(string route)
-    {
-        StreamReader reader = new StreamReader(route);
-        // En orden
-        //  1- tamaño del tablero
-        //  2- reservado
-        //  3- nivel
-        //  4- numero de flujos
-        //  5- soluciones ...
-        string chain;
-        while (!reader.EndOfStream)
-        {
-            //  Una línea es un nivel
-            chain = reader.ReadLine();
-            string[] subs = chain.Split(';');
-            string[] subChain = subs[0].Split(',');
-            string[] numBoard = subChain[0].Split(':');
-            int numBoardX, numBoardY;
-            if (numBoard.Length >= 2)   //No es cuadrado
-            {
-                numBoardX = int.Parse(numBoard[0].ToString());
-                numBoardY = int.Parse(numBoard[1].ToString());
-            }
-            else
-            {
-                numBoardX = int.Parse(subChain[0].ToString());
-                numBoardY = int.Parse(subChain[0].ToString());
-
-            }
-            int lvl = int.Parse(subChain[2].ToString());
-            int numFlow = int.Parse(subChain[3].ToString());
-            Level currLevel = new Level(numBoardX, lvl, numFlow, numBoardY);
-            for (int i = 0; i < currLevel.numFlow; i++)
-            {
-                string[] chars = subs[i + 1].Split(',');
-                List<int> currSolution = new List<int>();
-                for (int j = 0; j < chars.Length; j++)
-                {
-                    currSolution.Add(int.Parse(chars[j]));
-                }
-                currLevel.solutions.Add(currSolution);
-            }
-            levels.Add(currLevel);
-        }
-    }
-
-    /// <summary>
-    /// Devuelve todos los niveles de un pack
-    /// </summary>
-    /// <returns></returns>
-    public List<Level> GetAllLevels()
-    {
-        return levels;
-    }
-    
     /// <summary>
     /// Devueve un nivel de un pack
     /// </summary>
