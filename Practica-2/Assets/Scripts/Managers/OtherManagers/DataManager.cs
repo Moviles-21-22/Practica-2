@@ -1,11 +1,8 @@
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using UnityEditor;
 using UnityEngine;
 
-// ReSharper disable once CheckNamespace
-
-[SuppressMessage("ReSharper", "StringLiteralTypo")]
 public static class DataManager
 {
     /// <summary>
@@ -46,7 +43,8 @@ public static class DataManager
     /// </summary>
     /// <param name="catList">Lista de categorías del juego</param>
     /// <param name="themes">Lista de temas del juego</param>
-    public static DataToSave Init(List<Category> catList, List<ColorPack> themes)
+    /// <param name="reloadEditorData">Determina si recargan los datos con los datos del editor</param>
+    public static DataToSave Init(List<Category> catList, List<ColorPack> themes, bool reloadEditorData)
     {
         _categories = catList;
         _colorThemes = themes;
@@ -58,7 +56,14 @@ public static class DataManager
         }
 
 #if UNITY_EDITOR
-        // 2. Archivo para mostrar errores. Si no existe, se crea
+        // 2. Si existe y se quieren usar los datos del editor, se elimin la carpeta y se vuelve a crear
+        else if (reloadEditorData)
+        {
+            FileUtil.DeleteFileOrDirectory(Path);
+            Directory.CreateDirectory(Path);
+        }
+
+        // 3. Archivo para mostrar errores. Si no existe, se crea
         // Solo interesa en el editor para no ralentizar la ejecución
         if (!File.Exists(Path + ErrorFileName))
         {
@@ -73,32 +78,29 @@ public static class DataManager
 
     /// <summary>
     /// Guarda todos los datos del juego en un json
-    /// </summary>    
+    /// </summary>
+    /// <param name="numHints">Número de pistas</param>
+    /// <param name="isPremium">Determina si el usuario es premium</param>
+    /// <param name="categories">Lista de categorías</param>
+    /// <param name="themes">Lista de los temas</param>
+    /// <param name="currTheme">Último tema aplicado en el juego</param>
     public static void Save(int numHints, bool isPremium, List<Category> categories, List<ColorPack> themes,
         ColorPack currTheme)
     {
         try
         {
             DebugLogs("Empezando a guardar datos...");
-            //  Serializamos los posibles datos que pueden haber cambiado
+            // 1. Se crea el objeto que se va a serializar
             DataToSave objToSave = new DataToSave(numHints, isPremium, categories, themes, currTheme);
-            //  Creamos el hash
+
+            // 2. Se le añade el hash
             objToSave.SetHash(SecureManager.Hash(JsonUtility.ToJson(objToSave)));
-            //  Escribimos en el json
-            string json = JsonUtility.ToJson(objToSave);
+
+            // 3. Se transforma el objeto a formato JSON
+            var json = JsonUtility.ToJson(objToSave);
             DebugLogs("Json guardado con exito...");
 
-            if (!Directory.Exists(Path))
-            {
-                Directory.CreateDirectory(Path);
-                DebugLogs("El directorio " + Path + " se ha creado correctamente");
-            }
-
-            if (File.Exists(Path + FileName))
-            {
-                File.Delete(Path + FileName);
-            }
-
+            // 4. Se sobreescribe el archivo 
             File.WriteAllText(Path + FileName, json);
         }
         catch (System.Exception e)
@@ -112,27 +114,26 @@ public static class DataManager
 //--------------------------------------------------------------------------------------------------------------------//
 
     /// <summary>
-    /// Carga el json con la información necesaria para cargar un usuario
+    /// Genera los datos de cargado del juego y los devuelve
     /// </summary>
+    /// <returns>Datos cargados generados</returns>
     private static DataToSave Load()
     {
-        //var a = Path + FileName;
-        // 1. ¿Existe el archivo con datos guardados?
-        // 1.1 Si no existe el archivo, se crea uno por defecto
+        // ¿Existe el archivo con datos guardados?
+        // Si no existe el archivo, se crea uno por defecto
         if (!File.Exists(Path + FileName))
         {
             CreateDefaultJson();
         }
+        // Si existe se intenta recoger sus datos
         else
         {
-            // 1.2 Si existe se intenta recoger sus datos
-            string json;
-            // DataToSave objToLoad;
             try
             {
                 LogReset();
                 DebugLogs("Estamos usando la ruta " + Path);
-                json = File.ReadAllText(Path + FileName);
+                // 1. Se leen los datos del json y se transforman
+                var json = File.ReadAllText(Path + FileName);
                 _currData = JsonUtility.FromJson<DataToSave>(json);
             }
             catch (System.Exception e)
@@ -140,26 +141,23 @@ public static class DataManager
                 DebugLogs(e.Message);
                 throw new System.Exception(e.Message);
             }
-
-            //  Dividimos el contenido del json
-            //  El ultimo elemento del hashGenerated va a ser el hash
-            var hashGenerated = json.Split(',');
-            var serializado = string.Empty;
-            for (var i = 0; i < hashGenerated.Length - 1; i++)
-            {
-                serializado += hashGenerated[i] + ",";
-            }
-
-            serializado += "\"hash\":\"\"}";
-            //  Ambos hash coinciden
-            if (SecureManager.Hash(serializado).Equals(_currData.GetHash()))
+            
+            // 2. Se compara el hash con el original
+            var originalHash = _currData.GetHash();
+            // Como el hash original se construyó a partir de un hash = null, primero hay que
+            // construir una copia, asignar su hash como null y generar el hash de la copia.
+            // Mirar punto 4 del método CreateDefaultJson()
+            var dataAux = new DataToSave(_currData);
+            dataAux.SetHash(null);
+            var hash = SecureManager.Hash(JsonUtility.ToJson(dataAux));
+            
+            if (originalHash.Equals(hash))
             {
                 DebugLogs("Datos verificados...");
             }
             else
             {
                 DebugLogs("Datos corruptos, creando unos por defecto...");
-                // Reseteamos el json con valores por defecto
                 CreateDefaultJson();
             }
         }
@@ -176,13 +174,13 @@ public static class DataManager
         try
         {
             DebugLogs("Creando props por defecto...");
-            // 1. Se parte de catergorías base
+            // 1. Se resetean las categorías del juego
             foreach (var cat in _categories)
             {
                 cat.Reset();
             }
 
-            // 2. Se parte de temas base
+            // 2. Se resetean los temas del juego, pero se deja el primero activo
             _colorThemes[0].Reset();
             _colorThemes[0].active = true;
             for (var i = 1; i < _colorThemes.Count; i++)
@@ -190,10 +188,17 @@ public static class DataManager
                 _colorThemes[i].Reset();
             }
 
-            // 3. Se guarda el json
+            // 3. Se generan los datos que se quieren guardar
             _currData = new DataToSave(NumHintsDefault, false, _categories, _colorThemes, _colorThemes[0]);
-            _currData.SetHash(SecureManager.Hash(JsonUtility.ToJson(_currData)));
-            string json = JsonUtility.ToJson(_currData);
+            
+            // 4. Se crea el Hash
+            var has = SecureManager.Hash(JsonUtility.ToJson(_currData));
+            _currData.SetHash(has);
+
+            // 5. Se vuelcan los datos al json
+            var json = JsonUtility.ToJson(_currData);
+
+            // 6. Se crea o se sobreescribe el archivo
             File.WriteAllText(Path + FileName, json);
         }
         catch (System.Exception e)

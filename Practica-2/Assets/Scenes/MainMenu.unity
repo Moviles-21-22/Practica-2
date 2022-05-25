@@ -230,6 +230,18 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: useDefaultCat
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: useEditorData
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: reloadEditorData
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
       propertyPath: categories.Array.size
       value: 3
       objectReference: {fileID: 0}
@@ -647,7 +659,7 @@ RectTransform:
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &551334359 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}

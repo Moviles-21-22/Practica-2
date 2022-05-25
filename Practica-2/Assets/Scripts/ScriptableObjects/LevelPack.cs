@@ -1,15 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 /// <summary>
 /// Clase scripteable usada para representar los packs con los niveles
 /// </summary>
 [System.Serializable]
-[SuppressMessage("ReSharper", "CheckNamespace")]
-[SuppressMessage("ReSharper", "StringLiteralTypo")]
-[CreateAssetMenu(fileName = "levelpack", menuName = "Flow/level pack", order = 1)]
+//[CreateAssetMenu(fileName = "levelpack", menuName = "Flow/level pack", order = 1)]
 public class LevelPack : ScriptableObject
 {
     [Tooltip("Nombre del nivel")] public string levelName;
@@ -57,4 +53,8 @@ public class Levels
     /// Para saber si se ha superado con la puntuación máxima
     /// </summary>
     public bool perfect;
+
+    public Levels()
+    {
+    }
 }

@@ -9732,17 +9732,21 @@ PrefabInstance:
       value: GameManager
       objectReference: {fileID: 0}
     - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: defaultLevel
+      value: 149
+      objectReference: {fileID: 0}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
       propertyPath: levelManager
       value: 
       objectReference: {fileID: 773100166}
     - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
       propertyPath: useDefaultCat
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
       propertyPath: defaultCategory
       value: 
-      objectReference: {fileID: 11400000, guid: e0654b64e5519d54b902550dc30109f9, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
       propertyPath: useDefaultLevel
       value: 1

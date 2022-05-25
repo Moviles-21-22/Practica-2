@@ -1,12 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-[SuppressMessage("ReSharper", "CheckNamespace")]
-[SuppressMessage("ReSharper", "IdentifierTypo")]
-[SuppressMessage("ReSharper", "StringLiteralTypo")]
 public class GameManager : MonoBehaviour
 {
     /// <summary>
@@ -38,28 +34,31 @@ public class GameManager : MonoBehaviour
 
 //-------------------------------------------ATRIBUTOS-EDITOR---------------------------------------------------------//
     [Header("Categorias y temas del juego")]
-    [Tooltip("Lista de los paquetes de las categorías del juego")]
+    [Tooltip("Determina si se quieren recargar los datos del juego con los atributos del Editor")]
     [SerializeField]
+    private bool reloadEditorData;
+
+    [Tooltip("Lista de los paquetes de las categorías del juego")] [SerializeField]
     private List<Category> categories;
 
     [Tooltip("Lista de los paquetes de temas del juego")] [SerializeField]
     private List<ColorPack> colorThemes;
 
-    [Header("Atributos que se quieren iniciar por defecto")]
-    
-    [Tooltip("Categoría actual escogida")] [SerializeField]
+    [Header("Atributos que se quieren iniciar por defecto")] [Tooltip("Categoría por defecto")] [SerializeField]
     private Category defaultCategory;
 
     [SerializeField] private bool useDefaultCat;
 
     [Tooltip("Paquete de niveles por defecto")] [SerializeField]
     private LevelPack defaultLevelPack;
+
     [SerializeField] private bool useDefaultLevelPack;
-    
+
     [Tooltip("Nivel del paquete por defecto")] [SerializeField]
-    private int defaultLevel = 1;
+    private int defaultLevel = 0;
+
     [SerializeField] private bool useDefaultLevel;
-    
+
     [Tooltip("Tema inicial por defecto")] [SerializeField]
     private ColorPack defaultTheme;
 
@@ -105,7 +104,7 @@ public class GameManager : MonoBehaviour
 
             // SelectLevelScene
             instance.selectLevelSelectLevel = selectLevelSelectLevel;
-            if (instance.selectLevelSelectLevel) 
+            if (instance.selectLevelSelectLevel)
                 instance.selectLevelSelectLevel.Init(instance.currPack, instance.currCategory.color);
 
             // GameScene
@@ -121,9 +120,10 @@ public class GameManager : MonoBehaviour
             // Instancia única
             instance = this;
             // 1. Inicializacion de los datos
-            var currData = DataManager.Init(categories, colorThemes);
+            var currData = DataManager.Init(categories, colorThemes, reloadEditorData);
             LoadData(currData);
 
+            // 2. Inicialización de datos por defecto. Pensado para el debug especialmente
             if (useDefaultCat)
                 currCategory = defaultCategory;
             if (useDefaultLevelPack)
@@ -133,7 +133,7 @@ public class GameManager : MonoBehaviour
             if (useDefaultLevel)
                 LoadLevel(defaultLevel);
 
-            // 2. Inicializacion de los managers en caso de que existan
+            // 3. Inicializacion de los managers en caso de que existan
             // MainMenuScene
             if (mainMenu)
                 mainMenu.Init(categories, currTheme.colors);
@@ -185,6 +185,8 @@ public class GameManager : MonoBehaviour
     public void LoadLevel(int lvl)
     {
         currMap = new Map(currPack.txt.ToString());
+        if (lvl < 0 || lvl >= currMap.NumLevels())
+            lvl = 0;
         currLevel = currMap.GetLevel(lvl);
         LoadScene((int) SceneOrder.GAME_SCENE);
     }
@@ -207,7 +209,7 @@ public class GameManager : MonoBehaviour
         if (categories == null) DataManager.DebugLogs("No puedo cargar las categorias en el gameManager");
 
         numHints = objToLoad.GetNumHints();
-        isPremium = objToLoad.GetPremiumStatus();
+        isPremium = objToLoad.GetIsPremium();
 
         colorThemes = objToLoad.GetThemes();
         foreach (ColorPack cat in colorThemes)
@@ -339,7 +341,6 @@ public class GameManager : MonoBehaviour
 
         SaveGame();
     }
-
 
     /// <summary>
     /// Cambia el tema

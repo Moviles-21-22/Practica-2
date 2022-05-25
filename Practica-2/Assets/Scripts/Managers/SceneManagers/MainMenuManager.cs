@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class MainMenuManager : MonoBehaviour
 {
@@ -69,9 +68,9 @@ public class MainMenuManager : MonoBehaviour
             Debug.LogError("No se han encontrado objetos asignados al componente");
         }
 
-        for (int i = 0; i < categoriesList.Count; i++)
+        foreach (var cat in categoriesList)
         {
-            numElems += categoriesList[i].levels.Length;
+            numElems += cat.levels.Length;
         }
 
         return numElems * baseRect.rect.height;
@@ -84,23 +83,23 @@ public class MainMenuManager : MonoBehaviour
     private void InitCategories()
     {
         // Número de niveles dentro del paquete
-        int numCategories = categoriesList.Count;
+        var numCategories = categoriesList.Count;
 
         // Transformación del ContentScroll
-        float originalH = categorySection.rect.height;
+        var originalH = categorySection.rect.height;
         var finalH = CalculateHeightCategories() - originalH;
         contentScroll.sizeDelta = new Vector2(0, finalH);
-        Vector3 pos = contentScroll.position;
+        var pos = contentScroll.position;
         pos.y = 0;
         contentScroll.position = pos;
 
-        for (int i = 0; i < numCategories; i++)
+        for (var i = 0; i < numCategories; i++)
         {
-            var title = Instantiate(catTitlePrefab, categorySection.transform);
+            var titleGo = Instantiate(catTitlePrefab, categorySection.transform);
 
             // Nombre y color de cada paquete
-            title.SetText(categoriesList[i].categoryName);
-            title.SetCategoryColor(categoriesList[i].color);
+            titleGo.SetText(categoriesList[i].categoryName);
+            titleGo.SetCategoryColor(categoriesList[i].color);
 
             InitLevels(i);
         }
@@ -113,7 +112,7 @@ public class MainMenuManager : MonoBehaviour
         var anchor = topMenu.anchorMin;
         anchor.y = 1.0f - (originalH / contentScroll.rect.height);
         topMenu.anchorMin = anchor;
-
+        
         // Transformación de la sección de categorías
         categorySection.SetParent(contentScroll, false);
         anchor.x = 1;
@@ -123,27 +122,27 @@ public class MainMenuManager : MonoBehaviour
     /// <summary>
     /// Inicializa la información de los paquetes de niveles de cada una de las categorías
     /// </summary>
-    /// <param name="i_cat">Índice de la categoría dentro de la lista de categorías</param>
-    private void InitLevels(int i_cat)
+    /// <param name="iCat">Índice de la categoría dentro de la lista de categorías</param>
+    private void InitLevels(int iCat)
     {
         // Inicializaci�n de cada nivel dentro de la categor�a
-        for (int j = 0; j < categoriesList[i_cat].levels.Length; j++)
+        for (var j = 0; j < categoriesList[iCat].levels.Length; j++)
         {
             var levelPack = Instantiate(levelPackPrefab, categorySection.transform);
 
             // Color del nivel
-            levelPack.SetPackColor(categoriesList[i_cat].color);
+            levelPack.SetPackColor(categoriesList[iCat].color);
 
             // Nombre del nivel
-            levelPack.SetPackName(categoriesList[i_cat].levels[j].levelName);
+            levelPack.SetPackName(categoriesList[iCat].levels[j].levelName);
 
             // Niveles completados
-            var newText = categoriesList[i_cat].levels[j].completedLevels +
-                "/" + categoriesList[i_cat].levels[j].levelsInfo.Count;
+            var newText = categoriesList[iCat].levels[j].completedLevels +
+                "/" + categoriesList[iCat].levels[j].levelsInfo.Count;
             levelPack.SetCompletedLevels(newText);
 
             // Logica del boton
-            levelPack.AddCallBack(j, i_cat, audioSource, forward, this);
+            levelPack.AddCallBack(j, iCat, audioSource, forward, this);
         }
     }
 

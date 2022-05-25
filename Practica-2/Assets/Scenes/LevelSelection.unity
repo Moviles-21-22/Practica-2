@@ -626,6 +626,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 3c93c9465356ae349b6c8bb479d66001, type: 2}
     - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: reloadEditorData
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
       propertyPath: useDefaultLevelPack
       value: 1
       objectReference: {fileID: 0}
@@ -653,6 +657,10 @@ PrefabInstance:
       propertyPath: categories.Array.data[2]
       value: 
       objectReference: {fileID: 11400000, guid: ad1975f958b7ef64893a9c5647145511, type: 2}
+    - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
+      propertyPath: categories.Array.data[3]
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 4075807167624887493, guid: 48e13cbd436c011449b1800422ebf198, type: 3}
       propertyPath: colorThemes.Array.data[0]
       value: 

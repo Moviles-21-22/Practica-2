@@ -141,4 +141,9 @@ public class Map
     {
         return levels[lvl];
     }
+
+    public int NumLevels()
+    {
+        return levels.Count;
+    }
 }
