@@ -31,4 +31,4 @@ MonoBehaviour:
   - {r: 0, g: 0.5019608, b: 0.5019608, a: 1}
   - {r: 0.99607843, g: 0.4862745, b: 0.9254902, a: 1}
   active: 1
-  status: 0
+  initState: 1

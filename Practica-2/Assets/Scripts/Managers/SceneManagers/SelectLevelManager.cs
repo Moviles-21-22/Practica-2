@@ -98,10 +98,8 @@ public class SelectLevelManager : MonoBehaviour
                 boxes[i].SetLevelNum((index * boxes.Length) + i + 1);
             }
 
-            bool perfect = currLevelPack.levelsInfo[(index * boxes.Length) + i].perfect;
-            bool completed = currLevelPack.levelsInfo[(index * boxes.Length) + i].completed;
-
-            boxes[i].InitBox(color, perfect, completed, this);
+            Levels.LevelState levelState = currLevelPack.levelsInfo[(index * boxes.Length) + i].state;
+            boxes[i].InitBox(color, levelState, this);
 
             if (!lockPack ||
                 lockPack && (index * boxes.Length) + i <=

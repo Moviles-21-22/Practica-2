@@ -138,7 +138,7 @@ public class MainMenuManager : MonoBehaviour
 
             // Niveles completados
             var newText = categoriesList[iCat].levels[j].completedLevels +
-                "/" + categoriesList[iCat].levels[j].levelsInfo.Count;
+                "/" + categoriesList[iCat].levels[j].levelsInfo.Length;
             levelPack.SetCompletedLevels(newText);
 
             // Logica del boton

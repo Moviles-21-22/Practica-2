@@ -17,7 +17,7 @@ public class LevelPackMenu : MonoBehaviour
 
     public void AddCallBack(int lvl, int cat, AudioSource audioSource, AudioClip forward, MainMenuManager menu)
     {
-        // El botón le comunica al mainMenu que se quiere cargar un nuevo paquete de niveles
+        // El botÃ³n le comunica al mainMenu que se quiere cargar un nuevo paquete de niveles
         // de manera que sea el mainMenu quien se lo diga al GameManager
         Category category = menu.GetCategoriesList()[cat];
         LevelPack level = category.levels[lvl];

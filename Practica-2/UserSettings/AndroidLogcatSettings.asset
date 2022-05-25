@@ -3,8 +3,8 @@
     "m_SelectedPackage": {
         "deviceId": "ec5bb8b3",
         "name": "com.RandomPlayerStudio.FlowFree",
-        "processId": 8306,
-        "exited": false
+        "processId": 3489,
+        "exited": true
     },
     "m_SelectedPriority": 0,
     "m_KnownPackagesForSerialization": [
@@ -12,24 +12,36 @@
             "deviceId": "ec5bb8b3",
             "name": "com.RandomPlayerStudio.FlowFree",
             "processId": 3489,
-            "exited": false
+            "exited": true
         },
         {
             "deviceId": "ec5bb8b3",
             "name": "com.RandomPlayerStudio.FlowFree",
             "processId": 5411,
-            "exited": false
+            "exited": true
         },
         {
             "deviceId": "ec5bb8b3",
             "name": "com.RandomPlayerStudio.FlowFree",
             "processId": 7078,
-            "exited": false
+            "exited": true
         },
         {
             "deviceId": "ec5bb8b3",
             "name": "com.RandomPlayerStudio.FlowFree",
             "processId": 8306,
+            "exited": true
+        },
+        {
+            "deviceId": "ec5bb8b3",
+            "name": "com.miui.home",
+            "processId": 2473,
+            "exited": false
+        },
+        {
+            "deviceId": "emulator-5556",
+            "name": "com.RandomPlayerStudio.FlowFree",
+            "processId": 7037,
             "exited": false
         }
     ],

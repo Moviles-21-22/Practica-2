@@ -49,9 +49,9 @@ public class LevelManager : MonoBehaviour
         gm.ChangeLevel(level);
     }
 
-    public void AddSolutionLevel(bool perfect, int movements)
+    public void AddSolutionLevel(bool perfect, int movements, int numFlows)
     {
-        gm.AddSolutionLevel(perfect, movements);
+        gm.AddSolutionLevel(perfect, movements, numFlows);
     } 
     
     

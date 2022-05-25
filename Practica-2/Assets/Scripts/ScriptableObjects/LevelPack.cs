@@ -18,10 +18,9 @@ public class LevelPack : ScriptableObject
     public int completedLevels;
 
     [Tooltip("Información de los niveles del paquete")]
-    public List<Levels> levelsInfo;
+    public Levels[] levelsInfo;
 
     [Tooltip("Pack bloqueado")] public bool lockPack;
-    [Tooltip("Record de cada nivel")] public int[] records;
 
     [Tooltip("Determina la forma de enumerar los niveles")]
     public bool splitLevels = true;
@@ -34,9 +33,8 @@ public class LevelPack : ScriptableObject
         completedLevels = 0;
         for (int i = 0; i < gridNames.Length; i++)
         {
-            records[i] = 0;
-            levelsInfo[i].completed = false;
-            levelsInfo[i].perfect = false;
+            levelsInfo[i].state = Levels.LevelState.UNCOMPLETED;
+            levelsInfo[i].record = 0;
         }
     }
 }
@@ -44,17 +42,20 @@ public class LevelPack : ScriptableObject
 [System.Serializable]
 public class Levels
 {
-    /// <summary>
-    /// Para saber si se ha superado el nivel
-    /// </summary>
-    public bool completed;
-
-    /// <summary>
-    /// Para saber si se ha superado con la puntuación máxima
-    /// </summary>
-    public bool perfect;
-
-    public Levels()
+    public enum LevelState
     {
+        UNCOMPLETED,
+        COMPLETED,
+        PERFECT
     }
+    
+    /// <summary>
+    /// Estado del nivel
+    /// </summary>
+    public LevelState state;
+
+    /// <summary>
+    /// Record del nivel
+    /// </summary>
+    public int record;
 }
