@@ -1,26 +1,23 @@
-using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class SelectLevelManager : MonoBehaviour
 {
-    [Tooltip("Referencia al título del paquete")]
-    [SerializeField]
+    [Tooltip("Referencia al título del paquete")] [SerializeField]
     private Text packTitle;
 
-    [Tooltip("Referencia al contenido del scroll")]
-    [SerializeField]
+    [Tooltip("Referencia al contenido del scroll")] [SerializeField]
     private RectTransform contentScroll;
 
-    [Tooltip("Paquete que contiene el grid de los niveles")]
-    [SerializeField]
+    [Tooltip("Paquete que contiene el grid de los niveles")] [SerializeField]
     private GridPack packPrefab;
 
     // Actual pack cargado
-    private LevelPack currLevelPack;
+    private GameManager.LevelPackData currLevelPack;
 
     //  Colores para los bloques
-    private readonly Color[] colors = { Color.red, Color.blue, Color.green, Color.cyan, Color.magenta };
+    private readonly Color[] colors = {Color.red, Color.blue, Color.green, Color.cyan, Color.magenta};
 
     //  Para enumerar el grid
     private bool splitLevels;
@@ -31,42 +28,60 @@ public class SelectLevelManager : MonoBehaviour
     //  Niveles completados del bloque
     private int completedLevels;
 
-    private GameManager gm;
+    private Vector2 originalOffset;
+
+    private MainMenuManager mainMenu;
+
+    private bool initialized;
+
+    private List<GridPack> gridList;
 
     /// <summary>
     /// Inicializa el gestor del SelectLevelScene
     /// </summary>
-    /// <param name="lvlPack">Paquete de niveles que se va a cargar</param>
+    /// <param name="lvlPackData">Datos del paquete de niveles que se ha cargado</param>
+    /// <param name="lvlPack">Paquete de niveles ScriptableObject</param>
     /// <param name="catColor">Color del texto que muestra la categoría</param>
-    public void Init(LevelPack lvlPack, Color catColor)
+    /// <param name="man">Referencia al manager de la escena MainMenu</param>
+    public void Init(GameManager.LevelPackData lvlPackData, LevelPack lvlPack, Color catColor, MainMenuManager man)
     {
-        gm = GameManager.instance;
-        currLevelPack = lvlPack;
+        mainMenu = man;
+        currLevelPack = lvlPackData;
         packTitle.color = catColor;
-        InitGridData();
-        GeneratePackageLevels();
+        InitGridData(lvlPack);
+        if (!initialized)
+        {
+            gridList = new List<GridPack>();
+            GeneratePackageLevels(lvlPack);
+            initialized = true;
+        }
+        else
+        {
+            ChangeGridInfo(lvlPack);
+        }
     }
 
-    private void InitGridData()
+    private void InitGridData(LevelPack lvlPack)
     {
-        packTitle.text = currLevelPack.levelName;
-        splitLevels = currLevelPack.splitLevels;
-        lockPack = currLevelPack.lockPack;
+        packTitle.text = lvlPack.levelName;
+        splitLevels = lvlPack.splitLevels;
+        lockPack = lvlPack.lockPack;
         completedLevels = currLevelPack.completedLevels;
     }
 
-    private void GeneratePackageLevels()
+    private void GeneratePackageLevels(LevelPack lvlPack)
     {
         // Número de niveles dentro del paquete
-        int numPacks = currLevelPack.gridNames.Length;
+        int numPacks = lvlPack.gridNames.Length;
 
         // Ancho original del contentScroll
         var originalW = contentScroll.rect.width;
-        Vector2 offset = contentScroll.offsetMax;
+        originalOffset = contentScroll.offsetMax;
+        var offset = originalOffset;
 
         for (int i = 0; i < numPacks; i++)
         {
-            CreateGrid(currLevelPack, i, colors[i]);
+            gridList.Add(CreateGrid(lvlPack, i, colors[i]));
             if (i < numPacks - 1)
             {
                 offset.x += originalW;
@@ -78,53 +93,96 @@ public class SelectLevelManager : MonoBehaviour
     /// <summary>
     /// Crea el grid de forma dinámica en función del pack cargado
     /// </summary>
-    /// <param name="pack">Pack cargado actualmente</param>
+    /// <param name="lvlPack">Pack cargado actualmente</param>
     /// <param name="index">Indice del pack</param>
     /// <param name="color">Color del bloque</param>
-    private void CreateGrid(LevelPack pack, int index, Color color)
+    private GridPack CreateGrid(LevelPack lvlPack, int index, Color color)
     {
         GridPack currPack = Instantiate(packPrefab, contentScroll.transform);
-        currPack.SetText(pack.gridNames[index]);
+        currPack.SetText(lvlPack.gridNames[index]);
         CellLevel[] boxes = currPack.GetAllBoxes();
 
-        for (int i = 0; i < boxes.Length; i++)
+        for (int j = 0; j < boxes.Length; j++)
         {
             if (splitLevels)
             {
-                boxes[i].SetLevelNum(i + 1);
+                boxes[j].SetLevelNum(j + 1);
             }
             else
             {
-                boxes[i].SetLevelNum((index * boxes.Length) + i + 1);
+                boxes[j].SetLevelNum((index * boxes.Length) + j + 1);
             }
 
-            Levels.LevelState levelState = currLevelPack.levelsInfo[(index * boxes.Length) + i].state;
-            boxes[i].InitBox(color, levelState, this);
+            Levels.LevelState levelState = currLevelPack.levelsInfo[(index * boxes.Length) + j].state;
+            boxes[j].InitBox(color, levelState, this);
 
             if (!lockPack ||
-                lockPack && (index * boxes.Length) + i <=
-                completedLevels) // Desbloquea los niveles hasta dejar el primero sin hacer desbloqueado
+                lockPack && (index * boxes.Length) + j <= completedLevels)
+                // Desbloquea los niveles hasta dejar el primero sin desbloquear
             {
-                boxes[i].SetCallBack((index * boxes.Length) + i);
-                if ((index * boxes.Length) + i == completedLevels)
+                boxes[j].SetCallBack((index * boxes.Length) + j);
+                if ((index * boxes.Length) + j == completedLevels)
                 {
-                    boxes[i].CurrentLevel();
+                    boxes[j].CurrentLevel();
                 }
             }
             else
             {
-                boxes[i].ActiveLockImage();
+                boxes[j].ActiveLockImage();
             }
+        }
+
+        return currPack;
+    }
+
+    private void ChangeGridInfo(LevelPack lvlPack)
+    {
+        int index = 0;
+        foreach (var currPack in gridList)
+        {
+            currPack.SetText(lvlPack.gridNames[index]);
+            CellLevel[] boxes = currPack.GetAllBoxes();
+            for (int j = 0; j < boxes.Length; j++)
+            {
+                if (splitLevels)
+                {
+                    boxes[j].SetLevelNum(j + 1);
+                }
+                else
+                {
+                    boxes[j].SetLevelNum((index * boxes.Length) + j + 1);
+                }
+
+                var levelState = currLevelPack.levelsInfo[(index * boxes.Length) + j].state;
+                boxes[j].InitBox(colors[index], levelState, this);
+
+                if (!lockPack ||
+                    lockPack && (index * boxes.Length) + j <= completedLevels)
+                    // Desbloquea los niveles hasta dejar el primero sin desbloquear
+                {
+                    boxes[j].SetCallBack((index * boxes.Length) + j);
+                    if ((index * boxes.Length) + j == completedLevels)
+                    {
+                        boxes[j].CurrentLevel();
+                    }
+                }
+                else
+                {
+                    boxes[j].ActiveLockImage();
+                }
+            }
+            
+            index++;
         }
     }
 
     public void BackToMainMenu()
     {
-        gm.LoadScene((int)GameManager.SceneOrder.MAIN_MENU);
+        mainMenu.ChangeCanvas();
     }
 
     public void LoadLevel(int scene)
     {
-        gm.LoadLevel(scene);
+        mainMenu.LoadLevel(scene);
     }
 }

@@ -15,13 +15,11 @@ public class LevelPackMenu : MonoBehaviour
     [Tooltip("Referencia al RectTransform del objeto correspondiente")]
     [SerializeField] private RectTransform levelRect;
 
-    public void AddCallBack(int lvl, int cat, AudioSource audioSource, AudioClip forward, MainMenuManager menu)
+    public void AddCallBack(int indexPack, int indexCat, AudioSource audioSource, AudioClip forward, MainMenuManager menu)
     {
         // El botón le comunica al mainMenu que se quiere cargar un nuevo paquete de niveles
         // de manera que sea el mainMenu quien se lo diga al GameManager
-        Category category = menu.GetCategoriesList()[cat];
-        LevelPack level = category.levels[lvl];
-        button.onClick.AddListener(() => menu.LoadPackage(level, category));
+        button.onClick.AddListener(() => menu.LoadPackage(indexPack, indexCat));
         audioSource.PlayOneShot(forward);
     }
 

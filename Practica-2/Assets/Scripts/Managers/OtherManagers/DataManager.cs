@@ -39,14 +39,12 @@ public static class DataManager
 //--------------------------------------------------------------------------------------------------------------------//
 
     /// <summary>
-    /// Inicializa los datos que se usarán para cargar y guardar el resto del juego
+    /// Carga los datos del juego en caso de haberlos
     /// </summary>
-    /// <param name="catList">Lista de categorías del juego</param>
-    /// <param name="themes">Lista de temas del juego</param>
-    /// <param name="reloadEditorData">Determina si recargan los datos con los datos del editor</param>
-    public static DataToSave Init(List<Category> catList, List<ColorPack> themes, bool reloadEditorData)
+    /// <returns></returns>
+    public static void LoadData(List<Category> categories, List<ColorPack> themes, bool reloadEditorData)
     {
-        _categories = catList;
+        _categories = categories;
         _colorThemes = themes;
 
         //  1. Inicializacion del folder. Si no existe, se crea.
@@ -73,7 +71,7 @@ public static class DataManager
         }
 #endif
 
-        return Load();
+        Load();
     }
 
     /// <summary>
@@ -114,18 +112,14 @@ public static class DataManager
 //--------------------------------------------------------------------------------------------------------------------//
 
     /// <summary>
-    /// Genera los datos de cargado del juego y los devuelve
+    /// Genera los datos de cargado del juego
     /// </summary>
-    /// <returns>Datos cargados generados</returns>
-    private static DataToSave Load()
+    private static void Load()
     {
-        // ¿Existe el archivo con datos guardados?
-        // Si no existe el archivo, se crea uno por defecto
         if (!File.Exists(Path + FileName))
         {
             CreateDefaultJson();
         }
-        // Si existe se intenta recoger sus datos
         else
         {
             try
@@ -141,7 +135,7 @@ public static class DataManager
                 DebugLogs(e.Message);
                 throw new System.Exception(e.Message);
             }
-            
+
             // 2. Se compara el hash con el original
             var originalHash = _currData.GetHash();
             // Como el hash original se construyó a partir de un hash = null, primero hay que
@@ -150,7 +144,7 @@ public static class DataManager
             var dataAux = new DataToSave(_currData);
             dataAux.SetHash(null);
             var hash = SecureManager.Hash(JsonUtility.ToJson(dataAux));
-            
+
             if (originalHash.Equals(hash))
             {
                 DebugLogs("Datos verificados...");
@@ -161,8 +155,6 @@ public static class DataManager
                 CreateDefaultJson();
             }
         }
-
-        return _currData;
     }
 
     /// <summary>
@@ -190,7 +182,7 @@ public static class DataManager
 
             // 3. Se generan los datos que se quieren guardar
             _currData = new DataToSave(NumHintsDefault, false, _categories, _colorThemes, _colorThemes[0]);
-            
+
             // 4. Se crea el Hash
             var has = SecureManager.Hash(JsonUtility.ToJson(_currData));
             _currData.SetHash(has);
@@ -208,6 +200,11 @@ public static class DataManager
             DebugLogs(e.Message);
             throw new System.Exception("Reinstala la app");
         }
+    }
+
+    public static DataToSave GetCurrData()
+    {
+        return _currData;
     }
 
     /// <summary>

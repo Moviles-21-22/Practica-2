@@ -33,6 +33,9 @@ public class ShopManager : MonoBehaviour
     [Tooltip("Sprite del tick")] [SerializeField]
     private Sprite unlockSprite;
 
+    [Tooltip("Lista de los paquetes de temas del juego")] [SerializeField]
+    private List<ColorPack> colorThemes;
+    
     private bool isPremium;
     private int currHints;
     private List<ColorPack> themesList;
@@ -40,13 +43,14 @@ public class ShopManager : MonoBehaviour
     private Image currThemeShop;
     private GameManager gm;
     
-    public void Init(bool premium, List<ColorPack> themes, ColorPack theme, int numHints)
+    public void Init(bool premium, GameManager.ThemeData theme, int numHints)
     {
-        gm = GameManager.instance;
-        isPremium = premium;
-        currHints = numHints;
-        themesList = themes;
-        currTheme = theme;
+        //TODO
+        // gm = GameManager.instance;
+        // isPremium = premium;
+        // currHints = numHints;
+        // themesList = themes;
+        // currTheme = theme;
 
         ads.Init(isPremium);
         title.Init(currTheme.colors);

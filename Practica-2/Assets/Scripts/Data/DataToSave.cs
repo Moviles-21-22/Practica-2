@@ -8,27 +8,6 @@ using UnityEngine;
 [Serializable]
 public class DataToSave
 {
-    [Serializable]
-    public struct LevelPackData
-    {
-        public int completedLevels;
-        public Levels[] levelsInfo;
-    }
-
-    [Serializable]
-    public class CategoryData
-    {
-        // Paquete de niveles
-        public LevelPackData[] levels;
-    }
-
-    [Serializable]
-    public struct ThemeData
-    {
-        public bool isCurrTheme;
-        public bool unlocked;
-    }
-
     //  Numero de pistas
     [SerializeField] private int currHints;
 
@@ -36,14 +15,13 @@ public class DataToSave
     [SerializeField] private bool isPremium;
 
     //  Categorias serializables
-    [SerializeField] private List<CategoryData> categoriesList;
+    [SerializeField] private List<GameManager.CategoryData> categoriesList;
 
     //  Lista de skins
-    [SerializeField] private ThemeData[] themesList;
+    [SerializeField] private List<GameManager.ThemeData> themesList;
 
     //  Hash creado a partir del serializable
     [SerializeField] private string hash;
-
 
 //--------------------------------------------------------------------------------------------------------------------//
     /// <summary>
@@ -71,13 +49,13 @@ public class DataToSave
     private void CreateCategoryData(List<Category> categories)
     {
         int numCategories = categories.Count;
-        categoriesList = new List<CategoryData>();
+        categoriesList = new List<GameManager.CategoryData>();
         for (int i = 0; i < numCategories; i++)
         {
-            categoriesList.Add(new CategoryData());
+            categoriesList.Add(new GameManager.CategoryData());
             // Paquetes de niveles
             int numLevelPacks = categories[i].levels.Length;
-            categoriesList[i].levels = new LevelPackData[numLevelPacks];
+            categoriesList[i].levels = new GameManager.LevelPackData[numLevelPacks];
             var levelPack = categories[i].levels;
             CreateLevelPacksData(i, numLevelPacks, levelPack);
         }
@@ -94,7 +72,7 @@ public class DataToSave
         for (int j = 0; j < numLevelPacks; j++)
         {
             // 1. Número de niveles completos
-            categoriesList[i].levels[j] = new LevelPackData
+            categoriesList[i].levels[j] = new GameManager.LevelPackData
             {
                 completedLevels = levelPack[j].completedLevels,
             };
@@ -123,15 +101,22 @@ public class DataToSave
     private void CreateThemeData(IReadOnlyList<ColorPack> themes, ColorPack lastTheme)
     {
         int numThemes = themes.Count;
-        themesList = new ThemeData[numThemes];
+        themesList = new List<GameManager.ThemeData>();
         for (int i = 0; i < numThemes; i++)
         {
-            themesList[i] = new ThemeData
+            themesList.Add(new GameManager.ThemeData
             {
                 isCurrTheme = themes[i] == lastTheme,
                 // Estado del tema
                 unlocked = themes[i].active
-            };
+            });
+            int numColors = themes[i].colors.Count;
+            themesList[i].colors = new List<Color>();
+
+            for (int j = 0; j < numColors; j++)
+            {
+                themesList[i].colors.Add(themes[i].colors[j]);
+            }
         }
     }
 //--------------------------------------------------------------------------------------------------------------------//
@@ -153,16 +138,16 @@ public class DataToSave
     /// Genera los datos de la categoría mediante el constructor por copia
     /// </summary>
     /// <param name="categories">Lista de las categorías del otro DataToSave</param>
-    private void CreateCategoryData(List<CategoryData> categories)
+    private void CreateCategoryData(List<GameManager.CategoryData> categories)
     {
         int numCategories = categories.Count;
-        categoriesList = new List<CategoryData>();
+        categoriesList = new List<GameManager.CategoryData>();
         for (int i = 0; i < numCategories; i++)
         {
-            categoriesList.Add(new CategoryData());
+            categoriesList.Add(new GameManager.CategoryData());
             // Paquetes de niveles
             int numLevelPacks = categories[i].levels.Length;
-            categoriesList[i].levels = new LevelPackData[numLevelPacks];
+            categoriesList[i].levels = new GameManager.LevelPackData[numLevelPacks];
             var levelPack = categories[i].levels;
             CreateLevelPacksData(i, numLevelPacks, levelPack);
         }
@@ -174,12 +159,12 @@ public class DataToSave
     /// <param name="i">Índice de la lista de categoría para seleccionar una categoría</param>
     /// <param name="numLevelPacks">Número de paquetes de niveles</param>
     /// <param name="levelPack">Lista de los paquetes de niveles del otro DataToSave</param>
-    private void CreateLevelPacksData(int i, int numLevelPacks, IReadOnlyList<LevelPackData> levelPack)
+    private void CreateLevelPacksData(int i, int numLevelPacks, IReadOnlyList<GameManager.LevelPackData> levelPack)
     {
         for (int j = 0; j < numLevelPacks; j++)
         {
             // 1. Número de niveles completos
-            categoriesList[i].levels[j] = new LevelPackData
+            categoriesList[i].levels[j] = new GameManager.LevelPackData
             {
                 completedLevels = levelPack[j].completedLevels,
             };
@@ -204,19 +189,28 @@ public class DataToSave
     /// Genera los datos de los temas del juego
     /// </summary>
     /// <param name="themes">Lista de los temas del juego</param>
-    private void CreateThemeData(IList<ThemeData> themes)
+    private void CreateThemeData(IList<GameManager.ThemeData> themes)
     {
         int numThemes = themes.Count;
-        themesList = new ThemeData[numThemes];
+        themesList = new List<GameManager.ThemeData>();
         for (int i = 0; i < numThemes; i++)
         {
-            themesList[i] = new ThemeData
+            themesList.Add(new GameManager.ThemeData
             {
                 // Tema actual
-                isCurrTheme =  themes[i].isCurrTheme,
+                isCurrTheme = themes[i].isCurrTheme,
                 // Estado del tema
-                unlocked = themes[i].unlocked
-            };
+                unlocked = themes[i].unlocked,
+                colors = themes[i].colors
+            });
+
+            int numColors = themes[i].colors.Count;
+            themesList[i].colors = new List<Color>();
+
+            for (int j = 0; j < numColors; j++)
+            {
+                themesList[i].colors.Add(themes[i].colors[j]);
+            }
         }
     }
 
@@ -234,7 +228,7 @@ public class DataToSave
     /// Devuelve todas las categorias disponibles
     /// </summary>
     /// <returns></returns>
-    public List<CategoryData> GetCategories()
+    public List<GameManager.CategoryData> GetCategories()
     {
         return categoriesList;
     }
@@ -261,7 +255,7 @@ public class DataToSave
     /// Devuelve todos las skins disponibles
     /// </summary>
     /// <returns></returns>
-    public ThemeData[] GetThemes()
+    public List<GameManager.ThemeData> GetThemes()
     {
         return themesList;
     }
@@ -272,7 +266,7 @@ public class DataToSave
     /// <returns>Devuelve el índice de la skin usada</returns>
     public int GetCurrentTheme()
     {
-        for (int i = 0; i < themesList.Length; i++)
+        for (int i = 0; i < themesList.Count; i++)
         {
             if (themesList[i].isCurrTheme)
             {

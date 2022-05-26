@@ -20,11 +20,12 @@ public class LevelManager : MonoBehaviour
     private RectTransform[] hudRegion;
     
     private GameManager gm;
-    public void Init(Map currMap, Level lvl, LevelPack package, List<Color> theme, int numHints)
+    public void Init(Map currMap, Level lvl, GameManager.LevelPackData package, List<Color> theme, int numHints)
     {
-        gm = GameManager.instance;
-        hud.Init(currMap, lvl, package, numHints, this);
-        board.Init(lvl, theme, numHints, hudRegion, this);
+        //TODO:
+        // gm = GameManager.instance;
+        // hud.Init(currMap, lvl, package, numHints, this);
+        // board.Init(lvl, theme, numHints, hudRegion, this);
     }
 
     public void LoadScene(GameManager.SceneOrder scene)
