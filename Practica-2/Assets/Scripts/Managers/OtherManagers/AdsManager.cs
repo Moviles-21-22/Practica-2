@@ -79,7 +79,7 @@ public class AdsManager : MonoBehaviour , IUnityAdsInitializationListener, IUnit
         if (!GameManager.instance.isPlayerPremium())
         {
             Advertisement.Banner.SetPosition(bannerPosition);
-            Advertisement.Banner.Show(androidGameId);
+            Advertisement.Banner.Show(bannerAndroidUnit);
         }
     }
 
