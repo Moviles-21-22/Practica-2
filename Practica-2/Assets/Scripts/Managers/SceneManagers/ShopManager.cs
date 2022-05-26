@@ -9,10 +9,7 @@ public class ShopManager : MonoBehaviour
 {
     [Tooltip("Referencia a AdsManager")] [SerializeField]
     private AdsManager ads;
-
-    [Tooltip("Referencia a titleColor")] [SerializeField]
-    private TitleColor title;
-
+    
     [Tooltip("GameObject que muestra la oferta para comprar el premium")] [SerializeField]
     private GameObject premiumBox;
 
@@ -53,7 +50,6 @@ public class ShopManager : MonoBehaviour
         // currTheme = theme;
 
         ads.Init(isPremium);
-        title.Init(currTheme.colors);
 
         InitElements();
     }
@@ -134,7 +130,6 @@ public class ShopManager : MonoBehaviour
         currThemeShop.sprite = unlockSprite;
         currThemeShop.enabled = true;
         ChangeShopColor();
-        title.ChangeTheme(currTheme.colors);
     }
 
     /// <summary>

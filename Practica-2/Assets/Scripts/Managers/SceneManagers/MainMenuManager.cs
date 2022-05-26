@@ -3,9 +3,6 @@ using UnityEngine;
 
 public class MainMenuManager : MonoBehaviour
 {
-    [Tooltip("Referencia al titulo de colores NIVELES")]
-    public TitleColor title;
-
     [SerializeField] private AudioClip forward;
     [SerializeField] private AudioSource audioSource;
 
@@ -30,19 +27,6 @@ public class MainMenuManager : MonoBehaviour
     [Tooltip("Lista de los paquetes de temas del juego")] [SerializeField]
     private List<ColorPack> colorThemes;
 
-    [Header("Atributos que se quieren iniciar por defecto")] [Tooltip("Categoría por defecto")] [SerializeField]
-    private Category defaultCategory;
-
-    [Tooltip("Paquete de niveles por defecto")] [SerializeField]
-    private LevelPack defaultLevelPack;
-
-    [SerializeField] private bool useDefaultLevelPack;
-
-    [Tooltip("Nivel del paquete por defecto")] [SerializeField]
-    private int defaultLevel;
-
-    [SerializeField] private bool useDefaultLevel;
-
     [Header("Elementos del UI")]
     [Tooltip("RectTransform usado como base para el tamaño de las categorías")]
     [SerializeField]
@@ -64,6 +48,7 @@ public class MainMenuManager : MonoBehaviour
     private GameObject selecLevelMenu;
 
     private GameManager gm;
+    private List<GameManager.CategoryData> categoryData;
 
     /// <summary>
     /// Inicializa el MainMenu y todos sus elementos
@@ -72,14 +57,13 @@ public class MainMenuManager : MonoBehaviour
     {
         // Inicialización de los datos del juego
         gm = GameManager.instance;
-        gm.LoadData(categories, colorThemes, reloadData, defaultLevelPack);
+        gm.LoadData(categories, colorThemes, reloadData);
 
         InitCategories();
         var colors = gm.GetCurrTheme();
-        title.Init(colors);
 
-        if (useDefaultLevelPack)
-            LoadDefaultPackage();
+        LoadPackage(0, 0);
+        ChangeCanvas();
     }
 
     /// <summary>
@@ -89,13 +73,13 @@ public class MainMenuManager : MonoBehaviour
     /// <returns>Devuelve la altura</returns>
     private float CalculateHeightCategories()
     {
-        int numElems = categories.Count;
+        int numElems = categoryData.Count;
         if (numElems == 0)
         {
             Debug.LogError("No se han encontrado objetos asignados al componente");
         }
 
-        foreach (var cat in categories)
+        foreach (var cat in categoryData)
         {
             numElems += cat.levels.Length;
         }
@@ -110,7 +94,8 @@ public class MainMenuManager : MonoBehaviour
     private void InitCategories()
     {
         // Número de niveles dentro del paquete
-        var numCategories = categories.Count;
+        categoryData = gm.GetCategories();
+        var numCategories = categoryData.Count;
 
         // Transformación del ContentScroll
         var originalH = categorySection.rect.height;
@@ -125,7 +110,7 @@ public class MainMenuManager : MonoBehaviour
             var titleGo = Instantiate(catTitlePrefab, categorySection.transform);
 
             // Nombre y color de cada paquete
-            titleGo.SetText(categories[i].categoryName);
+            titleGo.SetText(categories[i].name);
             titleGo.SetCategoryColor(categories[i].color);
 
             InitLevels(i);
@@ -152,8 +137,6 @@ public class MainMenuManager : MonoBehaviour
     /// <param name="iCat">Índice de la categoría dentro de la lista de categorías</param>
     private void InitLevels(int iCat)
     {
-        var categoryData = gm.GetCategories();
-
         int numLevels = categoryData[iCat].levels.Length;
         // Inicializaci�n de cada nivel dentro de la categor�a
         for (var j = 0; j < numLevels; j++)
@@ -193,44 +176,14 @@ public class MainMenuManager : MonoBehaviour
     public void LoadPackage(int indexPack, int indexCat)
     {
         ChangeCanvas();
-
-        var catData = gm.GetCategories()[indexCat];
+        var catData = categoryData[indexCat];
         var lvlPackData = catData.levels[indexPack];
-        gm.LoadPackage(lvlPackData);
+        gm.LoadPackage(lvlPackData, catData);
 
         // SelectLevelScene
         var category = categories[indexCat];
         var catColor = category.color;
-        var lvlPack = categories[indexCat].levels[indexPack];
-        selectLevel.Init(lvlPackData, lvlPack, catColor, this);
-    }
-
-    private void LoadDefaultPackage()
-    {
-        ChangeCanvas();
-
-        var lvlPack = defaultLevelPack;
-        var lvlPackData = new GameManager.LevelPackData
-        {
-            completedLevels = lvlPack.completedLevels,
-            txt = lvlPack.txt.text
-        };
-        int numLevels = lvlPack.levelsInfo.Length;
-        lvlPackData.levelsInfo = new Levels[numLevels];
-        for (int i = 0; i < numLevels; i++)
-        {
-            lvlPackData.levelsInfo[i] = new Levels
-            {
-                record = lvlPack.levelsInfo[i].record,
-                state = lvlPack.levelsInfo[i].state
-            };
-        }
-
-        gm.LoadPackage(lvlPackData);
-
-        // SelectLevelScene
-        var category = defaultCategory;
-        var catColor = category.color;
+        var lvlPack = category.levels[indexPack];
         selectLevel.Init(lvlPackData, lvlPack, catColor, this);
     }
 
@@ -251,8 +204,8 @@ public class MainMenuManager : MonoBehaviour
         }
     }
 
-    public void LoadLevel(int scene)
+    public void LoadLevel(int lvl, LevelPack lvlPack)
     {
-        gm.LoadLevel(scene);
+        gm.LoadLevel(lvl, lvlPack);
     }
 }

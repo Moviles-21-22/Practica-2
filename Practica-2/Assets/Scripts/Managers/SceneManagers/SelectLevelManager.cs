@@ -36,6 +36,8 @@ public class SelectLevelManager : MonoBehaviour
 
     private List<GridPack> gridList;
 
+    private LevelPack currPack;
+    
     /// <summary>
     /// Inicializa el gestor del SelectLevelScene
     /// </summary>
@@ -48,31 +50,32 @@ public class SelectLevelManager : MonoBehaviour
         mainMenu = man;
         currLevelPack = lvlPackData;
         packTitle.color = catColor;
-        InitGridData(lvlPack);
+        currPack = lvlPack;
+        InitGridData();
         if (!initialized)
         {
             gridList = new List<GridPack>();
-            GeneratePackageLevels(lvlPack);
+            GeneratePackageLevels();
             initialized = true;
         }
         else
         {
-            ChangeGridInfo(lvlPack);
+            ChangeGridInfo();
         }
     }
 
-    private void InitGridData(LevelPack lvlPack)
+    private void InitGridData()
     {
-        packTitle.text = lvlPack.levelName;
-        splitLevels = lvlPack.splitLevels;
-        lockPack = lvlPack.lockPack;
+        packTitle.text = currPack.levelName;
+        splitLevels = currPack.splitLevels;
+        lockPack = currPack.lockPack;
         completedLevels = currLevelPack.completedLevels;
     }
 
-    private void GeneratePackageLevels(LevelPack lvlPack)
+    private void GeneratePackageLevels()
     {
         // Número de niveles dentro del paquete
-        int numPacks = lvlPack.gridNames.Length;
+        int numPacks = currPack.gridNames.Length;
 
         // Ancho original del contentScroll
         var originalW = contentScroll.rect.width;
@@ -81,7 +84,7 @@ public class SelectLevelManager : MonoBehaviour
 
         for (int i = 0; i < numPacks; i++)
         {
-            gridList.Add(CreateGrid(lvlPack, i, colors[i]));
+            gridList.Add(CreateGrid(currPack, i, colors[i]));
             if (i < numPacks - 1)
             {
                 offset.x += originalW;
@@ -93,7 +96,6 @@ public class SelectLevelManager : MonoBehaviour
     /// <summary>
     /// Crea el grid de forma dinámica en función del pack cargado
     /// </summary>
-    /// <param name="lvlPack">Pack cargado actualmente</param>
     /// <param name="index">Indice del pack</param>
     /// <param name="color">Color del bloque</param>
     private GridPack CreateGrid(LevelPack lvlPack, int index, Color color)
@@ -135,13 +137,13 @@ public class SelectLevelManager : MonoBehaviour
         return currPack;
     }
 
-    private void ChangeGridInfo(LevelPack lvlPack)
+    private void ChangeGridInfo()
     {
         int index = 0;
-        foreach (var currPack in gridList)
+        foreach (var pack in gridList)
         {
-            currPack.SetText(lvlPack.gridNames[index]);
-            CellLevel[] boxes = currPack.GetAllBoxes();
+            pack.SetText(currPack.gridNames[index]);
+            CellLevel[] boxes = pack.GetAllBoxes();
             for (int j = 0; j < boxes.Length; j++)
             {
                 if (splitLevels)
@@ -156,17 +158,7 @@ public class SelectLevelManager : MonoBehaviour
                 var levelState = currLevelPack.levelsInfo[(index * boxes.Length) + j].state;
                 boxes[j].InitBox(colors[index], levelState, this);
 
-                if (!lockPack ||
-                    lockPack && (index * boxes.Length) + j <= completedLevels)
-                    // Desbloquea los niveles hasta dejar el primero sin desbloquear
-                {
-                    boxes[j].SetCallBack((index * boxes.Length) + j);
-                    if ((index * boxes.Length) + j == completedLevels)
-                    {
-                        boxes[j].CurrentLevel();
-                    }
-                }
-                else
+                if (lockPack && (index * boxes.Length) + j > completedLevels)
                 {
                     boxes[j].ActiveLockImage();
                 }
@@ -181,8 +173,8 @@ public class SelectLevelManager : MonoBehaviour
         mainMenu.ChangeCanvas();
     }
 
-    public void LoadLevel(int scene)
+    public void LoadLevel(int lvl)
     {
-        mainMenu.LoadLevel(scene);
+        mainMenu.LoadLevel(lvl, currPack);
     }
 }

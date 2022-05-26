@@ -19,6 +19,11 @@ public class LevelManager : MonoBehaviour
     [Tooltip("Referencia al BoardManager")] [SerializeField]
     private RectTransform[] hudRegion;
     
+    [Tooltip("Nivel del paquete por defecto")] [SerializeField]
+    private int defaultLevel;
+
+    [SerializeField] private bool useDefaultLevel;
+    
     private GameManager gm;
     public void Init(Map currMap, Level lvl, GameManager.LevelPackData package, List<Color> theme, int numHints)
     {
@@ -37,7 +42,8 @@ public class LevelManager : MonoBehaviour
 
     public void BackToSelectLevelScene()
     {
-        gm.LoadScene((int) GameManager.SceneOrder.LEVEL_SELECT);
+        //TODO
+        // gm.LoadScene((int) GameManager.SceneOrder.LEVEL_SELECT);
     }
 
     public void AddHints(int numOfHints)

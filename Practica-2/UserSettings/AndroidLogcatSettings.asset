@@ -1,47 +1,59 @@
 {
     "m_SelectedDeviceId": "ec5bb8b3",
     "m_SelectedPackage": {
-        "deviceId": "ec5bb8b3",
-        "name": "com.RandomPlayerStudio.FlowFree",
-        "processId": 3489,
-        "exited": true
+        "deviceId": "",
+        "name": "",
+        "processId": 0,
+        "exited": false
     },
     "m_SelectedPriority": 0,
     "m_KnownPackagesForSerialization": [
         {
             "deviceId": "ec5bb8b3",
-            "name": "com.RandomPlayerStudio.FlowFree",
-            "processId": 3489,
-            "exited": true
-        },
-        {
-            "deviceId": "ec5bb8b3",
-            "name": "com.RandomPlayerStudio.FlowFree",
-            "processId": 5411,
-            "exited": true
-        },
-        {
-            "deviceId": "ec5bb8b3",
-            "name": "com.RandomPlayerStudio.FlowFree",
-            "processId": 7078,
-            "exited": true
-        },
-        {
-            "deviceId": "ec5bb8b3",
-            "name": "com.RandomPlayerStudio.FlowFree",
-            "processId": 8306,
-            "exited": true
-        },
-        {
-            "deviceId": "ec5bb8b3",
             "name": "com.miui.home",
-            "processId": 2473,
+            "processId": 32491,
             "exited": false
+        },
+        {
+            "deviceId": "ec5bb8b3",
+            "name": "com.RandomPlayerStudio.FlowFree",
+            "processId": 15778,
+            "exited": true
+        },
+        {
+            "deviceId": "ec5bb8b3",
+            "name": "com.RandomPlayerStudio.FlowFree",
+            "processId": 16457,
+            "exited": true
+        },
+        {
+            "deviceId": "ec5bb8b3",
+            "name": "com.RandomPlayerStudio.FlowFree",
+            "processId": 17399,
+            "exited": true
+        },
+        {
+            "deviceId": "ec5bb8b3",
+            "name": "com.RandomPlayerStudio.FlowFree",
+            "processId": 18367,
+            "exited": true
+        },
+        {
+            "deviceId": "ec5bb8b3",
+            "name": "com.RandomPlayerStudio.FlowFree",
+            "processId": 19575,
+            "exited": true
         },
         {
             "deviceId": "emulator-5556",
             "name": "com.RandomPlayerStudio.FlowFree",
             "processId": 7037,
+            "exited": false
+        },
+        {
+            "deviceId": "emulator-5554",
+            "name": "com.RandomPlayerStudio.FlowFree",
+            "processId": 5582,
             "exited": false
         }
     ],

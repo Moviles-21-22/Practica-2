@@ -12,15 +12,13 @@ public class GameManager : MonoBehaviour
     public enum SceneOrder
     {
         MAIN_MENU = 0,
-        LEVEL_SELECT = 1,
-        SHOP = 2,
-        GAME_SCENE = 3
+        SHOP = 1,
+        GAME_SCENE = 2
     }
 
     [Serializable]
     public struct LevelPackData
     {
-        public string txt;
         public int completedLevels;
         public Levels[] levelsInfo;
     }
@@ -35,6 +33,7 @@ public class GameManager : MonoBehaviour
     [Serializable]
     public class ThemeData
     {
+        public string colorPackName;
         public List<Color> colors;
         public bool isCurrTheme;
         public bool unlocked;
@@ -69,12 +68,14 @@ public class GameManager : MonoBehaviour
     /// Lista de los datos de guardado de los temas
     /// </summary>
     private List<ThemeData> themesData;
-    
+
     /// <summary>
     /// Actual paquete de niveles
     /// </summary>
     private LevelPackData currPack;
 
+    private CategoryData currCat;
+    
     /// <summary>
     /// Actual tema escogido
     /// </summary>
@@ -159,16 +160,16 @@ public class GameManager : MonoBehaviour
 
 //--------------------------------------------GESTION-LOAD-SAVE-------------------------------------------------------//
 
-    public void LoadData(List<Category> categories, List<ColorPack> themes, bool reload, bool defaultPack)
+    public void LoadData(List<Category> categories, List<ColorPack> themes, bool reload)
     {
         if (isDataLoaded)
             return;
-        
+
         // Se cargan los datos que haya guardados. 
         // Si no hay datos, se crearán unos por defecto
         DataManager.LoadData(categories, themes, reload);
         currData = DataManager.GetCurrData();
-        
+
         numHints = currData.GetNumHints();
         isPremium = currData.GetIsPremium();
         categoriesData = currData.GetCategories();
@@ -177,15 +178,16 @@ public class GameManager : MonoBehaviour
         foreach (var theme in themesData)
         {
             if (!theme.isCurrTheme) continue;
-            
+
             currTheme = theme;
             break;
         }
-        
+
         //LoadCategoryData(defaultPack);
         //LoadThemesData();
         isDataLoaded = true;
     }
+
     private void LoadThemesData()
     {
         //TODO
@@ -252,7 +254,7 @@ public class GameManager : MonoBehaviour
         //     }
         // }
     }
-    
+
     private void LoadDefaultLevelPack(LevelPack levelPack)
     {
         if (!levelPack)
@@ -263,7 +265,6 @@ public class GameManager : MonoBehaviour
         {
             currPack = new LevelPackData
             {
-                txt = levelPack.txt.text,
                 completedLevels = levelPack.completedLevels
             };
 
@@ -284,16 +285,11 @@ public class GameManager : MonoBehaviour
     /// Carga un nivel del pack de niveles escogido
     /// </summary>
     /// <param name="lvl">Nivel que se quiere cargar</param>
-    /// <param name="defaultLevel">Determina si se quiere usar un nivel por defecto</param>
     /// <param name="levelPack">Paquete de niveles que se usará por defecto</param>
-    public void LoadLevel(int lvl, bool defaultLevel = false, LevelPack levelPack = null)
+    public void LoadLevel(int lvl, LevelPack levelPack)
     {
-        if (defaultLevel)
-        {
-            LoadDefaultLevelPack(levelPack);
-        }
-
-        currMap = new Map(currPack.txt);
+        currPack = currCat.levels[lvl];
+        currMap = new Map(levelPack.txt.text);
         if (lvl < 0 || lvl >= currMap.NumLevels())
             lvl = 0;
         currLevel = currMap.GetLevel(lvl);
@@ -312,11 +308,13 @@ public class GameManager : MonoBehaviour
     /// Carga un pack especifico de una categoría
     /// </summary>
     /// <param name="levelPack">Pack que se quiere cargar</param>
-    public void LoadPackage(LevelPackData levelPack)
+    /// <param name="catData">Categoría escogida</param>
+    public void LoadPackage(LevelPackData levelPack, CategoryData catData)
     {
         currPack = levelPack;
+        currCat = catData;
     }
-    
+
 //--------------------------------------------------------------------------------------------------------------------//
 
     /// <summary>
@@ -328,8 +326,8 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(scene);
         DataManager.DebugLogs("Escena: " + scene + " cargada");
     }
-    
-        /// <summary>
+
+    /// <summary>
     /// Añade una solución de nivel del paquete actual
     /// </summary>
     /// <param name="perfect">Determinas si el nivel es perfecto o no</param>
@@ -394,7 +392,7 @@ public class GameManager : MonoBehaviour
         //v.active = true;
         //SetTheme(v);
     }
-    
+
     /// <summary>
     /// Desbloquea el acceso premium del usuario
     /// </summary>
@@ -452,7 +450,7 @@ public class GameManager : MonoBehaviour
         currLevel = currMap.GetLevel(lvl);
         LoadScene((int) SceneOrder.GAME_SCENE);
     }
-
+    
     /// <summary>
     /// Devuelve los colores del tema actual
     /// </summary>

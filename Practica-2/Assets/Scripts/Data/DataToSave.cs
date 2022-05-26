@@ -53,7 +53,7 @@ public class DataToSave
         for (int i = 0; i < numCategories; i++)
         {
             categoriesList.Add(new GameManager.CategoryData());
-            // Paquetes de niveles
+            // Paquete de niveles
             int numLevelPacks = categories[i].levels.Length;
             categoriesList[i].levels = new GameManager.LevelPackData[numLevelPacks];
             var levelPack = categories[i].levels;
@@ -71,12 +71,12 @@ public class DataToSave
     {
         for (int j = 0; j < numLevelPacks; j++)
         {
-            // 1. Número de niveles completos
             categoriesList[i].levels[j] = new GameManager.LevelPackData
             {
-                completedLevels = levelPack[j].completedLevels,
+                // 1. Número de niveles completos
+                completedLevels = levelPack[j].completedLevels
             };
-
+            
             // 2. Información de los niveles
             int numLevels = levelPack[j].levelsInfo.Length;
             categoriesList[i].levels[j].levelsInfo = new Levels[numLevels];
@@ -145,7 +145,7 @@ public class DataToSave
         for (int i = 0; i < numCategories; i++)
         {
             categoriesList.Add(new GameManager.CategoryData());
-            // Paquetes de niveles
+            // 1. Paquetes de niveles
             int numLevelPacks = categories[i].levels.Length;
             categoriesList[i].levels = new GameManager.LevelPackData[numLevelPacks];
             var levelPack = categories[i].levels;
@@ -163,12 +163,11 @@ public class DataToSave
     {
         for (int j = 0; j < numLevelPacks; j++)
         {
-            // 1. Número de niveles completos
             categoriesList[i].levels[j] = new GameManager.LevelPackData
             {
-                completedLevels = levelPack[j].completedLevels,
+                // 1. Número de niveles completos
+                completedLevels = levelPack[j].completedLevels
             };
-
             // 2. Información de los niveles
             int numLevels = levelPack[j].levelsInfo.Length;
             categoriesList[i].levels[j].levelsInfo = new Levels[numLevels];
