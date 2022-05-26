@@ -1,22 +1,22 @@
 using UnityEngine;
 using UnityEngine.Advertisements;
 
-public class SdkLoader : MonoBehaviour, IUnityAdsInitializationListener
+public class SdkLoader : MonoBehaviour , IUnityAdsInitializationListener
 {
-    [SerializeField] string _androidGameId;
-    [SerializeField] bool _testMode = true;
-    [SerializeField] bool _enablePerPlacementMode = true;
-    private string _gameId;
+    [SerializeField] string androidGameId;
+    [SerializeField] bool testMode = true;
+    [SerializeField] bool enablePerPlacementMode = true;
+    private string gameId;
 
     void Awake()
     {
-        //InitializeAds();
+        InitializeAds();
     }
 
     public void InitializeAds()
     {
-        _gameId = _androidGameId;
-        //Advertisement.Initialize(_gameId, _testMode, _enablePerPlacementMode, this);
+        gameId = androidGameId;
+        Advertisement.Initialize(gameId, testMode, this);
     }
 
     public void OnInitializationComplete()

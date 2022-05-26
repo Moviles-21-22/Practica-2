@@ -36,6 +36,10 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField]
     private RectTransform topMenu;
 
+    [Tooltip("Manager de los ads")]
+    [SerializeField]
+    private AdsManager adsManager;
+
     private GameManager gm;
 
     /// <summary>
@@ -49,6 +53,9 @@ public class MainMenuManager : MonoBehaviour
     public void Init(List<Category> categories, List<Color> theme)
     {
         gm = GameManager.instance;
+
+        adsManager.Init();
+
         categoriesList = categories;
 
         InitCategories();

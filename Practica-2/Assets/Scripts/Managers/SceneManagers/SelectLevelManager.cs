@@ -33,6 +33,10 @@ public class SelectLevelManager : MonoBehaviour
 
     private GameManager gm;
 
+    [Tooltip("Manager de ads")]
+    [SerializeField]
+    private AdsManager adsManager;
+
     /// <summary>
     /// Inicializa el gestor del SelectLevelScene
     /// </summary>
@@ -41,6 +45,9 @@ public class SelectLevelManager : MonoBehaviour
     public void Init(LevelPack lvlPack, Color catColor)
     {
         gm = GameManager.instance;
+
+        adsManager.Init();
+
         currLevelPack = lvlPack;
         packTitle.color = catColor;
         InitGridData();
