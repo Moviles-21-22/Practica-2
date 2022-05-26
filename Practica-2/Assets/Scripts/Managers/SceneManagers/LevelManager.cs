@@ -18,11 +18,16 @@ public class LevelManager : MonoBehaviour
 
     [Tooltip("Referencia al BoardManager")] [SerializeField]
     private RectTransform[] hudRegion;
-    
+
+    [Tooltip("Referencia al adsManager")]
+    [SerializeField]
+    private AdsManager adsManager;
+
     private GameManager gm;
     public void Init(Map currMap, Level lvl, LevelPack package, List<Color> theme, int numHints)
     {
         gm = GameManager.instance;
+        adsManager.Init();
         hud.Init(currMap, lvl, package, numHints, this);
         board.Init(lvl, theme, numHints, hudRegion, this);
     }

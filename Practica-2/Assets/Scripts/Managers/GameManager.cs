@@ -360,4 +360,10 @@ public class GameManager : MonoBehaviour
         currLevel = currMap.GetLevel(lvl);
         LoadScene((int) SceneOrder.GAME_SCENE);
     }
+
+    /// <summary>
+    /// Devuelve el status de premium
+    /// </summary>
+    /// <returns></returns>
+    public bool isPlayerPremium() { return isPremium; }
 }

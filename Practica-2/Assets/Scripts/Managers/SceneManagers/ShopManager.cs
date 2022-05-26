@@ -48,7 +48,7 @@ public class ShopManager : MonoBehaviour
         themesList = themes;
         currTheme = theme;
 
-        ads.Init(isPremium);
+        ads.Init();
         title.Init(currTheme.colors);
 
         InitElements();
@@ -69,6 +69,7 @@ public class ShopManager : MonoBehaviour
 
     public void HideBanner()
     {
+        ads.HideBanner();
     }
 
 

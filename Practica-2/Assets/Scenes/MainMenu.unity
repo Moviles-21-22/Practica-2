@@ -687,6 +687,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1754892208}
+  - {fileID: 1347586592}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -959,6 +960,22 @@ MonoBehaviour:
   m_ChildScaleWidth: 1
   m_ChildScaleHeight: 1
   m_ReverseArrangement: 0
+--- !u!114 &1347586591 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 899503529488775082, guid: d67a430093d00764fb4dff81ed7c0d77, type: 3}
+  m_PrefabInstance: {fileID: 1625721943}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1d0634421ede1d4c970eb8270cb02af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1347586592 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 899503529488775085, guid: d67a430093d00764fb4dff81ed7c0d77, type: 3}
+  m_PrefabInstance: {fileID: 1625721943}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1373086505
 GameObject:
   m_ObjectHideFlags: 0
@@ -1174,6 +1191,67 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1461937247}
   m_CullTransparentMesh: 1
+--- !u!1001 &1625721943
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 643248457}
+    m_Modifications:
+    - target: {fileID: 899503529488775082, guid: d67a430093d00764fb4dff81ed7c0d77, type: 3}
+      propertyPath: testMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 899503529488775084, guid: d67a430093d00764fb4dff81ed7c0d77, type: 3}
+      propertyPath: m_Name
+      value: AdsManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 899503529488775085, guid: d67a430093d00764fb4dff81ed7c0d77, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 899503529488775085, guid: d67a430093d00764fb4dff81ed7c0d77, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.5767204
+      objectReference: {fileID: 0}
+    - target: {fileID: 899503529488775085, guid: d67a430093d00764fb4dff81ed7c0d77, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.436823
+      objectReference: {fileID: 0}
+    - target: {fileID: 899503529488775085, guid: d67a430093d00764fb4dff81ed7c0d77, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.76150274
+      objectReference: {fileID: 0}
+    - target: {fileID: 899503529488775085, guid: d67a430093d00764fb4dff81ed7c0d77, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 899503529488775085, guid: d67a430093d00764fb4dff81ed7c0d77, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 899503529488775085, guid: d67a430093d00764fb4dff81ed7c0d77, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 899503529488775085, guid: d67a430093d00764fb4dff81ed7c0d77, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 899503529488775085, guid: d67a430093d00764fb4dff81ed7c0d77, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 899503529488775085, guid: d67a430093d00764fb4dff81ed7c0d77, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 899503529488775085, guid: d67a430093d00764fb4dff81ed7c0d77, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d67a430093d00764fb4dff81ed7c0d77, type: 3}
 --- !u!1 &1683156311
 GameObject:
   m_ObjectHideFlags: 0
@@ -1504,6 +1582,7 @@ MonoBehaviour:
   categorySection: {fileID: 1317417491}
   contentScroll: {fileID: 546198783}
   topMenu: {fileID: 697200272}
+  adsManager: {fileID: 1347586591}
 --- !u!1 &1934377856
 GameObject:
   m_ObjectHideFlags: 0
