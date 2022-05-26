@@ -5,14 +5,12 @@ using UnityEngine.UI;
 
 [SuppressMessage("ReSharper", "CheckNamespace")]
 [SuppressMessage("ReSharper", "StringLiteralTypo")]
+[SuppressMessage("ReSharper", "Unity.InefficientPropertyAccess")]
 public class ShopManager : MonoBehaviour
 {
     [Tooltip("Referencia a AdsManager")] [SerializeField]
     private AdsManager ads;
-
-    [Tooltip("Referencia a titleColor")] [SerializeField]
-    private TitleColor title;
-
+    
     [Tooltip("GameObject que muestra la oferta para comprar el premium")] [SerializeField]
     private GameObject premiumBox;
 
@@ -33,23 +31,25 @@ public class ShopManager : MonoBehaviour
     [Tooltip("Sprite del tick")] [SerializeField]
     private Sprite unlockSprite;
 
+    [Tooltip("Lista de los paquetes de temas del juego")] [SerializeField]
+    private List<ColorPack> colorThemes;
+    
     private bool isPremium;
     private int currHints;
-    private List<ColorPack> themesList;
-    private ColorPack currTheme;
+    private List<GameManager.ThemeData> themesList;
+    private GameManager.ThemeData currTheme;
     private Image currThemeShop;
     private GameManager gm;
     
-    public void Init(bool premium, List<ColorPack> themes, ColorPack theme, int numHints)
+    public void Init(List<GameManager.ThemeData> themes,GameManager.ThemeData lastTheme, int numHints)
     {
         gm = GameManager.instance;
-        isPremium = premium;
+        isPremium = gm.IsPlayerPremium();
         currHints = numHints;
         themesList = themes;
-        currTheme = theme;
+        currTheme = lastTheme;
 
         ads.Init();
-        title.Init(currTheme.colors);
 
         InitElements();
     }
@@ -114,10 +114,11 @@ public class ShopManager : MonoBehaviour
     /// <param name="index">Tema que se escocge</param>
     public void ChangeTheme(int index)
     {
-        currTheme = themesFeatures[index].theme;
+        //TODO: Hacer el cambio
+        currTheme = themesList[index];
         var selectedImage = themesFeatures[index].selectedImage;
 
-        if (currTheme.active)
+        if (!currTheme.unlocked)
         {
             gm.SetTheme(currTheme);
         }
@@ -131,7 +132,6 @@ public class ShopManager : MonoBehaviour
         currThemeShop.sprite = unlockSprite;
         currThemeShop.enabled = true;
         ChangeShopColor();
-        title.ChangeTheme(currTheme.colors);
     }
 
     /// <summary>
@@ -159,7 +159,7 @@ public class ShopManager : MonoBehaviour
                 currThemeShop = themesFeatures[i].selectedImage;
             }
 
-            if (!themesList[i].active)
+            if (!themesList[i].unlocked)
             {
                 themesFeatures[i].selectedImage.enabled = true;
                 themesFeatures[i].selectedImage.sprite = lockSprite;

@@ -1884,7 +1884,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ads: {fileID: 7869540305992442476}
-  title: {fileID: 1414888144}
   premiumBox: {fileID: 1733139959}
   hintsText: {fileID: 1641436538}
   themesFeatures:
@@ -1948,6 +1947,13 @@ MonoBehaviour:
   - {fileID: 944542903}
   lockSprite: {fileID: 21300000, guid: bff0354a8b3460147a489d6df17042ea, type: 3}
   unlockSprite: {fileID: 21300000, guid: 30dba30081967904396b3de7d3f130b5, type: 3}
+  colorThemes:
+  - {fileID: 11400000, guid: 30b3347c126ef954d8d24336c3fde2ce, type: 2}
+  - {fileID: 11400000, guid: c19dc87640dcaf842838d0fbe358843c, type: 2}
+  - {fileID: 11400000, guid: 946ef7b456620c548bd725d0190bd894, type: 2}
+  - {fileID: 11400000, guid: 56572ea752a3c6243b69b2b34fa26c0a, type: 2}
+  - {fileID: 11400000, guid: f0e602a3e3b1b774bad0246bc9bb9aeb, type: 2}
+  - {fileID: 11400000, guid: bd9e5ab2158bd3042870837e7c3f82ef, type: 2}
 --- !u!1 &528700404
 GameObject:
   m_ObjectHideFlags: 0

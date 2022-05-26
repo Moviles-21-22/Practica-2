@@ -1,51 +1,219 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-
-// ReSharper disable once CheckNamespace
 
 /// <summary>
 /// Clase para guardar datos serializables
 /// </summary>
-[System.Serializable]
+[Serializable]
 public class DataToSave
 {
     //  Numero de pistas
-    [SerializeField] private int numHints;
+    [SerializeField] private int currHints;
 
-    //  Para determinar si el jugador es premium
-    [SerializeField] private bool premium;
-
-    //  Lista de skins
-    [SerializeField] private List<ColorPack> themes;
-
-    //  Skin actual usada por el jugador
-    [SerializeField] private ColorPack currTheme;
+    //  Para determinar si el jugador es isPremium
+    [SerializeField] private bool isPremium;
 
     //  Categorias serializables
-    [SerializeField] private List<Category> categories;
+    [SerializeField] private List<GameManager.CategoryData> categoriesList;
+
+    //  Lista de skins
+    [SerializeField] private List<GameManager.ThemeData> themesList;
 
     //  Hash creado a partir del serializable
     [SerializeField] private string hash;
 
-    public DataToSave(int numH, bool p, List<Category> c, List<ColorPack> t,
-        ColorPack lastTheme)
+//--------------------------------------------------------------------------------------------------------------------//
+    /// <summary>
+    /// Genera un paquete de datos copiados de los datos del juego original para que
+    /// se puedan serializar
+    /// </summary>
+    /// <param name="numHints">Número de pistas</param>
+    /// <param name="premium">Determina si el usuario es premium</param>
+    /// <param name="categories">Lista de categorías</param>
+    /// <param name="themes">Lista de los temas</param>
+    /// <param name="lastTheme">Último tema aplicado en el juego</param>
+    public DataToSave(int numHints, bool premium, List<Category> categories,
+        List<ColorPack> themes, ColorPack lastTheme)
     {
-        numHints = numH;
-        premium = p;
-        categories = c;
-        themes = t;
-        currTheme = lastTheme;
+        currHints = numHints;
+        isPremium = premium;
+        CreateCategoryData(categories);
+        CreateThemeData(themes, lastTheme);
     }
 
     /// <summary>
-    /// Guarda el hash en la clase
+    /// Genera los datos de las categorías del juego para que sean serializados.
     /// </summary>
-    /// <param name="newHash"></param>
-    public void SetHash(string newHash)
+    /// <param name="categories">Lista de categorías</param>
+    private void CreateCategoryData(List<Category> categories)
     {
-        this.hash = newHash;
+        int numCategories = categories.Count;
+        categoriesList = new List<GameManager.CategoryData>();
+        for (int i = 0; i < numCategories; i++)
+        {
+            categoriesList.Add(new GameManager.CategoryData());
+            // Paquete de niveles
+            int numLevelPacks = categories[i].levels.Length;
+            categoriesList[i].levels = new GameManager.LevelPackData[numLevelPacks];
+            var levelPack = categories[i].levels;
+            CreateLevelPacksData(i, numLevelPacks, levelPack);
+        }
     }
 
+    /// <summary>
+    /// Genera los datos de los paquetes de niveles de una categoría
+    /// </summary>
+    /// <param name="i">Índice de la lista de categoría para seleccionar una categoría</param>
+    /// <param name="numLevelPacks">Número de paquetes de niveles</param>
+    /// <param name="levelPack">Lista de los paquetes de niveles</param>
+    private void CreateLevelPacksData(int i, int numLevelPacks, IReadOnlyList<LevelPack> levelPack)
+    {
+        for (int j = 0; j < numLevelPacks; j++)
+        {
+            categoriesList[i].levels[j] = new GameManager.LevelPackData
+            {
+                // 1. Número de niveles completos
+                completedLevels = levelPack[j].completedLevels
+            };
+            
+            // 2. Información de los niveles
+            int numLevels = levelPack[j].levelsInfo.Length;
+            categoriesList[i].levels[j].levelsInfo = new Levels[numLevels];
+            for (int k = 0; k < numLevels; k++)
+            {
+                // 2.1 Records de cada uno de los niveles
+                categoriesList[i].levels[j].levelsInfo[k] = new Levels
+                {
+                    record = levelPack[j].levelsInfo[k].record,
+                    // 2.2 Información de los niveles
+                    state = levelPack[j].levelsInfo[k].state
+                };
+            }
+        }
+    }
+
+    /// <summary>
+    /// Genera los datos de los temas del juego
+    /// </summary>
+    /// <param name="themes">Lista de los temas del juego</param>
+    /// <param name="lastTheme">Último tema usado</param>
+    private void CreateThemeData(IReadOnlyList<ColorPack> themes, ColorPack lastTheme)
+    {
+        int numThemes = themes.Count;
+        themesList = new List<GameManager.ThemeData>();
+        for (int i = 0; i < numThemes; i++)
+        {
+            themesList.Add(new GameManager.ThemeData
+            {
+                isCurrTheme = themes[i] == lastTheme,
+                // Estado del tema
+                unlocked = themes[i].active
+            });
+            int numColors = themes[i].colors.Count;
+            themesList[i].colors = new List<Color>();
+
+            for (int j = 0; j < numColors; j++)
+            {
+                themesList[i].colors.Add(themes[i].colors[j]);
+            }
+        }
+    }
+//--------------------------------------------------------------------------------------------------------------------//
+
+    /// <summary>
+    /// Constructor por copia
+    /// </summary>
+    public DataToSave(DataToSave other)
+    {
+        if (other == null) return;
+
+        currHints = other.GetNumHints();
+        isPremium = other.GetIsPremium();
+        CreateCategoryData(other.GetCategories());
+        CreateThemeData(other.GetThemes());
+    }
+
+    /// <summary>
+    /// Genera los datos de la categoría mediante el constructor por copia
+    /// </summary>
+    /// <param name="categories">Lista de las categorías del otro DataToSave</param>
+    private void CreateCategoryData(List<GameManager.CategoryData> categories)
+    {
+        int numCategories = categories.Count;
+        categoriesList = new List<GameManager.CategoryData>();
+        for (int i = 0; i < numCategories; i++)
+        {
+            categoriesList.Add(new GameManager.CategoryData());
+            // 1. Paquetes de niveles
+            int numLevelPacks = categories[i].levels.Length;
+            categoriesList[i].levels = new GameManager.LevelPackData[numLevelPacks];
+            var levelPack = categories[i].levels;
+            CreateLevelPacksData(i, numLevelPacks, levelPack);
+        }
+    }
+
+    /// <summary>
+    /// Genera los datos de los paquetes de niveles de una categoría mediante el constructor por copia
+    /// </summary>
+    /// <param name="i">Índice de la lista de categoría para seleccionar una categoría</param>
+    /// <param name="numLevelPacks">Número de paquetes de niveles</param>
+    /// <param name="levelPack">Lista de los paquetes de niveles del otro DataToSave</param>
+    private void CreateLevelPacksData(int i, int numLevelPacks, IReadOnlyList<GameManager.LevelPackData> levelPack)
+    {
+        for (int j = 0; j < numLevelPacks; j++)
+        {
+            categoriesList[i].levels[j] = new GameManager.LevelPackData
+            {
+                // 1. Número de niveles completos
+                completedLevels = levelPack[j].completedLevels
+            };
+            // 2. Información de los niveles
+            int numLevels = levelPack[j].levelsInfo.Length;
+            categoriesList[i].levels[j].levelsInfo = new Levels[numLevels];
+            for (int k = 0; k < numLevels; k++)
+            {
+                // 2.1 Records de cada uno de los niveles
+                categoriesList[i].levels[j].levelsInfo[k] = new Levels
+                {
+                    record = levelPack[j].levelsInfo[k].record,
+                    // 2.2 Información de los niveles
+                    state = levelPack[j].levelsInfo[k].state
+                };
+            }
+        }
+    }
+
+    /// <summary>
+    /// Genera los datos de los temas del juego
+    /// </summary>
+    /// <param name="themes">Lista de los temas del juego</param>
+    private void CreateThemeData(IList<GameManager.ThemeData> themes)
+    {
+        int numThemes = themes.Count;
+        themesList = new List<GameManager.ThemeData>();
+        for (int i = 0; i < numThemes; i++)
+        {
+            themesList.Add(new GameManager.ThemeData
+            {
+                // Tema actual
+                isCurrTheme = themes[i].isCurrTheme,
+                // Estado del tema
+                unlocked = themes[i].unlocked,
+                colors = themes[i].colors
+            });
+
+            int numColors = themes[i].colors.Count;
+            themesList[i].colors = new List<Color>();
+
+            for (int j = 0; j < numColors; j++)
+            {
+                themesList[i].colors.Add(themes[i].colors[j]);
+            }
+        }
+    }
+
+//-----------------------------------------------------GET-SET--------------------------------------------------------//
     /// <summary>
     /// Devuelve el hash
     /// </summary>
@@ -59,9 +227,9 @@ public class DataToSave
     /// Devuelve todas las categorias disponibles
     /// </summary>
     /// <returns></returns>
-    public List<Category> GetCategories()
+    public List<GameManager.CategoryData> GetCategories()
     {
-        return categories;
+        return categoriesList;
     }
 
     /// <summary>
@@ -70,33 +238,50 @@ public class DataToSave
     /// <returns></returns>
     public int GetNumHints()
     {
-        return numHints;
+        return currHints;
     }
 
     /// <summary>
-    /// Devuelve el estatus del jugador (premium)
+    /// Devuelve el estatus del jugador (isPremium)
     /// </summary>
     /// <returns></returns>
-    public bool GetPremiumStatus()
+    public bool GetIsPremium()
     {
-        return premium;
+        return isPremium;
     }
 
     /// <summary>
     /// Devuelve todos las skins disponibles
     /// </summary>
     /// <returns></returns>
-    public List<ColorPack> GetThemes()
+    public List<GameManager.ThemeData> GetThemes()
     {
-        return themes;
+        return themesList;
     }
 
     /// <summary>
     /// Devuelve la skin actualmente usada por el jugador
     /// </summary>
-    /// <returns></returns>
-    public ColorPack GetCurrentTheme()
+    /// <returns>Devuelve el índice de la skin usada</returns>
+    public int GetCurrentTheme()
     {
-        return currTheme;
+        for (int i = 0; i < themesList.Count; i++)
+        {
+            if (themesList[i].isCurrTheme)
+            {
+                return i;
+            }
+        }
+
+        return 0;
+    }
+
+    /// <summary>
+    /// Guarda el hash en la clase
+    /// </summary>
+    /// <param name="newHash"></param>
+    public void SetHash(string newHash)
+    {
+        hash = newHash;
     }
 }

@@ -1,25 +1,25 @@
 using UnityEngine;
 using UnityEngine.Advertisements;
 
-public class AdsManager : MonoBehaviour , IUnityAdsInitializationListener, IUnityAdsLoadListener, IUnityAdsShowListener
+public class AdsManager : MonoBehaviour, IUnityAdsInitializationListener, IUnityAdsLoadListener, IUnityAdsShowListener
 {
-    [Tooltip("Posición del banner")]
-    [SerializeField] BannerPosition bannerPosition = BannerPosition.BOTTOM_CENTER;
+    [Tooltip("Posición del banner")] [SerializeField]
+    BannerPosition bannerPosition = BannerPosition.BOTTOM_CENTER;
 
-    [Tooltip("Unidad de banner para Android")]
-    [SerializeField] string bannerAndroidUnit = "Banner_Android";
+    [Tooltip("Unidad de banner para Android")] [SerializeField]
+    string bannerAndroidUnit = "Banner_Android";
 
-    [Tooltip("Unidad de interstitial para Android")]
-    [SerializeField] string interstitialAndroidUnit = "Interstitial_Android";
+    [Tooltip("Unidad de interstitial para Android")] [SerializeField]
+    string interstitialAndroidUnit = "Interstitial_Android";
 
-    [Tooltip("Unidad de reward para Android")]
-    [SerializeField] string rewardAndroidUnit = "Rewarded_Android";
+    [Tooltip("Unidad de reward para Android")] [SerializeField]
+    string rewardAndroidUnit = "Rewarded_Android";
 
-    [Tooltip("Game id de android")]
-    [SerializeField] public string androidGameId;
+    [Tooltip("Game id de android")] [SerializeField]
+    public string androidGameId;
 
-    [Tooltip("Test selectedImage")]
-    [SerializeField]  public bool testMode;
+    [Tooltip("Test selectedImage")] [SerializeField]
+    public bool testMode;
 
     ///// <summary>
     ///// Determina si el jugador es premium
@@ -31,8 +31,8 @@ public class AdsManager : MonoBehaviour , IUnityAdsInitializationListener, IUnit
     ///// </summary>
     //private bool rewarded = false;
 
-    [Tooltip("Numero de pistas que se dan al ver un video reward")]
-    [SerializeField] private uint numRewardVideoHints = 1;
+    [Tooltip("Numero de pistas que se dan al ver un video reward")] [SerializeField]
+    private uint numRewardVideoHints = 1;
 
     /// <summary>
     /// Instancia del adsManager
@@ -42,17 +42,33 @@ public class AdsManager : MonoBehaviour , IUnityAdsInitializationListener, IUnit
     /// <summary>
     /// Inicialización del ads manager
     /// </summary>
-    /// <param name="premium">Si activar o no los ads</param>
     public void Init()
     {
-        if (instance == null) instance = this;
-
+        if (instance == null)
+        {
 #if UNITY_EDITOR
-        testMode = true;
+            testMode = true;
 #elif UNITY_ANDROID
         testMode = false;
 #endif
-        Advertisement.Initialize(androidGameId, testMode, this);
+            Advertisement.Initialize(androidGameId, testMode, this);
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            // Se delega la información del gameObject actual para que sea 
+            // la instancia estática quien la tenga
+            instance.testMode = testMode;
+            instance.bannerPosition = bannerPosition;
+            instance.bannerAndroidUnit = bannerAndroidUnit;
+            instance.interstitialAndroidUnit = this.interstitialAndroidUnit;
+            instance.rewardAndroidUnit = rewardAndroidUnit;
+            instance.androidGameId = androidGameId;
+            
+            Advertisement.Initialize(instance.androidGameId, instance.testMode, this);
+            Destroy(gameObject);
+        }
     }
 
     /// <summary>
@@ -65,7 +81,7 @@ public class AdsManager : MonoBehaviour , IUnityAdsInitializationListener, IUnit
 
     public void PlayInterstitial()
     {
-        if (!GameManager.instance.isPlayerPremium())
+        if (!GameManager.instance.IsPlayerPremium())
         {
             Advertisement.Load(interstitialAndroidUnit, this);
         }
@@ -76,7 +92,7 @@ public class AdsManager : MonoBehaviour , IUnityAdsInitializationListener, IUnit
     /// </summary>
     public void ShowBanner()
     {
-        if (!GameManager.instance.isPlayerPremium())
+        if (!GameManager.instance.IsPlayerPremium())
         {
             Advertisement.Banner.SetPosition(bannerPosition);
             Advertisement.Banner.Show(bannerAndroidUnit);
@@ -96,7 +112,6 @@ public class AdsManager : MonoBehaviour , IUnityAdsInitializationListener, IUnit
     }
 
 
-
     public void ShowInterstitial()
     {
         Advertisement.Show(interstitialAndroidUnit, this);
@@ -108,7 +123,7 @@ public class AdsManager : MonoBehaviour , IUnityAdsInitializationListener, IUnit
     /// </summary>
     public void HideBanner()
     {
-        if (GameManager.instance.isPlayerPremium()) Advertisement.Banner.Hide();
+        if (GameManager.instance.IsPlayerPremium()) Advertisement.Banner.Hide();
     }
 
     /// <summary>
@@ -203,7 +218,7 @@ public class AdsManager : MonoBehaviour , IUnityAdsInitializationListener, IUnit
                 break;
             case UnityAdsShowCompletionState.COMPLETED:
                 Debug.Log("Reward correctamente reproducido");
-                GameManager.instance.AddHints((int)numRewardVideoHints);
+                GameManager.instance.AddHints((int) numRewardVideoHints);
                 break;
             case UnityAdsShowCompletionState.UNKNOWN:
                 Debug.LogError("Error desconocido al visualizar el video");

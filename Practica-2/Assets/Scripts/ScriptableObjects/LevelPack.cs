@@ -1,15 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 /// <summary>
 /// Clase scripteable usada para representar los packs con los niveles
 /// </summary>
 [System.Serializable]
-[SuppressMessage("ReSharper", "CheckNamespace")]
-[SuppressMessage("ReSharper", "StringLiteralTypo")]
-[CreateAssetMenu(fileName = "levelpack", menuName = "Flow/level pack", order = 1)]
+//[CreateAssetMenu(fileName = "levelpack", menuName = "Flow/level pack", order = 1)]
 public class LevelPack : ScriptableObject
 {
     [Tooltip("Nombre del nivel")] public string levelName;
@@ -22,10 +18,9 @@ public class LevelPack : ScriptableObject
     public int completedLevels;
 
     [Tooltip("Información de los niveles del paquete")]
-    public List<Levels> levelsInfo;
+    public Levels[] levelsInfo;
 
     [Tooltip("Pack bloqueado")] public bool lockPack;
-    [Tooltip("Record de cada nivel")] public int[] records;
 
     [Tooltip("Determina la forma de enumerar los niveles")]
     public bool splitLevels = true;
@@ -38,9 +33,8 @@ public class LevelPack : ScriptableObject
         completedLevels = 0;
         for (int i = 0; i < gridNames.Length; i++)
         {
-            records[i] = 0;
-            levelsInfo[i].completed = false;
-            levelsInfo[i].perfect = false;
+            levelsInfo[i].state = Levels.LevelState.UNCOMPLETED;
+            levelsInfo[i].record = 0;
         }
     }
 }
@@ -48,13 +42,20 @@ public class LevelPack : ScriptableObject
 [System.Serializable]
 public class Levels
 {
+    public enum LevelState
+    {
+        UNCOMPLETED,
+        COMPLETED,
+        PERFECT
+    }
+    
     /// <summary>
-    /// Para saber si se ha superado el nivel
+    /// Estado del nivel
     /// </summary>
-    public bool completed;
+    public LevelState state;
 
     /// <summary>
-    /// Para saber si se ha superado con la puntuación máxima
+    /// Record del nivel
     /// </summary>
-    public bool perfect;
+    public int record;
 }

@@ -39,29 +39,30 @@ public class CellLevel : MonoBehaviour
     private float offsetAlpha = -0.1f;
 
     private SelectLevelManager selectLevelManager;
-    
-    
+
+
     /// <summary>
     /// Inicializa la celda del grid de niveles
     /// </summary>
     /// <param name="newColor">Color que le corresponde al tile</param>
-    /// <param name="isPerfect">¿El nivel es perfecto?</param>
-    /// <param name="isCompleted">¿El nivel está completado?</param>
-    public void InitBox(Color newColor, bool isPerfect, bool isCompleted, SelectLevelManager manager)
+    /// <param name="levelState"></param>
+    /// <param name="manager">Menu de </param>
+    public void InitBox(Color newColor, Levels.LevelState levelState, SelectLevelManager manager)
     {
         selectLevelManager = manager;
         color = newColor;
 
-        if (isPerfect)
+        switch (levelState)
         {
-            starImage.enabled = true;
-        }
-        else if (isCompleted)
-        {
-            completedImage.enabled = true;
+            case Levels.LevelState.PERFECT:
+                starImage.enabled = true;
+                break;
+            case Levels.LevelState.COMPLETED:
+                completedImage.enabled = true;
+                break;
         }
 
-        color.a = isCompleted ? 1.0f : 0.2f;
+        color.a = levelState != Levels.LevelState.UNCOMPLETED ? 1.0f : 0.2f;
         background.color = color;
         frame.color = color;
     }

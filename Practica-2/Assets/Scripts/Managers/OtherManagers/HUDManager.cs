@@ -143,24 +143,27 @@ public class HUDManager : MonoBehaviour
     {
         //============TITULO-DEL-NIVEL===================//
         completedLevelIcon.elementText.text = currLevel.numBoardX + "x" + currLevel.numBoardY;
-        if (levelPack.levelsInfo[currLevel.lvl].perfect)
+        Levels.LevelState levelState = levelPack.levelsInfo[currLevel.lvl].state;
+        switch (levelState)
         {
-            completedLevelIcon.elementImage.enabled = true;
-            completedLevelIcon.elementImage.sprite = completedLevelIcon.elementSprites[0];
-        }
-        else if (levelPack.levelsInfo[currLevel.lvl].completed)
-        {
-            completedLevelIcon.elementImage.enabled = true;
-            completedLevelIcon.elementImage.sprite = completedLevelIcon.elementSprites[1];
+            case Levels.LevelState.PERFECT:
+                completedLevelIcon.elementImage.enabled = true;
+                completedLevelIcon.elementImage.sprite = completedLevelIcon.elementSprites[0];
+                break;
+            case Levels.LevelState.COMPLETED:
+                completedLevelIcon.elementImage.enabled = true;
+                completedLevelIcon.elementImage.sprite = completedLevelIcon.elementSprites[1];
+                break;
         }
 
         //============VOLVER===================//
-        backButton.onClick.AddListener(() => lvlMan.LoadScene(GameManager.SceneOrder.LEVEL_SELECT));
+        //TODO
+        // backButton.onClick.AddListener(() => lvlMan.LoadScene(GameManager.SceneOrder.LEVEL_SELECT));
 
         //============TABLERO-INFO===================//
         numFlowsText.text = "flujos: " + 0 + "/" + currLevel.numFlow;
         numPasosText.text = "pasos: " + 0;
-        recordText.text = "récord: " + levelPack.records[currLevel.lvl];
+        recordText.text = "récord: " + levelPack.levelsInfo[currLevel.lvl].record;
     }
 
     /// <summary>
@@ -205,7 +208,7 @@ public class HUDManager : MonoBehaviour
         }
 
         //============NIVEL-POSTERIOR===================//
-        if (currLevel.lvl + 1 == levelPack.levelsInfo.Count)
+        if (currLevel.lvl + 1 == levelPack.levelsInfo.Length)
         {
             nextLevel.elementImage.sprite = nextLevel.elementSprites[0];
         }
@@ -255,7 +258,7 @@ public class HUDManager : MonoBehaviour
         finalMovsText.text = "Completaste el nivel\n" + "con " + currentMovs + " pasos";
 
         // El último nivel
-        if (currLevel.lvl + 1 == levelPack.levelsInfo.Count)
+        if (currLevel.lvl + 1 == levelPack.levelsInfo.Length)
         {
             winTitle.text = "¡Felicitaciones!";
             finalMovsText.text = "Has llegado al final del\n" + levelPack.name;

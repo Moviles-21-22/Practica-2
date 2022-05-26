@@ -18,18 +18,25 @@ public class LevelManager : MonoBehaviour
 
     [Tooltip("Referencia al BoardManager")] [SerializeField]
     private RectTransform[] hudRegion;
+    
+    [Tooltip("Nivel del paquete por defecto")] [SerializeField]
+    private int defaultLevel;
+
+    [SerializeField] private bool useDefaultLevel;
+    
 
     [Tooltip("Referencia al adsManager")]
     [SerializeField]
     private AdsManager adsManager;
 
     private GameManager gm;
-    public void Init(Map currMap, Level lvl, LevelPack package, List<Color> theme, int numHints)
+    public void Init(Map currMap, Level lvl, GameManager.LevelPackData package, List<Color> theme, int numHints)
     {
-        gm = GameManager.instance;
+        //TODO:
+        // gm = GameManager.instance;
         adsManager.Init();
-        hud.Init(currMap, lvl, package, numHints, this);
-        board.Init(lvl, theme, numHints, hudRegion, this);
+        // hud.Init(currMap, lvl, package, numHints, this);
+        // board.Init(lvl, theme, numHints, hudRegion, this);
     }
 
     public void LoadScene(GameManager.SceneOrder scene)
@@ -41,7 +48,8 @@ public class LevelManager : MonoBehaviour
 
     public void BackToSelectLevelScene()
     {
-        gm.LoadScene((int) GameManager.SceneOrder.LEVEL_SELECT);
+        //TODO
+        // gm.LoadScene((int) GameManager.SceneOrder.LEVEL_SELECT);
     }
 
     public void AddHints(int numOfHints)
@@ -54,9 +62,9 @@ public class LevelManager : MonoBehaviour
         gm.ChangeLevel(level);
     }
 
-    public void AddSolutionLevel(bool perfect, int movements)
+    public void AddSolutionLevel(bool perfect, int movements, int numFlows)
     {
-        gm.AddSolutionLevel(perfect, movements);
+        gm.AddSolutionLevel(perfect, movements, numFlows);
     } 
     
     

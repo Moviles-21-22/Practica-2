@@ -504,7 +504,7 @@ public class BoardManager : MonoBehaviour
         if (IsSolution())
         {
             bool perfect = currMovs == currLevel.numFlow;
-            levelManager.AddSolutionLevel(perfect, currMovs);
+            levelManager.AddSolutionLevel(perfect, currMovs, currLevel.numFlow);
             levelManager.LevelCompleted(perfect);
         }
 
