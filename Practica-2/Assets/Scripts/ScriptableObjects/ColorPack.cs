@@ -12,7 +12,7 @@ public class ColorPack : ScriptableObject
     [Tooltip("Lista con los colores de esta skin")]
     [SerializeField] public List<Color> colors;
     [Tooltip("Está desbloqueado")]
-    [SerializeField] public bool active;
+    [SerializeField] public bool unlocked;
     [Tooltip("Estado inicial del theme")]
     [SerializeField] public bool initState;
 
@@ -21,6 +21,6 @@ public class ColorPack : ScriptableObject
     /// </summary>
     public void Reset()
     {
-        active = initState;
+        unlocked = initState;
     }
 }

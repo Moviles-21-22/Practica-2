@@ -77,25 +77,22 @@ public static class DataManager
     /// <summary>
     /// Guarda todos los datos del juego en un json
     /// </summary>
-    /// <param name="numHints">Número de pistas</param>
-    /// <param name="isPremium">Determina si el usuario es premium</param>
-    /// <param name="categories">Lista de categorías</param>
-    /// <param name="themes">Lista de los temas</param>
-    /// <param name="currTheme">Último tema aplicado en el juego</param>
-    public static void Save(int numHints, bool isPremium, List<Category> categories, List<ColorPack> themes,
-        ColorPack currTheme)
+    /// <param name="data">Datos del juego que se van a guardar</param>
+    public static void Save(DataToSave data)
     {
         try
         {
             DebugLogs("Empezando a guardar datos...");
             // 1. Se crea el objeto que se va a serializar
-            DataToSave objToSave = new DataToSave(numHints, isPremium, categories, themes, currTheme);
 
-            // 2. Se le añade el hash
-            objToSave.SetHash(SecureManager.Hash(JsonUtility.ToJson(objToSave)));
+            // 2. Se le añade el hash. El hash generado se ha creado a partir de los
+            // datos del juego sin haber asingado ningún hash previo.
+            var json = JsonUtility.ToJson(data);
+            var hash = SecureManager.Hash(json);
+            data.SetHash(hash);
 
             // 3. Se transforma el objeto a formato JSON
-            var json = JsonUtility.ToJson(objToSave);
+            json = JsonUtility.ToJson(data);
             DebugLogs("Json guardado con exito...");
 
             // 4. Se sobreescribe el archivo 
@@ -174,7 +171,7 @@ public static class DataManager
 
             // 2. Se resetean los temas del juego, pero se deja el primero activo
             _colorThemes[0].Reset();
-            _colorThemes[0].active = true;
+            _colorThemes[0].unlocked = true;
             for (var i = 1; i < _colorThemes.Count; i++)
             {
                 _colorThemes[i].Reset();

@@ -10,7 +10,7 @@ public class ShopManager : MonoBehaviour
 {
     [Tooltip("Referencia a AdsManager")] [SerializeField]
     private AdsManager ads;
-    
+
     [Tooltip("GameObject que muestra la oferta para comprar el premium")] [SerializeField]
     private GameObject premiumBox;
 
@@ -33,25 +33,56 @@ public class ShopManager : MonoBehaviour
 
     [Tooltip("Lista de los paquetes de temas del juego")] [SerializeField]
     private List<ColorPack> colorThemes;
-    
+
     private bool isPremium;
     private int currHints;
     private List<GameManager.ThemeData> themesList;
     private GameManager.ThemeData currTheme;
     private Image currThemeShop;
     private GameManager gm;
-    
-    public void Init(List<GameManager.ThemeData> themes,GameManager.ThemeData lastTheme, int numHints)
+
+    /// <summary>
+    /// Inicializa la tienda
+    /// </summary>
+    /// <param name="themes">Lista de los temas guardados en el GM</param>
+    /// <param name="lastTheme">Último tema aplicado</param>
+    /// <param name="numHints">Número de pistas disponibles</param>
+    /// <param name="defaultInit">Determina si se inicializa desde la propia escena ShopScene</param>
+    public void Init(List<GameManager.ThemeData> themes, GameManager.ThemeData lastTheme,
+        int numHints, bool defaultInit = false)
     {
         gm = GameManager.instance;
         isPremium = gm.IsPlayerPremium();
         currHints = numHints;
-        themesList = themes;
-        currTheme = lastTheme;
+        if (defaultInit)
+        {
+            GenerateDefaultData();
+        }
+        else
+        {
+            themesList = themes;
+            currTheme = lastTheme;
+        }
 
         ads.Init();
 
         InitElements();
+    }
+
+    private void GenerateDefaultData()
+    {
+        int numThemes = colorThemes.Count;
+        themesList = new List<GameManager.ThemeData>();
+        for (int i = 0; i < numThemes; i++)
+        {
+            themesList.Add(new GameManager.ThemeData());
+            themesList[i].name = colorThemes[i].name;
+            themesList[i].colors = colorThemes[i].colors;
+            themesList[i].unlocked = colorThemes[i].unlocked;
+        }
+
+        themesList[0].isCurrTheme = true;
+        currTheme = themesList[0];
     }
 
     private void InitElements()
@@ -114,17 +145,16 @@ public class ShopManager : MonoBehaviour
     /// <param name="index">Tema que se escocge</param>
     public void ChangeTheme(int index)
     {
-        //TODO: Hacer el cambio
         currTheme = themesList[index];
         var selectedImage = themesFeatures[index].selectedImage;
 
-        if (!currTheme.unlocked)
+        if (currTheme.unlocked)
         {
-            gm.SetTheme(currTheme);
+            gm.SetTheme(index);
         }
         else
         {
-            gm.UnlockTheme(currTheme);
+            gm.UnlockTheme(index);
         }
 
         currThemeShop.enabled = false;
@@ -166,7 +196,7 @@ public class ShopManager : MonoBehaviour
                 themesFeatures[i].selectedImage.rectTransform.sizeDelta.Set(50.0f, 50.0f);
             }
 
-            themesFeatures[i].themeName.text = themesList[i].colorPackName;
+            themesFeatures[i].themeName.text = themesList[i].name;
 
             for (var j = 0; j < themesFeatures[i].samples.Count; j++)
             {

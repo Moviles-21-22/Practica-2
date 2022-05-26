@@ -66,7 +66,6 @@ public class MainMenuManager : MonoBehaviour
         adsManager.Init();
 
         InitCategories();
-        var colors = gm.GetCurrTheme();
 
         LoadPackage(0, 0);
         ChangeCanvas();

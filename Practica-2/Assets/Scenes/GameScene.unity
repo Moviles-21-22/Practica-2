@@ -771,8 +771,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 406.18604, y: -881.631}
-  m_SizeDelta: {x: 792.3721, y: 257.21033}
+  m_AnchoredPosition: {x: 274.45712, y: -584.2738}
+  m_SizeDelta: {x: 528.91425, y: 142.75792}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &142772775
 MonoBehaviour:
@@ -3843,6 +3843,8 @@ MonoBehaviour:
   hudRegion:
   - {fileID: 725060593}
   - {fileID: 882642886}
+  defaultLevel: 0
+  useDefaultLevel: 1
   adsManager: {fileID: 518470787}
 --- !u!1 &782578794
 GameObject:
@@ -4422,8 +4424,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 406.18604, y: -183.60516}
-  m_SizeDelta: {x: 792.3721, y: 347.21033}
+  m_AnchoredPosition: {x: 274.45712, y: -149.37897}
+  m_SizeDelta: {x: 528.91425, y: 278.75793}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &936746975
 MonoBehaviour:
@@ -5363,8 +5365,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 406.18604, y: -490.8155}
-  m_SizeDelta: {x: 792.3721, y: 257.21033}
+  m_AnchoredPosition: {x: 274.45712, y: -365.1369}
+  m_SizeDelta: {x: 528.91425, y: 142.75792}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1090603879
 MonoBehaviour:
@@ -5414,6 +5416,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 518470787}
+        m_TargetAssemblyTypeName: AdsManager, Assembly-CSharp
+        m_MethodName: PlayAd
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -8836,6 +8850,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: BoardManager, Assembly-CSharp
         m_MethodName: SetEditable
         m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 397909750}
+        m_TargetAssemblyTypeName: BoardManager, Assembly-CSharp
+        m_MethodName: GiveHint
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

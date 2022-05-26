@@ -3,63 +3,73 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
-[SuppressMessage("ReSharper", "IdentifierTypo")]
-[SuppressMessage("ReSharper", "CheckNamespace")]
-[SuppressMessage("ReSharper", "PossibleNullReferenceException")]
-[SuppressMessage("ReSharper", "StringLiteralTypo")]
-[SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
-[SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
 public class BoardManager : MonoBehaviour
 {
-    [Tooltip("Referencia al objeto padre donde se van a instanciar los tiles")]
-    [SerializeField]
+    [Tooltip("Referencia al objeto padre donde se van a instanciar los tiles")] [SerializeField]
     private Transform pool;
-    [Tooltip("Referencia al prefab de los tiles que se van a crear")]
-    [SerializeField]
+
+    [Tooltip("Referencia al prefab de los tiles que se van a crear")] [SerializeField]
     private Tile tilePrefab;
 
     //Pistas
     private int currHints;
-    
+
     //  Lista de colores
     private List<Color> currTheme;
+
     // Determina si se está pulsadno la pantalla
     private bool inputDown;
+
     // Determina si se puede editar o no el tablero
     private bool editable = true;
+
     //Guarda el color lógico del último movimiento que modificó el tablero
     private int lastColorMove;
+
     // Contador del número de flujos conectados
     private int connectedFlows;
+
     // Porcentaje de tablero completo
     private float percentage;
+
     // Porcentaje que se suma al total por cada tile ocupado
     private float plusPercentage;
+
     // Color del tile tocado
     private Color currTileColor;
+
     // Poisición donde se ha pulsado la primera vez
     private Vector3 initPosInput = new Vector2(-1, -1);
 
     // Ultimo tile que han tocado, hasta que el dedo se levante
     private Tile currTile;
+
     // Tile que representa el recorrido del puntero 
     private Tile inputTile;
+
     // Circulos instanciados en el tablero
     private List<Tile> circleTiles = new List<Tile>();
+
     // Muros instanciados en el tablero
     private List<Tile> wallTiles = new List<Tile>();
+
     // Tiles del tablero
     private Tile[,] tiles;
+
     // Dimensiones del tablero
     private Vector2Int tabSize;
+
     // Struct auxiliar con la información del nivel actual
     private Level currLevel;
+
     // Lista con los movimientos de cada uno de los flujos
     private List<FlowMovements> cMovements = new List<FlowMovements>();
+
     // Contador de movimientos
     private int currMovs;
 
     private LevelManager levelManager;
+
     #region Inits
 
     //  Setea al board y activa el puntero
@@ -69,10 +79,11 @@ public class BoardManager : MonoBehaviour
         currTheme = theme;
         currHints = numHints;
         levelManager = lvlMan;
-        
+
         InitTab(hudRegion);
         InitData();
     }
+
     /// <summary>
     /// Inicializa el nivel actual
     /// </summary>
@@ -92,6 +103,7 @@ public class BoardManager : MonoBehaviour
                 tiles[i, j].transform.position = initPos;
                 initPos.x += 1;
             }
+
             initPos.x = 0;
             initPos.y -= 1;
         }
@@ -113,7 +125,7 @@ public class BoardManager : MonoBehaviour
         // Conversión a la proporción
         hudOffsetY /= cam.pixelHeight;
 
-        camH *= (1 - hudOffsetY - 0.05f);    // 0.05f de margen
+        camH *= (1 - hudOffsetY - 0.05f); // 0.05f de margen
         float tileH = camH / tabSize.y;
         float tileW = camW / tabSize.x;
 
@@ -152,7 +164,7 @@ public class BoardManager : MonoBehaviour
     /// </summary>
     private void InitData()
     {
-        lastColorMove = (int)Tile.TILE_COLOR.NONE;
+        lastColorMove = (int) Tile.TILE_COLOR.NONE;
 
         // Calculos para el porcentaje del nivel
         plusPercentage = 100.0f / ((tabSize.x * tabSize.y) - currLevel.numFlow - currLevel.gaps.Count);
@@ -172,13 +184,14 @@ public class BoardManager : MonoBehaviour
         {
             //Cabeza de la tuberia
             float firstElemt = currLevel.solutions[i][0];
-            int filaA = (int)((firstElemt + 1) / currLevel.numBoardX);
-            int colA = (int)((firstElemt + 1) % currLevel.numBoardX) - 1;
+            int filaA = (int) ((firstElemt + 1) / currLevel.numBoardX);
+            int colA = (int) ((firstElemt + 1) % currLevel.numBoardX) - 1;
             if (colA < 0)
             {
                 colA = currLevel.numBoardX - 1;
                 filaA -= 1;
             }
+
             //print("colA: " + colA + " filaA: " + filaA);
             tiles[filaA, colA].InitTile(i, currTheme[i], colA, filaA);
             circleTiles.Add(tiles[filaA, colA]);
@@ -189,13 +202,14 @@ public class BoardManager : MonoBehaviour
 
             //Final de la tuberia
             float secElement = currLevel.solutions[i][currLevel.solutions[i].Count - 1];
-            int filaB = (int)((secElement + 1) / currLevel.numBoardX);
-            int colB = (int)((secElement + 1) % currLevel.numBoardX) - 1;
+            int filaB = (int) ((secElement + 1) / currLevel.numBoardX);
+            int colB = (int) ((secElement + 1) % currLevel.numBoardX) - 1;
             if (colB < 0)
             {
                 colB = currLevel.numBoardX - 1;
                 filaB -= 1;
             }
+
             tiles[filaB, colB].InitTile(i, currTheme[i], colB, filaB);
             circleTiles.Add(tiles[filaB, colB]);
         }
@@ -212,21 +226,22 @@ public class BoardManager : MonoBehaviour
             int firstElemt = currLevel.walls[i][0];
             int secElemt = currLevel.walls[i][1];
 
-            int fila = (int)((firstElemt + 1) / currLevel.numBoardX);
-            int colm = (int)((firstElemt + 1) % currLevel.numBoardX) - 1;
+            int fila = (int) ((firstElemt + 1) / currLevel.numBoardX);
+            int colm = (int) ((firstElemt + 1) % currLevel.numBoardX) - 1;
             if (colm < 0)
             {
                 colm = currLevel.numBoardX - 1;
                 fila -= 1;
             }
+
             //Encontramos en que direccion se encuentra el muro respecto a firstElemt
-            if (firstElemt > secElemt + 1)          //Muro encima
+            if (firstElemt > secElemt + 1) //Muro encima
                 tiles[fila, colm].ActiveWall(0);
-            else if (firstElemt == secElemt + 1)    //Muro a la derecha
+            else if (firstElemt == secElemt + 1) //Muro a la derecha
                 tiles[fila, colm].ActiveWall(1);
-            else if (firstElemt < secElemt - 1)     //Muro debajo
+            else if (firstElemt < secElemt - 1) //Muro debajo
                 tiles[fila, colm].ActiveWall(2);
-            else if (firstElemt == secElemt - 1)    //Muro a la izquierda
+            else if (firstElemt == secElemt - 1) //Muro a la izquierda
                 tiles[fila, colm].ActiveWall(3);
 
             wallTiles.Add(tiles[fila, colm]);
@@ -242,18 +257,21 @@ public class BoardManager : MonoBehaviour
                 if (!tiles[0, i].GetEmpty())
                     tiles[0, i].ActiveWall(0);
             }
+
             //Ultima columna del tablero → muro por la derecha
             for (int i = 0; i < currLevel.numBoardY; ++i)
             {
                 if (!tiles[i, currLevel.numBoardX - 1].GetEmpty())
                     tiles[i, currLevel.numBoardX - 1].ActiveWall(1);
             }
+
             //Ultima fila del tablero → muro por debajo
             for (int i = 0; i < currLevel.numBoardX; ++i)
             {
                 if (!tiles[currLevel.numBoardY - 1, i].GetEmpty())
                     tiles[currLevel.numBoardY - 1, i].ActiveWall(2);
             }
+
             //Primera columna del tablero → muro por la izquierda
             for (int i = 0; i < currLevel.numBoardY; ++i)
             {
@@ -278,6 +296,7 @@ public class BoardManager : MonoBehaviour
                 colm = currLevel.numBoardX - 1;
                 fila -= 1;
             }
+
             tiles[fila, colm].InitEmptyTile();
         }
 
@@ -292,21 +311,23 @@ public class BoardManager : MonoBehaviour
                 fila -= 1;
             }
 
-            if (fila > 0 && !tiles[fila - 1, colm].GetEmpty())          //Muro encima
+            if (fila > 0 && !tiles[fila - 1, colm].GetEmpty()) //Muro encima
                 tiles[fila, colm].ActiveWall(0);
-            if (colm < currLevel.numBoardX - 1 && !tiles[fila, colm + 1].GetEmpty())    //Muro a la derecha
+            if (colm < currLevel.numBoardX - 1 && !tiles[fila, colm + 1].GetEmpty()) //Muro a la derecha
                 tiles[fila, colm].ActiveWall(1);
-            if (fila < currLevel.numBoardY - 1 && !tiles[fila + 1, colm].GetEmpty())     //Muro debajo
+            if (fila < currLevel.numBoardY - 1 && !tiles[fila + 1, colm].GetEmpty()) //Muro debajo
                 tiles[fila, colm].ActiveWall(2);
-            if (colm > 0 && !tiles[fila, colm - 1].GetEmpty())    //Muro a la izquierda
+            if (colm > 0 && !tiles[fila, colm - 1].GetEmpty()) //Muro a la izquierda
                 tiles[fila, colm].ActiveWall(3);
         }
     }
+
     #endregion
-    
+
     public void Update()
     {
-        if (!editable) {
+        if (!editable)
+        {
             return;
         }
 #if UNITY_EDITOR
@@ -331,7 +352,6 @@ public class BoardManager : MonoBehaviour
             DrawCirclePointer(Input.mousePosition);
         }
 #elif UNITY_ANDROID
-
         for (int i = 0; i < Input.touchCount; i++)
         {
             //  Toque empieza            
@@ -355,6 +375,7 @@ public class BoardManager : MonoBehaviour
     }
 
     #region InputLogic
+
     /// <summary>
     /// Lógica que procesa el toque en pantalla
     /// </summary>
@@ -371,7 +392,7 @@ public class BoardManager : MonoBehaviour
 
                 //Solo hacemos algo si hemos tocado un tile que no esté vacío
                 int c = currTile.GetTileColor();
-                if (c != (int)Tile.TILE_COLOR.NONE)
+                if (c != (int) Tile.TILE_COLOR.NONE)
                 {
                     ProcessTileDown(c);
                 }
@@ -395,8 +416,8 @@ public class BoardManager : MonoBehaviour
             {
                 //  Buscamos el tile entre todas las tiles
                 var dragedTile = GetTileOnCollision(touchRect); // Tile actual recibido por el input
-                int c = currTile.GetTileColor();    // Anterior tile pulsado
-                if (c == (int)Tile.TILE_COLOR.NONE || !AreNeighbour(c, dragedTile.Value.x, dragedTile.Value.y))
+                int c = currTile.GetTileColor(); // Anterior tile pulsado
+                if (c == (int) Tile.TILE_COLOR.NONE || !AreNeighbour(c, dragedTile.Value.x, dragedTile.Value.y))
                 {
                     return;
                 }
@@ -404,7 +425,8 @@ public class BoardManager : MonoBehaviour
                 else if (dragedTile.Key != null && dragedTile.Key != currTile)
                 {
                     // Dirección entre el nuevo tile y el anterior
-                    Vector2 dir = (dragedTile.Key.GetLogicRect().position - currTile.GetLogicRect().position).normalized;
+                    Vector2 dir = (dragedTile.Key.GetLogicRect().position - currTile.GetLogicRect().position)
+                        .normalized;
 
                     //Comprobamos si hace colisión con un muro, en cuyo caso salimos sin hacer nada
                     if (dragedTile.Key.WallCollision(-dir) || currTile.WallCollision(dir))
@@ -425,7 +447,7 @@ public class BoardManager : MonoBehaviour
                             BackFlowPath(dragedTile, c);
                         }
                         // Corte de tubería
-                        else if (dragedTile.Key.GetTileColor() != (int)Tile.TILE_COLOR.NONE)
+                        else if (dragedTile.Key.GetTileColor() != (int) Tile.TILE_COLOR.NONE)
                         {
                             CutFlow(dragedTile);
 
@@ -453,7 +475,7 @@ public class BoardManager : MonoBehaviour
                         currTile = dragedTile.Key;
                     }
 
-                    levelManager.UpdatePercentage((int)Math.Round(percentage));
+                    levelManager.UpdatePercentage((int) Math.Round(percentage));
                     cMovements[c].DrawPath(FlowMovements.PathType.CURR_PATH);
                 }
             }
@@ -468,11 +490,12 @@ public class BoardManager : MonoBehaviour
         if (currTile != null)
         {
             int c = currTile.GetTileColor();
-            if (c == (int)Tile.TILE_COLOR.NONE)
+            if (c == (int) Tile.TILE_COLOR.NONE)
             {
                 currTile = null;
                 return;
             }
+
             connectedFlows = 0;
             for (int i = 0; i < cMovements.Count; ++i)
                 ApplyMovements(i);
@@ -504,7 +527,7 @@ public class BoardManager : MonoBehaviour
         if (IsSolution())
         {
             bool perfect = currMovs == currLevel.numFlow;
-            levelManager.AddSolutionLevel(perfect, currMovs, currLevel.numFlow);
+            levelManager.AddSolutionLevel(currMovs, currLevel.numFlow);
             levelManager.LevelCompleted(perfect);
         }
 
@@ -536,7 +559,8 @@ public class BoardManager : MonoBehaviour
             p = cMovements[tileColor].ClearUntilTile(cMovements[tileColor].GetCurrentMoves()[0]) - 1;
         }
         // En caso de que se pulse un tile del flujo que no sea un círculo y que sea distinto al último que se guardó
-        else if (!currTile.CircleActive() && currTile != cMovements[tileColor].GetCurrentMoves()[cMovements[tileColor].GetCurrentMoves().Count - 1])
+        else if (!currTile.CircleActive() && currTile !=
+                 cMovements[tileColor].GetCurrentMoves()[cMovements[tileColor].GetCurrentMoves().Count - 1])
         {
             if (cMovements[tileColor].IsConected())
             {
@@ -548,7 +572,7 @@ public class BoardManager : MonoBehaviour
 
         // Se actualiza el porcentaje
         percentage -= p > 0 ? plusPercentage * p : 0;
-        levelManager.UpdatePercentage((int)Mathf.Round(percentage));
+        levelManager.UpdatePercentage((int) Mathf.Round(percentage));
 
         // Se actualiza el tile actual pulsado
         currTile.SetTileColor(tileColor);
@@ -685,7 +709,6 @@ public class BoardManager : MonoBehaviour
                 p = cMovements[cM].ClearUntilTile(dragedTile.Key);
 
             percentage -= plusPercentage * p;
-
         }
         //Si la tubería no estaba completa se recortará directamente
         else
@@ -705,9 +728,11 @@ public class BoardManager : MonoBehaviour
 
         dragedTile.Key.ActiveBgColor(true, currTheme[cM]);
     }
+
     #endregion
 
     #region Getters
+
     /// <summary>
     /// Determina si la casilla que se está pulsando y la vecina son "juagbles"
     /// </summary>
@@ -763,6 +788,7 @@ public class BoardManager : MonoBehaviour
             x = currLevel.numBoardX - 1;
             y -= 1;
         }
+
         return new Vector2Int(x, y);
     }
 
@@ -796,65 +822,70 @@ public class BoardManager : MonoBehaviour
                 }
             }
         }
-        return new KeyValuePair<Tile, Vector2Int>(tile, !collisionDetected ? new Vector2Int(-1, -1) : new Vector2Int(x, y));
+
+        return new KeyValuePair<Tile, Vector2Int>(tile,
+            !collisionDetected ? new Vector2Int(-1, -1) : new Vector2Int(x, y));
     }
+
     #endregion
 
     #region Otros
+
     /// <summary>
     /// Procesa una pista: une dos tuberías que no esten ya resueltas
     /// </summary>
     public void GiveHint()
     {
-        if (currHints > 0)
+        if (currHints <= 0 || !editable) return;
+
+        // Buscamos qué elementos no están conectados como posibles candidatos a pista
+        var movs = new List<int>();
+        int cont = 0;
+
+        foreach (var cM in cMovements)
         {
-            // Buscamos qué elementos no están conectados como posibles candidatos a pista
-            List<int> movs = new List<int>();
-            int cont = 0;
-            foreach (FlowMovements cM in cMovements)
+            if (!cM.IsConected())
             {
-                if (!cM.IsConected())
-                {
-                    int cl = cM.GetFlowColor();
-                    if (cl != -1)
-                        movs.Add(cont);
-                }
-                cont++;
+                int cl = cM.GetFlowColor();
+                if (cl != -1)
+                    movs.Add(cont);
             }
-            // Elegimos aleatoriamente uno
-            if (movs.Count > 0)
+
+            cont++;
+        }
+
+        // Elegimos aleatoriamente uno
+        if (movs.Count <= 0) return;
+        
+        int elc = UnityEngine.Random.Range(0, movs.Count - 1);
+        int choice = movs[elc];
+        var d = cMovements[choice];
+        cMovements[choice] = d;
+        cMovements[choice].isHint = true;
+
+        List<int> currSolution = currLevel.solutions[choice];
+
+        for (int i = 0; i < currSolution.Count; i++)
+        {
+            Vector2Int index = ConvertIndex(currSolution[i]);
+            Tile tile = tiles[index.y, index.x];
+            if (tile.CircleActive() && i == 0)
             {
-                int elc = UnityEngine.Random.Range(0, movs.Count - 1);
-                int choice = movs[elc];
-                var d = cMovements[choice];
-                cMovements[choice] = d;
-                cMovements[choice].isHint = true;
-
-                List<int> currSolution = currLevel.solutions[choice];
-
-                for (int i = 0; i < currSolution.Count; i++)
-                {
-                    Vector2Int index = ConvertIndex(currSolution[i]);
-                    Tile tile = tiles[index.y, index.x];
-                    if (tile.CircleActive() && i == 0)
-                    {
-                        InputDown(tile.GetLogicRect().center);
-                        tile.ActiveStar(true);
-                    }
-                    else if (i == currSolution.Count - 1)
-                    {
-                        InputMoving(tile.GetLogicRect().center);
-                        tile.ActiveStar(true);
-                    }
-                    else
-                    {
-                        InputMoving(tile.GetLogicRect().center);
-                    }
-                }
-
-                levelManager.UpdateHints();
+                InputDown(tile.GetLogicRect().center);
+                tile.ActiveStar(true);
+            }
+            else if (i == currSolution.Count - 1)
+            {
+                InputMoving(tile.GetLogicRect().center);
+                tile.ActiveStar(true);
+            }
+            else
+            {
+                InputMoving(tile.GetLogicRect().center);
             }
         }
+
+        levelManager.UpdateHints();
     }
 
     /// <summary>
@@ -864,7 +895,7 @@ public class BoardManager : MonoBehaviour
     /// </summary>
     private void DrawCirclePointer(Vector2 inputPos)
     {
-        if (currTile != null && currTile.GetTileColor() != (int)Tile.TILE_COLOR.NONE)
+        if (currTile != null && currTile.GetTileColor() != (int) Tile.TILE_COLOR.NONE)
         {
             inputTile.GetCircleRender().enabled = true;
             Vector2 pos = Camera.main.ScreenToWorldPoint(inputPos);
@@ -916,11 +947,12 @@ public class BoardManager : MonoBehaviour
         }
 
         cMovements[c].UndoMovements(ref percentage, plusPercentage);
-        levelManager.UpdatePercentage((int)Math.Round(percentage));
+        levelManager.UpdatePercentage((int) Math.Round(percentage));
         levelManager.UpdateUndoButtonBehaviour(false);
     }
 
-    public void SetEditable(bool edit) {
+    public void SetEditable(bool edit)
+    {
         editable = edit;
     }
 

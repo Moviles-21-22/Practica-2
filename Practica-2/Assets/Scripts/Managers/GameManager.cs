@@ -11,14 +11,16 @@ public class GameManager : MonoBehaviour
     [Serializable]
     public enum SceneOrder
     {
-        MAIN_MENU = 0,
-        SHOP = 1,
-        GAME_SCENE = 2
+        INIT_SCENE = 0,
+        MAIN_MENU = 1,
+        SHOP = 2,
+        GAME_SCENE = 3
     }
 
     [Serializable]
     public struct LevelPackData
     {
+        public string name;
         public int completedLevels;
         public Levels[] levelsInfo;
     }
@@ -33,7 +35,7 @@ public class GameManager : MonoBehaviour
     [Serializable]
     public class ThemeData
     {
-        public string colorPackName;
+        public string name;
         public List<Color> colors;
         public bool isCurrTheme;
         public bool unlocked;
@@ -51,12 +53,6 @@ public class GameManager : MonoBehaviour
     [Tooltip("Referencia al LevelManager")]
     public LevelManager levelManager;
 
-//-------------------------------------------ATRIBUTOS-EDITOR---------------------------------------------------------//
-
-    [Tooltip("Tema inicial por defecto")] [SerializeField]
-    private ColorPack defaultTheme;
-
-    [SerializeField] private bool useDefaultTheme;
 //------------------------------------------ATRIBUTOS-PRIVADOS--------------------------------------------------------//
 
     /// <summary>
@@ -75,26 +71,41 @@ public class GameManager : MonoBehaviour
     private LevelPackData currPack;
 
     private CategoryData currCat;
-    
+
     /// <summary>
     /// Actual tema escogido
     /// </summary>
     private ThemeData currTheme;
 
-    //  Actual nivel en juego
+    /// <summary>
+    /// Actual nivel del juego
+    /// </summary>
     private Level currLevel;
 
     //  Actual pack cargado
+    /// <summary>
+    /// Actual pack cargado
+    /// </summary>
     private Map currMap;
 
-    //  Numero de pistas disponibles
+    /// <summary>
+    /// Número de pistas disponibles
+    /// </summary>
     private int numHints;
 
-    //  Tiene premium el jugador
+    /// <summary>
+    /// Premium del jugador
+    /// </summary>
     private bool isPremium;
 
+    /// <summary>
+    /// Datos cargados actuales
+    /// </summary>
     private DataToSave currData;
 
+    /// <summary>
+    /// Determina si ya se han cargado los datos
+    /// </summary>
     private bool isDataLoaded;
 //--------------------------------------------------------------------------------------------------------------------//
 
@@ -134,7 +145,7 @@ public class GameManager : MonoBehaviour
                 mainMenu.Init();
             // ShopScene
             if (shop)
-                shop.Init(themesData, currTheme, numHints);
+                shop.Init(themesData, currTheme, numHints, true);
             // GameScene
             if (levelManager)
                 levelManager.Init(currMap, currLevel, currPack, currTheme.colors, numHints);
@@ -160,6 +171,13 @@ public class GameManager : MonoBehaviour
 
 //--------------------------------------------GESTION-LOAD-SAVE-------------------------------------------------------//
 
+    /// <summary>
+    /// Carga los datos del juego. Si hay datos guardados, se cargarán esos, sino
+    /// se crearán los datos por defecto.
+    /// </summary>
+    /// <param name="categories">Lista de categorías base para crear datos por defecto</param>
+    /// <param name="themes">Lista de temeas base para crear datos por defecto</param>
+    /// <param name="reload">Determina si se recrgan los datos guardados o no</param>
     public void LoadData(List<Category> categories, List<ColorPack> themes, bool reload)
     {
         if (isDataLoaded)
@@ -183,102 +201,7 @@ public class GameManager : MonoBehaviour
             break;
         }
 
-        //LoadCategoryData(defaultPack);
-        //LoadThemesData();
         isDataLoaded = true;
-    }
-
-    private void LoadThemesData()
-    {
-        //TODO
-        // var themeData = objToLoad.GetThemes();
-        // int numThemes = themeData.Length;
-        //
-        // for (int i = 0; i < numThemes; i++)
-        // {
-        //     colorThemes[i].active = themeData[i].unlocked;
-        //     DataManager.DebugLogs("Skin " + colorThemes[i].colorPackName + " cargada correctamente");
-        // }
-        //
-        // if (colorThemes == null)
-        //     DataManager.DebugLogs("No puedo cargar las skins en el gameManager");
-        // else
-        // {
-        //     var currThemeIndex = objToLoad.GetCurrentTheme();
-        //     currTheme = colorThemes[currThemeIndex];
-        // }
-        //
-        // isDataLoaded = true;
-    }
-
-    /// <summary>
-    /// Carga los datos de las categorías
-    /// </summary>
-    /// <param name="defaultPack"></param>
-    private void LoadCategoryData(bool defaultPack)
-    {
-        //TODO
-        // DataManager.DebugLogs("Empezamos a cargar los datos...");
-        //
-        // categories = currData.GetCategories();
-        // int numCats = categories.Count;
-        // for (int i = 0; i < numCats; i++)
-        // {
-        //     // Paquetes de niveles
-        //     int numLevelPacks = categories[i].levels.Length;
-        //     var levelPack = categories[i].levels;
-        //     LoadLevelPacksData(categories, i, numLevelPacks, levelPack, defaultPack);
-        // }
-        //
-        // DataManager.DebugLogs("Datos cargados...");
-        // isDataLoaded = true;
-    }
-
-    private void LoadLevelPacksData(List<CategoryData> categories, int iCat,
-        int numLevelPacks, LevelPackData[] levelPack, bool defaultPack)
-    {
-        //TODO
-        // for (int j = 0; j < numLevelPacks; j++)
-        // {
-        //     // 1. Número de niveles completos
-        //     categories[iCat].levels[j].completedLevels = levelPack[j].completedLevels;
-        //
-        //     // 2. Información de los niveles
-        //     int numLevels = levelPack[j].levelsInfo.Length;
-        //     for (int k = 0; k < numLevels; k++)
-        //     {
-        //         // 2.1 Records de cada uno de los niveles
-        //         categories[iCat].levels[j].levelsInfo[k].record = levelPack[j].levelsInfo[k].record;
-        //         // 2.2 Información de los niveles
-        //         categories[iCat].levels[j].levelsInfo[k].state = levelPack[j].levelsInfo[k].state;
-        //     }
-        // }
-    }
-
-    private void LoadDefaultLevelPack(LevelPack levelPack)
-    {
-        if (!levelPack)
-        {
-            Debug.LogError("No se ha asignado ningún paquete por defecto");
-        }
-        else
-        {
-            currPack = new LevelPackData
-            {
-                completedLevels = levelPack.completedLevels
-            };
-
-            int numLevels = levelPack.levelsInfo.Length;
-            currPack.levelsInfo = new Levels[numLevels];
-            for (int i = 0; i < numLevels; i++)
-            {
-                currPack.levelsInfo[i] = new Levels
-                {
-                    record = levelPack.levelsInfo[i].record,
-                    state = levelPack.levelsInfo[i].state
-                };
-            }
-        }
     }
 
     /// <summary>
@@ -288,7 +211,7 @@ public class GameManager : MonoBehaviour
     /// <param name="levelPack">Paquete de niveles que se usará por defecto</param>
     public void LoadLevel(int lvl, LevelPack levelPack)
     {
-        currPack = currCat.levels[lvl];
+        currPack.name = levelPack.name;
         currMap = new Map(levelPack.txt.text);
         if (lvl < 0 || lvl >= currMap.NumLevels())
             lvl = 0;
@@ -301,7 +224,17 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void SaveGame()
     {
-        //DataManager.Save(numHints, isPremium, categories, colorThemes, currTheme);
+        if (currData == null)
+        {
+            Debug.LogError("La escena se ha inicializado desde la propia tienda.\n" +
+                           "No se pueden guardar los datos\n" +
+                           "Para poder guardar los datos, vuelve al MainMenu para que se carguen" +
+                           " los datos correctamente");
+            return;
+        }
+
+        currData.SetNewData(numHints, isPremium, categoriesData, themesData);
+        DataManager.Save(currData);
     }
 
     /// <summary>
@@ -330,66 +263,65 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Añade una solución de nivel del paquete actual
     /// </summary>
-    /// <param name="perfect">Determinas si el nivel es perfecto o no</param>
-    /// <param name="movs">Número de movimientos para superar el nivel</param>
+    /// <param name="numMovs">Número de movimientos para superar el nivel</param>
     /// <param name="numFlows">Numero de flujos del nivel</param>
-    public void AddSolutionLevel(bool perfect, int movs, int numFlows)
+    public void AddSolutionLevel(int numMovs, int numFlows)
     {
-        //TODO
-        // bool saved = false;
-        // int i = 0;
-        // int j = 0;
-        // // De momento así, pero es mejorable
-        // while (!saved && i < categories.Count)
-        // {
-        //     if (categories[i].name == currCategory.name)
-        //     {
-        //         while (!saved && j < categories[i].levels.Length)
-        //         {
-        //             if (categories[i].levels[j].name == currPack.name)
-        //             {
-        //                 saved = true;
-        //
-        //                 // Cuando ya se ha completado el nivel no hace falta esto
-        //                 var currState = categories[i].levels[j].levelsInfo[currLevel.lvl].state;
-        //
-        //                 // Se añade un nivel completado al paquete
-        //                 if (currState == Levels.LevelState.UNCOMPLETED)
-        //                 {
-        //                     categories[i].levels[j].completedLevels++;
-        //                 }
-        //
-        //                 // Se asigna el nivel como perfeto o completo
-        //                 categories[i].levels[j].levelsInfo[currLevel.lvl].state = movs == numFlows
-        //                     ? Levels.LevelState.PERFECT
-        //                     : Levels.LevelState.COMPLETED;
-        //
-        //                 // Se actualiza el record
-        //                 var record = categories[i].levels[j].levelsInfo[currLevel.lvl].record;
-        //                 categories[i].levels[j].levelsInfo[currLevel.lvl].record =
-        //                     record <= movs && record != 0 ? record : movs;
-        //
-        //                 // El nivel actual se ha completado
-        //                 SaveGame();
-        //             }
-        //
-        //             j++;
-        //         }
-        //     }
-        //
-        //     i++;
-        // }
+        bool saved = false;
+        int i = 0;
+        int j = 0;
+        // De momento así, pero es mejorable
+        int numCats = categoriesData.Count;
+        while (!saved && i < numCats)
+        {
+            if (categoriesData[i] == currCat)
+            {
+                while (!saved && j < categoriesData[i].levels.Length)
+                {
+                    if (categoriesData[i].levels[j].name == currPack.name)
+                    {
+                        saved = true;
+
+                        // Cuando ya se ha completado el nivel no hace falta esto
+                        var currState = categoriesData[i].levels[j].levelsInfo[currLevel.lvl].state;
+
+                        // Se añade un nivel completado al paquete
+                        if (currState == Levels.LevelState.UNCOMPLETED)
+                        {
+                            categoriesData[i].levels[j].completedLevels++;
+                        }
+
+                        // Se asigna el nivel como perfeto o completo
+                        categoriesData[i].levels[j].levelsInfo[currLevel.lvl].state = numMovs == numFlows
+                            ? Levels.LevelState.PERFECT
+                            : Levels.LevelState.COMPLETED;
+
+                        // Se actualiza el record
+                        var record = categoriesData[i].levels[j].levelsInfo[currLevel.lvl].record;
+                        categoriesData[i].levels[j].levelsInfo[currLevel.lvl].record =
+                            record <= numMovs && record != 0 ? record : numMovs;
+
+                        // El nivel actual se ha completado
+                        SaveGame();
+                    }
+
+                    j++;
+                }
+            }
+
+            i++;
+        }
     }
 
     /// <summary>
     /// Desbloquea un tema
     /// </summary>
     /// <param name="t">El tema a desbloquear</param>
-    public void UnlockTheme(ThemeData t)
+    public void UnlockTheme(int t)
     {
-        var theme = themesData[themesData.IndexOf(t)];
+        var theme = themesData[t];
         theme.unlocked = true;
-        SetTheme(theme);
+        SetTheme(t);
     }
 
     /// <summary>
@@ -433,9 +365,12 @@ public class GameManager : MonoBehaviour
     /// Cambia el tema
     /// </summary>
     /// <param name="t">El tema a cambiar</param>
-    public void SetTheme(ThemeData t)
+    public void SetTheme(int t)
     {
-        currTheme = t;
+        // El anterior se suelta
+        currTheme.isCurrTheme = false;
+        // Se pone el nuevo
+        currTheme = themesData[t];
         currTheme.isCurrTheme = true;
         SaveGame();
     }
@@ -449,7 +384,7 @@ public class GameManager : MonoBehaviour
         currLevel = currMap.GetLevel(lvl);
         LoadScene((int) SceneOrder.GAME_SCENE);
     }
-    
+
     /// <summary>
     /// Devuelve los colores del tema actual
     /// </summary>
@@ -467,5 +402,13 @@ public class GameManager : MonoBehaviour
     /// Devuelve el status de premium
     /// </summary>
     /// <returns></returns>
-    public bool IsPlayerPremium() { return isPremium; }
+    public bool IsPlayerPremium()
+    {
+        return isPremium;
+    }
+
+    public int GetHints()
+    {
+        return numHints;
+    }
 }

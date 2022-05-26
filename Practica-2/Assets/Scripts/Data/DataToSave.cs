@@ -73,20 +73,22 @@ public class DataToSave
         {
             categoriesList[i].levels[j] = new GameManager.LevelPackData
             {
-                // 1. Número de niveles completos
+                // 1. Nombre del paquete
+                name = levelPack[j].name,
+                // 2. Número de niveles completos
                 completedLevels = levelPack[j].completedLevels
             };
-            
-            // 2. Información de los niveles
+
+            // 3. Información de los niveles
             int numLevels = levelPack[j].levelsInfo.Length;
             categoriesList[i].levels[j].levelsInfo = new Levels[numLevels];
             for (int k = 0; k < numLevels; k++)
             {
-                // 2.1 Records de cada uno de los niveles
                 categoriesList[i].levels[j].levelsInfo[k] = new Levels
                 {
+                    // 3.1 Records de cada uno de los niveles
                     record = levelPack[j].levelsInfo[k].record,
-                    // 2.2 Información de los niveles
+                    // 3.2 Información de los niveles
                     state = levelPack[j].levelsInfo[k].state
                 };
             }
@@ -106,9 +108,10 @@ public class DataToSave
         {
             themesList.Add(new GameManager.ThemeData
             {
+                name = themes[i].name,
                 isCurrTheme = themes[i] == lastTheme,
                 // Estado del tema
-                unlocked = themes[i].active
+                unlocked = themes[i].unlocked
             });
             int numColors = themes[i].colors.Count;
             themesList[i].colors = new List<Color>();
@@ -165,19 +168,21 @@ public class DataToSave
         {
             categoriesList[i].levels[j] = new GameManager.LevelPackData
             {
-                // 1. Número de niveles completos
+                // 1. Nombre del paquete
+                name = levelPack[j].name,
+                // 2. Número de niveles completos
                 completedLevels = levelPack[j].completedLevels
             };
-            // 2. Información de los niveles
+            // 3. Información de los niveles
             int numLevels = levelPack[j].levelsInfo.Length;
             categoriesList[i].levels[j].levelsInfo = new Levels[numLevels];
             for (int k = 0; k < numLevels; k++)
             {
-                // 2.1 Records de cada uno de los niveles
+                // 3.1 Records de cada uno de los niveles
                 categoriesList[i].levels[j].levelsInfo[k] = new Levels
                 {
                     record = levelPack[j].levelsInfo[k].record,
-                    // 2.2 Información de los niveles
+                    // 3.2 Información de los niveles
                     state = levelPack[j].levelsInfo[k].state
                 };
             }
@@ -196,6 +201,7 @@ public class DataToSave
         {
             themesList.Add(new GameManager.ThemeData
             {
+                name = themes[i].name,
                 // Tema actual
                 isCurrTheme = themes[i].isCurrTheme,
                 // Estado del tema
@@ -283,5 +289,15 @@ public class DataToSave
     public void SetHash(string newHash)
     {
         hash = newHash;
+    }
+
+    public void SetNewData(int numHints, bool premium, List<GameManager.CategoryData> categoriesData,
+        List<GameManager.ThemeData> themesData)
+    {
+        currHints = numHints;
+        isPremium = premium;
+        categoriesList = categoriesData;
+        themesList = themesData;
+        hash = null;
     }
 }

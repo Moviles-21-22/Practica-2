@@ -44,18 +44,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainMenu: {fileID: 0}
-  selectLevelGrid: {fileID: 0}
-  categories:
-  - {fileID: 11400000, guid: e0654b64e5519d54b902550dc30109f9, type: 2}
-  - {fileID: 11400000, guid: 14e41d866031a2749b450e0ccabb96af, type: 2}
-  - {fileID: 11400000, guid: ad1975f958b7ef64893a9c5647145511, type: 2}
-  colorThemes:
-  - {fileID: 11400000, guid: 30b3347c126ef954d8d24336c3fde2ce, type: 2}
-  - {fileID: 11400000, guid: c19dc87640dcaf842838d0fbe358843c, type: 2}
-  - {fileID: 11400000, guid: 946ef7b456620c548bd725d0190bd894, type: 2}
-  - {fileID: 11400000, guid: 56572ea752a3c6243b69b2b34fa26c0a, type: 2}
-  - {fileID: 11400000, guid: f0e602a3e3b1b774bad0246bc9bb9aeb, type: 2}
-  - {fileID: 11400000, guid: bd9e5ab2158bd3042870837e7c3f82ef, type: 2}
-  currCategory: {fileID: 0}
-  currPack: {fileID: 0}
-  currTheme: {fileID: 11400000, guid: 30b3347c126ef954d8d24336c3fde2ce, type: 2}
+  shop: {fileID: 0}
+  levelManager: {fileID: 0}
+  defaultTheme: {fileID: 0}
+  useDefaultTheme: 0

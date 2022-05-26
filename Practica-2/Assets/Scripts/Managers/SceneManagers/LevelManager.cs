@@ -32,24 +32,22 @@ public class LevelManager : MonoBehaviour
     private GameManager gm;
     public void Init(Map currMap, Level lvl, GameManager.LevelPackData package, List<Color> theme, int numHints)
     {
-        //TODO:
-        // gm = GameManager.instance;
+        gm = GameManager.instance;
+        
         adsManager.Init();
-        // hud.Init(currMap, lvl, package, numHints, this);
-        // board.Init(lvl, theme, numHints, hudRegion, this);
+
+        hud.Init(currMap, lvl, package, numHints, this);
+        board.Init(lvl, theme, numHints, hudRegion, this);
     }
 
     public void LoadScene(GameManager.SceneOrder scene)
     {
-        // TODO: Pensar en si se podría meter el SaveGame en el LoadScene. ¿Interesa guardar en cada cambio de escena?
-        gm.SaveGame();
         gm.LoadScene((int)scene);
     }
 
     public void BackToSelectLevelScene()
     {
-        //TODO
-        // gm.LoadScene((int) GameManager.SceneOrder.LEVEL_SELECT);
+        gm.LoadScene((int)GameManager.SceneOrder.MAIN_MENU);
     }
 
     public void AddHints(int numOfHints)
@@ -62,13 +60,11 @@ public class LevelManager : MonoBehaviour
         gm.ChangeLevel(level);
     }
 
-    public void AddSolutionLevel(bool perfect, int movements, int numFlows)
+    public void AddSolutionLevel(int movements, int numFlows)
     {
-        gm.AddSolutionLevel(perfect, movements, numFlows);
-    } 
-    
-    
-    
+        gm.AddSolutionLevel(movements, numFlows);
+    }
+
 //-------------------------------------------------UPDATE-HUD---------------------------------------------------------//
     
     public void UpdatePercentage(int percentage)
@@ -99,6 +95,7 @@ public class LevelManager : MonoBehaviour
     public void UpdateHints()
     {
         gm.UseHint();
-        hud.UpdateHintText();
+        var hints = gm.GetHints();
+        hud.UpdateHintText(hints);
     }
 }

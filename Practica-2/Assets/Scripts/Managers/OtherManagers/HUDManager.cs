@@ -81,14 +81,13 @@ public class HUDManager : MonoBehaviour
 
     // Referencia al LevelManager
     private LevelManager lvlMan;
-    
-    
+
     //Mapa del nivel cargado
     private Map map;
     // Numero de pistas disponibles
     private int currHints;
     //Paquete de niveles cargado
-    private LevelPack levelPack;
+    private GameManager.LevelPackData levelPack;
     //Nivel cargado
     private Level currLevel;
     //Variable de tiempo usada para procesar las animaciones
@@ -114,7 +113,7 @@ public class HUDManager : MonoBehaviour
         public Button elementButton;
     }
 
-    public void Init(Map currMap, Level lvl, LevelPack package,  int numHints, LevelManager lvlManager)
+    public void Init(Map currMap, Level lvl, GameManager.LevelPackData package,  int numHints, LevelManager lvlManager)
     {
         lvlMan = lvlManager;
         currHints = numHints;
@@ -128,7 +127,7 @@ public class HUDManager : MonoBehaviour
     /// <summary>
     /// Inicializa los datos generales del juego
     /// </summary>
-    private void InitHudData(Map currMap, Level lvl, LevelPack package)
+    private void InitHudData(Map currMap, Level lvl, GameManager.LevelPackData package)
     {
         map = currMap;
         currLevel = lvl;
@@ -174,7 +173,7 @@ public class HUDManager : MonoBehaviour
         // Proximo nivel
         nextLevelWin.elementButton.onClick.AddListener(() => lvlMan.ChangeLevel(currLevel.lvl + 1));
         addHintsButton.onClick.AddListener(() => lvlMan.AddHints(1));
-        addHintsButton.onClick.AddListener(UpdateHintText);
+        //addHintsButton.onClick.AddListener(UpdateHintText);
     }
 
     /// <summary>
@@ -222,8 +221,9 @@ public class HUDManager : MonoBehaviour
     /// <summary>
     /// Cambia el texto que muestra las pistas en función de las pistas que queden
     /// </summary>
-    public void UpdateHintText()
+    public void UpdateHintText(int numHints)
     {
+        currHints = numHints;
         hints.elementText.text = currHints + "x";
         if (currHints == 0)
         {
@@ -265,7 +265,7 @@ public class HUDManager : MonoBehaviour
 
             // Nos lleva al mainMenu
             nextLevelWin.elementButton.onClick.RemoveAllListeners();
-            nextLevelWin.elementButton.onClick.AddListener(() => lvlMan.LoadScene((int)GameManager.SceneOrder.MAIN_MENU));
+            nextLevelWin.elementButton.onClick.AddListener(() => lvlMan.LoadScene(GameManager.SceneOrder.MAIN_MENU));
             nextLevelWin.elementText.text = "elige el próximo paquete";
         }
 
