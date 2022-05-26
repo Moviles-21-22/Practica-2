@@ -155,10 +155,6 @@ public class HUDManager : MonoBehaviour
                 break;
         }
 
-        //============VOLVER===================//
-        //TODO
-        // backButton.onClick.AddListener(() => lvlMan.LoadScene(GameManager.SceneOrder.LEVEL_SELECT));
-
         //============TABLERO-INFO===================//
         numFlowsText.text = "flujos: " + 0 + "/" + currLevel.numFlow;
         numPasosText.text = "pasos: " + 0;
@@ -186,14 +182,7 @@ public class HUDManager : MonoBehaviour
 
         //============PISTAS===================//
         hints.elementText.text = currHints + "x";
-        if (currHints == 0)
-        {
-            hints.elementImage.sprite = hints.elementSprites[0];
-        }
-        else
-        {
-            hints.elementImage.sprite = hints.elementSprites[1];
-        }
+        hints.elementImage.sprite = currHints == 0 ? hints.elementSprites[0] : hints.elementSprites[1];
 
         //============NIVEL-ANTERIOR===================//
         if (currLevel.lvl == 0)

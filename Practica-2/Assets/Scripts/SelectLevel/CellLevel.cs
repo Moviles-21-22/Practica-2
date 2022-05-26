@@ -1,42 +1,45 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class CellLevel : MonoBehaviour
 {
-    [Tooltip("Referencia al componente Button de la celda")]
-    [SerializeField]
+    [Tooltip("Referencia al componente Button de la celda")] [SerializeField]
     private Button button;
-    [Tooltip("Referencia al componente Text que muestra el número de nivel")]
-    [SerializeField]
+
+    [Tooltip("Referencia al componente Text que muestra el número de nivel")] [SerializeField]
     private Text numText;
-    [Tooltip("Referencia al sprite del fondo de la celda")]
-    [SerializeField]
+
+    [Tooltip("Referencia al sprite del fondo de la celda")] [SerializeField]
     private RawImage background;
 
-    [SerializeField]
-    private RawImage frame;
+    [SerializeField] private RawImage frame;
 
-    [Tooltip("Referencia al sprite del nivel completado")]
-    [SerializeField]
+    [Tooltip("Referencia al sprite del nivel completado")] [SerializeField]
     private RawImage completedImage;
 
-    [Tooltip("Referencia al sprite del nivel completado perfecto")]
-    [SerializeField]
+    [Tooltip("Referencia al sprite del nivel completado perfecto")] [SerializeField]
     private RawImage starImage;
 
-    [Tooltip("Referencia al candado del nivel bloqueado")]
-    [SerializeField]
+    [Tooltip("Referencia al candado del nivel bloqueado")] [SerializeField]
     private RawImage lockImage;
 
     /// <summary>
     /// Color actual del tile
     /// </summary>
     private Color color;
+
+    private Color initTextColor;
+    private Color initFrameColor;
+    private Color initBgColor;
+    
     /// <summary>
     /// Cantidad de alpha que se va a ir aplicando para la animación
     /// </summary>
     private float offsetAlpha = -0.1f;
+
+    private bool currentLevel;
 
     private SelectLevelManager selectLevelManager;
 
@@ -65,6 +68,9 @@ public class CellLevel : MonoBehaviour
         color.a = levelState != Levels.LevelState.UNCOMPLETED ? 1.0f : 0.2f;
         background.color = color;
         frame.color = color;
+        initTextColor = numText.color;
+        initFrameColor = frame.color;
+        initBgColor = background.color;
     }
 
     /// <summary>
@@ -85,11 +91,11 @@ public class CellLevel : MonoBehaviour
     {
         numText.text = num.ToString();
     }
-    
+
     /// <summary>
     /// Activar el candado del bloque
     /// </summary>
-    public void ActiveLockImage() 
+    public void ActiveLockImage()
     {
         var colorAux = background.color;
         colorAux.a = 0.0f;
@@ -106,8 +112,9 @@ public class CellLevel : MonoBehaviour
     /// <summary>
     /// Cambio del nivel actual
     /// </summary>
-    public void CurrentLevel() 
+    public void CurrentLevel()
     {
+        currentLevel = true;
         var colorAux = Color.grey;
         background.color = colorAux;
 
@@ -120,22 +127,37 @@ public class CellLevel : MonoBehaviour
     /// <summary>
     /// Animación del frame brillando del nivel que toca
     /// </summary>
-    private void CurrentLevelAnim() 
+    private void CurrentLevelAnim()
     {
-        if (frame.color.a <= 0.0f) 
+        if (frame.color.a <= 0.0f)
         {
             offsetAlpha = 0.1f;
         }
-        
+
         var colorAux = frame.color;
         colorAux.a += offsetAlpha;
         frame.color = colorAux;
 
-        if (frame.color.a >= 1.0f) 
+        if (frame.color.a >= 1.0f)
         {
             offsetAlpha = -0.1f;
             CancelInvoke(nameof(CurrentLevelAnim));
             InvokeRepeating(nameof(CurrentLevelAnim), 1.0f, 0.1f);
         }
+    }
+
+    public void Reset()
+    {
+        background.color = initBgColor;
+        frame.color = initFrameColor;
+        numText.color = initTextColor;
+        lockImage.enabled = false;
+        completedImage.enabled = false;
+        starImage.enabled = false;
+        
+        if (!currentLevel) return;
+        
+        CancelInvoke();
+        currentLevel = false;
     }
 }

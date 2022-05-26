@@ -181,14 +181,14 @@ public class MainMenuManager : MonoBehaviour
     public void LoadPackage(int indexPack, int indexCat)
     {
         ChangeCanvas();
-        var catData = categoryData[indexCat];
-        var lvlPackData = catData.levels[indexPack];
-        gm.LoadPackage(lvlPackData, catData);
+        gm.LoadPackage(indexPack, indexCat);
 
         // SelectLevelScene
         var category = categories[indexCat];
         var catColor = category.color;
         var lvlPack = category.levels[indexPack];
+        var catData = categoryData[indexCat];
+        var lvlPackData = catData.levels[indexPack];
         selectLevel.Init(lvlPackData, lvlPack, catColor, this);
     }
 

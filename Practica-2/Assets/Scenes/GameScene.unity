@@ -3843,8 +3843,9 @@ MonoBehaviour:
   hudRegion:
   - {fileID: 725060593}
   - {fileID: 882642886}
-  defaultLevel: 0
-  useDefaultLevel: 1
+  defaultTheme: {fileID: 11400000, guid: f0e602a3e3b1b774bad0246bc9bb9aeb, type: 2}
+  defaultPack: {fileID: 11400000, guid: 3c93c9465356ae349b6c8bb479d66001, type: 2}
+  defaultLevel: 6
   adsManager: {fileID: 518470787}
 --- !u!1 &782578794
 GameObject:

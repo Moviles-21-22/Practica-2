@@ -37,7 +37,7 @@ public class SelectLevelManager : MonoBehaviour
     private List<GridPack> gridList;
 
     private LevelPack currPack;
-    
+
     /// <summary>
     /// Inicializa el gestor del SelectLevelScene
     /// </summary>
@@ -96,13 +96,14 @@ public class SelectLevelManager : MonoBehaviour
     /// <summary>
     /// Crea el grid de forma dinámica en función del pack cargado
     /// </summary>
+    /// <param name="lvlPack">Paquete de niveles que se va a usar</param>
     /// <param name="index">Indice del pack</param>
     /// <param name="color">Color del bloque</param>
     private GridPack CreateGrid(LevelPack lvlPack, int index, Color color)
     {
-        GridPack currPack = Instantiate(packPrefab, contentScroll.transform);
-        currPack.SetText(lvlPack.gridNames[index]);
-        CellLevel[] boxes = currPack.GetAllBoxes();
+        GridPack gridPack = Instantiate(packPrefab, contentScroll.transform);
+        gridPack.SetText(lvlPack.gridNames[index]);
+        CellLevel[] boxes = gridPack.GetAllBoxes();
 
         for (int j = 0; j < boxes.Length; j++)
         {
@@ -134,7 +135,7 @@ public class SelectLevelManager : MonoBehaviour
             }
         }
 
-        return currPack;
+        return gridPack;
     }
 
     private void ChangeGridInfo()
@@ -146,6 +147,7 @@ public class SelectLevelManager : MonoBehaviour
             CellLevel[] boxes = pack.GetAllBoxes();
             for (int j = 0; j < boxes.Length; j++)
             {
+                boxes[j].Reset();
                 if (splitLevels)
                 {
                     boxes[j].SetLevelNum(j + 1);
@@ -158,12 +160,20 @@ public class SelectLevelManager : MonoBehaviour
                 var levelState = currLevelPack.levelsInfo[(index * boxes.Length) + j].state;
                 boxes[j].InitBox(colors[index], levelState, this);
 
-                if (lockPack && (index * boxes.Length) + j > completedLevels)
+                if (!lockPack || (lockPack && (index * boxes.Length) + j <= completedLevels))
+                    // Desbloquea los niveles hasta dejar el primero sin desbloquear
+                {
+                    if ((index * boxes.Length) + j == completedLevels)
+                    {
+                        boxes[j].CurrentLevel();
+                    }
+                }
+                else
                 {
                     boxes[j].ActiveLockImage();
                 }
             }
-            
+
             index++;
         }
     }

@@ -19,25 +19,50 @@ public class LevelManager : MonoBehaviour
     [Tooltip("Referencia al BoardManager")] [SerializeField]
     private RectTransform[] hudRegion;
     
+    [Tooltip("Tema que se carga por defecto")]
+    public ColorPack defaultTheme;
+    
+    [Tooltip("Nivel del paquete por defecto")] [SerializeField]
+    private LevelPack defaultPack;
+    
     [Tooltip("Nivel del paquete por defecto")] [SerializeField]
     private int defaultLevel;
-
-    [SerializeField] private bool useDefaultLevel;
-    
 
     [Tooltip("Referencia al adsManager")]
     [SerializeField]
     private AdsManager adsManager;
 
     private GameManager gm;
-    public void Init(Map currMap, Level lvl, GameManager.LevelPackData package, List<Color> theme, int numHints)
+
+    public void Init(Map currMap, Level lvl, GameManager.LevelPackData package,
+        int numHints, List<Color> theme = null, bool useDefaultLevel = false)
     {
         gm = GameManager.instance;
-        
+
         adsManager.Init();
 
-        hud.Init(currMap, lvl, package, numHints, this);
-        board.Init(lvl, theme, numHints, hudRegion, this);
+        if (useDefaultLevel)
+        {
+            gm.LoadLevel(defaultLevel, defaultPack, true);
+            GameManager.LevelPackData defPack = new GameManager.LevelPackData
+            {
+                name = defaultPack.levelName,
+                completedLevels = defaultPack.completedLevels,
+                levelsInfo = defaultPack.levelsInfo
+            };
+            
+            var defMap = gm.GetCurrMap();
+            var defLevel = gm.GetCurrLevel();
+            var defColors = defaultTheme.colors;
+            hud.Init(defMap, defLevel, defPack, numHints, this);
+            board.Init(defLevel, defColors, numHints, hudRegion, this);
+        }
+        else
+        {
+
+            hud.Init(currMap, lvl, package, numHints, this);
+            board.Init(lvl, theme, numHints, hudRegion, this);
+        }
     }
 
     public void LoadScene(GameManager.SceneOrder scene)
@@ -62,6 +87,7 @@ public class LevelManager : MonoBehaviour
 
     public void AddSolutionLevel(int movements, int numFlows)
     {
+        
         gm.AddSolutionLevel(movements, numFlows);
     }
 
