@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class SelectLevelManager : MonoBehaviour
 {
     [Tooltip("Referencia al título del paquete")] [SerializeField]
-    private Text packTitle;
+    private TextMeshProUGUI packTitle;
 
     [Tooltip("Referencia al contenido del scroll")] [SerializeField]
     private RectTransform contentScroll;

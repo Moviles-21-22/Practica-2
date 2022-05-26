@@ -1,10 +1,11 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class CategoryTitle : MonoBehaviour
 {
     [Tooltip("Referencia al texto del titulo")]
-    [SerializeField] private Text titleText;
+    [SerializeField] private TextMeshProUGUI titleText;
 
     [Tooltip("Referencia al sprite colorido de la categoria")]
     [SerializeField] private Image titleSprite;

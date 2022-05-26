@@ -1,5 +1,5 @@
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class GridPack : MonoBehaviour
 {
@@ -7,7 +7,7 @@ public class GridPack : MonoBehaviour
     public CellLevel[] boxs;
 
     [SerializeField]
-    private Text title;
+    private TextMeshProUGUI title;
 
     /// <summary>
     /// Cambia el nombre del pack

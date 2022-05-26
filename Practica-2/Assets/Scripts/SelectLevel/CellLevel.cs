@@ -1,5 +1,4 @@
-using System;
-using System.Diagnostics.CodeAnalysis;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,7 +8,7 @@ public class CellLevel : MonoBehaviour
     private Button button;
 
     [Tooltip("Referencia al componente Text que muestra el número de nivel")] [SerializeField]
-    private Text numText;
+    private TextMeshProUGUI numText;
 
     [Tooltip("Referencia al sprite del fondo de la celda")] [SerializeField]
     private RawImage background;

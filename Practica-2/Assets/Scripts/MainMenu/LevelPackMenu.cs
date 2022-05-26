@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,10 +8,10 @@ public class LevelPackMenu : MonoBehaviour
     [SerializeField] private Button button;
 
     [Tooltip("Referencia al texto del nombre del nivel")]
-    [SerializeField] private Text packName;
+    [SerializeField] private TextMeshProUGUI packName;
 
     [Tooltip("Referencia al texto que muestra los niveles completados")]
-    [SerializeField] private Text levels;
+    [SerializeField] private TextMeshProUGUI levels;
 
     [Tooltip("Referencia al RectTransform del objeto correspondiente")]
     [SerializeField] private RectTransform levelRect;
