@@ -142,6 +142,7 @@ public class MainMenuManager : MonoBehaviour
     /// Inicializa la información de los paquetes de niveles de cada una de las categorías
     /// </summary>
     /// <param name="iCat">Índice de la categoría dentro de la lista de categorías</param>
+    /// <param name="tamFont"></param>
     private void InitLevels(int iCat, float tamFont)
     {
         int numLevels = categoryData[iCat].levels.Length;

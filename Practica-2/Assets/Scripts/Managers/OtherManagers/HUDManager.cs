@@ -146,7 +146,8 @@ public class HUDManager : MonoBehaviour
         //============TABLERO-INFO===================//
         UpdateFlows(0);
         UpdateMovements(0);
-        recordText.text = "récord: " + levelPack.levelsInfo[currLevel.lvl].record;
+        ShowPercentage(0);
+        recordText.text = "récord:\n" + levelPack.levelsInfo[currLevel.lvl].record;
     }
 
     /// <summary>
@@ -221,7 +222,7 @@ public class HUDManager : MonoBehaviour
     /// </summary>
     public void ShowPercentage(int percentage)
     {
-        percentageText.text = "tubería: " + (percentage).ToString() + "%";
+        percentageText.text = "tubería:\n" + percentage + "%";
     }
 
     /// <summary>
@@ -230,7 +231,7 @@ public class HUDManager : MonoBehaviour
     public void UpdateFlows(int flows)
     {
         currentFlows = flows;
-        numFlowsText.text = "flujos: " + currentFlows + "/" + currLevel.numFlow;
+        numFlowsText.text = "flujos:\n" + currentFlows + "/" + currLevel.numFlow;
     }
 
     /// <summary>
@@ -239,7 +240,7 @@ public class HUDManager : MonoBehaviour
     public void UpdateMovements(int movs)
     {
         currentMovs = movs;
-        numPasosText.text = "pasos: " + currentMovs;
+        numPasosText.text = "pasos:\n" + currentMovs;
     }
 
     /// <summary>

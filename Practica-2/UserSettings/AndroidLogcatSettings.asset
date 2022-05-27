@@ -3,7 +3,7 @@
     "m_SelectedPackage": {
         "deviceId": "ec5bb8b3",
         "name": "com.RandomPlayerStudio.FlowFree",
-        "processId": 17101,
+        "processId": 21273,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -54,6 +54,24 @@
             "deviceId": "ec5bb8b3",
             "name": "com.RandomPlayerStudio.FlowFree",
             "processId": 17101,
+            "exited": false
+        },
+        {
+            "deviceId": "ec5bb8b3",
+            "name": "com.RandomPlayerStudio.FlowFree",
+            "processId": 16840,
+            "exited": false
+        },
+        {
+            "deviceId": "ec5bb8b3",
+            "name": "com.RandomPlayerStudio.FlowFree",
+            "processId": 18476,
+            "exited": false
+        },
+        {
+            "deviceId": "ec5bb8b3",
+            "name": "com.RandomPlayerStudio.FlowFree",
+            "processId": 21273,
             "exited": false
         },
         {

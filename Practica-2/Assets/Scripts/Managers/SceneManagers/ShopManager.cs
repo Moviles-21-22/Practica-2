@@ -135,7 +135,7 @@ public class ShopManager : MonoBehaviour
     public struct ThemeFeatures
     {
         public Image selectedImage;
-        public Text themeName;
+        public TextMeshProUGUI themeName;
         public ColorPack theme;
         public List<Image> samples;
     }
