@@ -421,7 +421,7 @@ public class BoardManager : MonoBehaviour
                 int c = currTile.GetTileColor(); // Anterior tile pulsado
 
                 //Comprobamos que mueva alguna tubería y que la tubería no esté ya conectada
-                if (c == (int)Tile.TILE_COLOR.NONE || (currTile.CircleActive() && cMovements[c].GetCurrentMoves().Count > 1))
+                if (c == (int)Tile.TILE_COLOR.NONE)
                 {
                     return;
                 }
@@ -483,12 +483,16 @@ public class BoardManager : MonoBehaviour
                             BackFlowPath(dragedTile, c);
                         }
                         // Corte de tubería
-                        else if (dragedTile.Key.GetTileColor() != (int)Tile.TILE_COLOR.NONE)
+                        else if (dragedTile.Key.GetTileColor() != (int)Tile.TILE_COLOR.NONE && !(currTile.CircleActive() && cMovements[c].GetCurrentMoves().Count > 1))
                         {
                             CutFlow(dragedTile);
 
                             // Se actualiza el porcentaje
                             percentage += plusPercentage;
+                        }
+                        else if (currTile.CircleActive() && cMovements[c].GetCurrentMoves().Count > 1)
+                        {
+                            return;
                         }
                         else
                         {

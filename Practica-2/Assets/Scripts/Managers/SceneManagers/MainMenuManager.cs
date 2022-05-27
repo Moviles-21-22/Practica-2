@@ -109,9 +109,8 @@ public class MainMenuManager : MonoBehaviour
         var pos = contentScroll.position;
         pos.y = 0;
         contentScroll.position = pos;
-
         var tam = categorySection.rect.width / 10;
-        Debug.Log(categorySection.rect.width);
+
         for (var i = 0; i < numCategories; i++)
         {
             var titleGo = Instantiate(catTitlePrefab, categorySection.transform);
