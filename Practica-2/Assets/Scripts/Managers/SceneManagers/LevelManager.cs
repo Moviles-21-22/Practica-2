@@ -16,24 +16,25 @@ public class LevelManager : MonoBehaviour
     [Tooltip("Referencia al BoardManager")] [SerializeField]
     private BoardManager board;
 
+    [Tooltip("Referencia al adsManager")] [SerializeField]
+    private AdsManager adsManager;
+
     [Tooltip("Referencia al BoardManager")] [SerializeField]
     private RectTransform[] hudRegion;
-    
+
     [Tooltip("Tema que se carga por defecto")]
     public ColorPack defaultTheme;
-    
+
     [Tooltip("Nivel del paquete por defecto")] [SerializeField]
     private LevelPack defaultPack;
-    
+
     [Tooltip("Nivel del paquete por defecto")] [SerializeField]
     private int defaultLevel;
 
-    [Tooltip("Referencia al adsManager")]
-    [SerializeField]
-    private AdsManager adsManager;
-
     private GameManager gm;
 
+    private int lastTileColor;
+    
     public void Init(Map currMap, Level lvl, GameManager.LevelPackData package,
         int numHints, List<Color> theme = null, bool useDefaultLevel = false)
     {
@@ -50,33 +51,32 @@ public class LevelManager : MonoBehaviour
                 completedLevels = defaultPack.completedLevels,
                 levelsInfo = defaultPack.levelsInfo
             };
-            
-            var defMap = gm.GetCurrMap();
+
             var defLevel = gm.GetCurrLevel();
             var defColors = defaultTheme.colors;
-            hud.Init(defMap, defLevel, defPack, numHints, this);
+            hud.Init(defLevel, defPack, numHints, this);
             board.Init(defLevel, defColors, numHints, hudRegion, this);
         }
         else
         {
-
-            hud.Init(currMap, lvl, package, numHints, this);
+            hud.Init(lvl, package, numHints, this);
             board.Init(lvl, theme, numHints, hudRegion, this);
         }
     }
 
     public void LoadScene(GameManager.SceneOrder scene)
     {
-        gm.LoadScene((int)scene);
+        gm.LoadScene((int) scene);
     }
 
     public void BackToSelectLevelScene()
     {
-        gm.LoadScene((int)GameManager.SceneOrder.MAIN_MENU);
+        gm.LoadScene((int) GameManager.SceneOrder.MAIN_MENU);
     }
 
     public void AddHints(int numOfHints)
     {
+        AdsManager.PlayAd();
         gm.AddHints(numOfHints);
     }
 
@@ -87,41 +87,72 @@ public class LevelManager : MonoBehaviour
 
     public void AddSolutionLevel(int movements, int numFlows)
     {
-        
         gm.AddSolutionLevel(movements, numFlows);
+        bool perfect = movements == numFlows;
+        LevelCompleted(perfect);
     }
 
 //-------------------------------------------------UPDATE-HUD---------------------------------------------------------//
-    
+
+    /// <summary>
+    /// Actualiza los datos del porcentaje en el hud
+    /// </summary>
+    /// <param name="percentage"></param>
     public void UpdatePercentage(int percentage)
     {
         hud.ShowPercentage(percentage);
     }
 
-    public void UpdateUndoButtonBehaviour(bool active, UnityAction action = null)
+    /// <summary>
+    /// Deshace el último movimiento del tablero
+    /// </summary>
+    public void UndoMovement()
     {
-        hud.UndoButtonBehaviour(active, action);
+        board.UndoMovement(lastTileColor);
     }
 
+    /// <summary>
+    /// Activa el botón de deshacer movimientos
+    /// </summary>
+    public void ActivateUndoButton(int tileColor)
+    {
+        lastTileColor = tileColor;
+        hud.ActivateUndoButton();
+    }
+
+    /// <summary>
+    /// Actualiza el número de flujos conectados en el hud
+    /// </summary>
+    /// <param name="flows">Número de flujos conectados</param>
     public void UpdateFlowsCounter(int flows)
     {
-        hud.ShowFlows(flows);
+        hud.UpdateFlows(flows);
     }
 
+    /// <summary>
+    /// Actualiza el número de movimientos en el hud
+    /// </summary>
+    /// <param name="movements">Número de movimientos</param>
     public void UpdateMovements(int movements)
     {
-        hud.ShowMovements(movements);
+        hud.UpdateMovements(movements);
     }
 
-    public void LevelCompleted(bool isPerfect)
-    {
-        hud.LevelCompleted(isPerfect);
-    }
-
-    public void UpdateHints()
+    /// <summary>
+    /// Le comunica al boardManager que utilice una pista
+    /// </summary>
+    public void UseHint()
     {
         gm.UseHint();
-        var hints = gm.GetHints();
-        hud.UpdateHintText(hints);
+        board.ApplyHint();
+    }
+
+    /// <summary>
+    /// Genera el pop-up del nivel completado en el hud
+    /// </summary>
+    /// <param name="isPerfect">Para saber si el nivel es perfecto</param>
+    private void LevelCompleted(bool isPerfect)
+    {
+        hud.LevelCompleted(isPerfect);
     }
 }

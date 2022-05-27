@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using UnityEngine;
 
 public class BoardManager : MonoBehaviour
@@ -515,7 +516,7 @@ public class BoardManager : MonoBehaviour
                 }
 
                 lastColorMove = c;
-                levelManager.UpdateUndoButtonBehaviour(true, () => UndoMovement(c));
+                levelManager.ActivateUndoButton(lastColorMove);
             }
 
             inputTile.GetCircleRender().enabled = false;
@@ -526,9 +527,7 @@ public class BoardManager : MonoBehaviour
 
         if (IsSolution())
         {
-            bool perfect = currMovs == currLevel.numFlow;
             levelManager.AddSolutionLevel(currMovs, currLevel.numFlow);
-            levelManager.LevelCompleted(perfect);
         }
 
         currTile = null;
@@ -762,15 +761,13 @@ public class BoardManager : MonoBehaviour
             return false;
 
 
-        //Recorremos todas las listas de movimientos
-        foreach (FlowMovements cM in cMovements)
+        // Si hay algún flujo desconectado, se descarta
+        if (cMovements.Any(cM => !cM.IsConected()))
         {
-            //Si el primer elem y el ultimo de una lista no es circulo: no es solución
-            if (!cM.IsConected())
-                return false;
+            return false;
         }
 
-        //Si hemos salido es porque todos los colores tienen la solución
+        // Desactiva el uso del tablero
         editable = false;
         return true;
     }
@@ -832,9 +829,9 @@ public class BoardManager : MonoBehaviour
     #region Otros
 
     /// <summary>
-    /// Procesa una pista: une dos tuberías que no esten ya resueltas
+    /// Aplica una pista: une dos tuberías que no esten ya resueltas
     /// </summary>
-    public void GiveHint()
+    public void ApplyHint()
     {
         if (currHints <= 0 || !editable) return;
 
@@ -863,7 +860,7 @@ public class BoardManager : MonoBehaviour
         cMovements[choice] = d;
         cMovements[choice].isHint = true;
 
-        List<int> currSolution = currLevel.solutions[choice];
+        var currSolution = currLevel.solutions[choice];
 
         for (int i = 0; i < currSolution.Count; i++)
         {
@@ -884,8 +881,6 @@ public class BoardManager : MonoBehaviour
                 InputMoving(tile.GetLogicRect().center);
             }
         }
-
-        levelManager.UpdateHints();
     }
 
     /// <summary>
@@ -939,8 +934,9 @@ public class BoardManager : MonoBehaviour
             levelManager.UpdateFlowsCounter(-1);
         }
 
-        // Actualizar el camino del mismo color que antes no cuenta
-        // como movimiento, por tanto, no hace falta descontarlo
+        // Si el color del movimiento que se deshace es igual al color del último
+        // color usado entonces no hace falta descontar el número de movimientos,
+        // porque no había sumado movimientos entonces
         if (c != lastColorMove)
         {
             currMovs--;
@@ -948,12 +944,6 @@ public class BoardManager : MonoBehaviour
 
         cMovements[c].UndoMovements(ref percentage, plusPercentage);
         levelManager.UpdatePercentage((int) Math.Round(percentage));
-        levelManager.UpdateUndoButtonBehaviour(false);
-    }
-
-    public void SetEditable(bool edit)
-    {
-        editable = edit;
     }
 
     #endregion

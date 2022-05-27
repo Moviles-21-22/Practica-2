@@ -74,9 +74,9 @@ public class AdsManager : MonoBehaviour, IUnityAdsInitializationListener, IUnity
     /// <summary>
     /// Para reproducir un video reward
     /// </summary>
-    public void PlayAd()
+    public static void PlayAd()
     {
-        Advertisement.Load(rewardAndroidUnit, this);
+        Advertisement.Load(instance.rewardAndroidUnit, instance);
     }
 
     public void PlayInterstitial()

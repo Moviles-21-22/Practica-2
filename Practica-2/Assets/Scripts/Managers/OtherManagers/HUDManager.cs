@@ -1,175 +1,151 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 [SuppressMessage("ReSharper", "StringLiteralTypo")]
 public class HUDManager : MonoBehaviour
 {
-    [Tooltip("Referencia al objeto que muestra si el nivel se ha completado")]
-    [SerializeField]
+    [Tooltip("Referencia al objeto que muestra si el nivel se ha completado")] [SerializeField]
     private GameObject winInfo;
 
-    [Tooltip("Referencia a la imagen de la estrella cuando se gana")]
-    [SerializeField]
+    [Tooltip("Referencia a la imagen de la estrella cuando se gana")] [SerializeField]
     private RawImage winStar;
 
-    [Tooltip("Sprites que se usan para el icono de ganar")]
-    [SerializeField]
+    [Tooltip("Sprites que se usan para el icono de ganar")] [SerializeField]
     private Texture[] winSprites;
 
+    [Header("Elementos del hud")]
     [Tooltip("Referencia al objeto que muestra si el nivel se ha completado")]
     [SerializeField]
-    private HUD_Element completedLevelIcon;
+    private HudElement levelTitleElement;
 
-    [Tooltip("Referencia al objeto que se encarga de deshacer movimientos")]
-    [SerializeField]
-    private HUD_Element undoElement;
+    [Tooltip("Referencia al objeto que muestra las pistas")] [SerializeField]
+    private HudElement hints;
 
-    [Tooltip("Referencia al objeto que regresa al nivel anterior")]
-    [SerializeField]
-    private HUD_Element prevLevel;
-
-    [Tooltip("Referencia al objeto que pasa al nivel posterior")]
-    [SerializeField]
-    private HUD_Element nextLevel;
-
-    [Tooltip("Referencia al objeto que muestra las pistas")]
-    [SerializeField]
-    private HUD_Element hints;
-
-    [Tooltip("Referencia al botón de próximo nivel al ganar el juego")]
-    [SerializeField]
-    private HUD_Element nextLevelWin;
-
-    [Header("Textos")]
+    [Header("Elementos del hud - Textos")]
     [Tooltip("Referencia al texto que muestra el nivel actual")]
     [SerializeField]
     private Text numLevelText;
-    [Tooltip("Referencia al texto que muestra el tamaño del grid")]
-    [SerializeField]
-    private Text numFlowsText;
-    [Tooltip("Referencia al texto que muestra el número de movimientos")]
-    [SerializeField]
-    private Text numPasosText;
-    [Tooltip("Referencia al texto que muestra el récord actual")]
-    [SerializeField]
-    private Text recordText;
-    [Tooltip("Referencia al texto que muestra el porcentaje completado")]
-    [SerializeField]
-    private Text percentageText;
-    [Tooltip("Referencia al titulo del texto que se muestra al ganar")]
-    [SerializeField]
+    
+    [Tooltip("Referencia al titulo del texto que se muestra al ganar")] [SerializeField]
     private Text winTitle;
-    [Tooltip("Referencia al texto final que muestra el número de movimientos")]
-    [SerializeField]
+    
+    [Tooltip("Referencia al botón del próximo nivel cuando se gana")] [SerializeField]
+    private Text nextLevelWinText;
+    
+    [Header("Board Info")]
+    [Tooltip("Referencia al texto que el número de flujos conectados")] [SerializeField]
+    private Text numFlowsText;
+
+    [Tooltip("Referencia al texto que muestra el número de movimientos")] [SerializeField]
+    private Text numPasosText;
+
+    [Tooltip("Referencia al texto que muestra el récord actual")] [SerializeField]
+    private Text recordText;
+
+    [Tooltip("Referencia al texto que muestra el porcentaje completado")] [SerializeField]
+    private Text percentageText;
+
+    [Tooltip("Referencia al texto final que muestra el número de movimientos")] [SerializeField]
     private Text finalMovsText;
 
-    [Header("Botones")]
-    [Tooltip("Referencia al botón de volver atrás")]
+    [Header("Elementos del hud - Botones")]
+    [Tooltip("Referencia al botón del proximo nivel")]
     [SerializeField]
-    private Button backButton;
-    [Tooltip("Referencia al botón de reiniciar nivel")]
-    [SerializeField]
-    private Button restartButton;
-    [Tooltip("Referencia al botón para agregar pistas")]
-    [SerializeField]
-    private Button addHintsButton;
+    private Button undoButton;
+
+    [Tooltip("Referencia al botón del proximo nivel")] [SerializeField]
+    private Button nextLevelButton;
+
+    [Tooltip("Referencia al botón del anterior nivel")] [SerializeField]
+    private Button prevLevelButton;
+//--------------------------------------------------ATRIBUTOS-PRIVADO-------------------------------------------------//
 
     // Referencia al LevelManager
     private LevelManager lvlMan;
 
-    //Mapa del nivel cargado
-    private Map map;
     // Numero de pistas disponibles
     private int currHints;
+
     //Paquete de niveles cargado
     private GameManager.LevelPackData levelPack;
+
     //Nivel cargado
     private Level currLevel;
+
     //Variable de tiempo usada para procesar las animaciones
-    private float timer = 0.0f;
+    private float timer;
+
     //Numero de tuberías conectadas
-    private int currentFlows = 0;
+    private int currentFlows;
+
     //Numero de pasos
-    private int currentMovs = 0;
+    private int currentMovs;
 
-    [System.Serializable]
-    class HUD_Element
+//--------------------------------------------------------------------------------------------------------------------//
+
+    public void Init(Level lvl, GameManager.LevelPackData package, int numHints, LevelManager lvlManager)
     {
-        [Tooltip("Diferentes sprites del elemento de HUD")]
-        public Sprite[] elementSprites;
-
-        [Tooltip("Referencia al componente Image del elemento del HUD")]
-        public Image elementImage;
-
-        [Tooltip("Referencia al componente Text del elemento del HUD")]
-        public Text elementText;
-
-        [Tooltip("Referencia al componente Button del elemento del HUD")]
-        public Button elementButton;
-    }
-
-    public void Init(Map currMap, Level lvl, GameManager.LevelPackData package,  int numHints, LevelManager lvlManager)
-    {
-        lvlMan = lvlManager;
-        currHints = numHints;
-        InitHudData(currMap, lvl, package);
+        InitHudData(lvl, package, numHints, lvlManager);
 
         InitTopElements();
-        InitMidElements();
         InitBotElements();
     }
+    
+//-------------------------------------------------INICIALIZACION-----------------------------------------------------//
 
     /// <summary>
     /// Inicializa los datos generales del juego
     /// </summary>
-    private void InitHudData(Map currMap, Level lvl, GameManager.LevelPackData package)
+    private void InitHudData(Level lvl, GameManager.LevelPackData package, int numHints, LevelManager lvlManager)
     {
-        map = currMap;
+        lvlMan = lvlManager;
+        currHints = numHints;
         currLevel = lvl;
         levelPack = package;
         numLevelText.text = "Nivel " + (currLevel.lvl + 1);
     }
-
+    
     /// <summary>
     /// Inicializa la parte superior del hud
     /// </summary>
     private void InitTopElements()
     {
-        //============TITULO-DEL-NIVEL===================//
-        completedLevelIcon.elementText.text = currLevel.numBoardX + "x" + currLevel.numBoardY;
-        Levels.LevelState levelState = levelPack.levelsInfo[currLevel.lvl].state;
-        switch (levelState)
-        {
-            case Levels.LevelState.PERFECT:
-                completedLevelIcon.elementImage.enabled = true;
-                completedLevelIcon.elementImage.sprite = completedLevelIcon.elementSprites[0];
-                break;
-            case Levels.LevelState.COMPLETED:
-                completedLevelIcon.elementImage.enabled = true;
-                completedLevelIcon.elementImage.sprite = completedLevelIcon.elementSprites[1];
-                break;
-        }
-
-        //============TABLERO-INFO===================//
-        numFlowsText.text = "flujos: " + 0 + "/" + currLevel.numFlow;
-        numPasosText.text = "pasos: " + 0;
-        recordText.text = "récord: " + levelPack.levelsInfo[currLevel.lvl].record;
+        InitTitle();
+        InitBoardInfo();
     }
 
     /// <summary>
-    /// Inicializa la parte del medio del hud
+    /// Inicializa la informaación del título del nivel
     /// </summary>
-    private void InitMidElements()
+    private void InitTitle()
     {
-        // Proximo nivel
-        nextLevelWin.elementButton.onClick.AddListener(() => lvlMan.ChangeLevel(currLevel.lvl + 1));
-        addHintsButton.onClick.AddListener(() => lvlMan.AddHints(1));
-        //addHintsButton.onClick.AddListener(UpdateHintText);
+        levelTitleElement.elementText.text = currLevel.numBoardX + "x" + currLevel.numBoardY;
+        var levelState = levelPack.levelsInfo[currLevel.lvl].state;
+        switch (levelState)
+        {
+            case Levels.LevelState.PERFECT:
+                levelTitleElement.elementImage.enabled = true;
+                levelTitleElement.elementImage.sprite = levelTitleElement.elementSprites[0];
+                break;
+            case Levels.LevelState.COMPLETED:
+                levelTitleElement.elementImage.enabled = true;
+                levelTitleElement.elementImage.sprite = levelTitleElement.elementSprites[1];
+                break;
+            case Levels.LevelState.UNCOMPLETED:
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Inicializa la información del tablero
+    /// </summary>
+    private void InitBoardInfo()
+    {
+        //============TABLERO-INFO===================//
+        UpdateFlows(0);
+        UpdateMovements(0);
+        recordText.text = "récord: " + levelPack.levelsInfo[currLevel.lvl].record;
     }
 
     /// <summary>
@@ -177,55 +153,33 @@ public class HUDManager : MonoBehaviour
     /// </summary>
     private void InitBotElements()
     {
-        // Reinicia el nivel
-        restartButton.onClick.AddListener(() => lvlMan.LoadScene(GameManager.SceneOrder.GAME_SCENE));
+        //============HINTS============//
+        UpdateHintText();
 
-        //============PISTAS===================//
-        hints.elementText.text = currHints + "x";
-        hints.elementImage.sprite = currHints == 0 ? hints.elementSprites[0] : hints.elementSprites[1];
-
-        //============NIVEL-ANTERIOR===================//
+        //============NIVEL-ANTERIOR============//
         if (currLevel.lvl == 0)
         {
-            prevLevel.elementImage.sprite = prevLevel.elementSprites[0];
+            prevLevelButton.interactable = false;
         }
-        else
+        //============NIVEL-POSTERIOR============//
+        else if (currLevel.lvl + 1 == levelPack.levelsInfo.Length)
         {
-            prevLevel.elementImage.sprite = prevLevel.elementSprites[1];
-            prevLevel.elementButton.onClick.AddListener(() => lvlMan.ChangeLevel(currLevel.lvl - 1));
-        }
-
-        //============NIVEL-POSTERIOR===================//
-        if (currLevel.lvl + 1 == levelPack.levelsInfo.Length)
-        {
-            nextLevel.elementImage.sprite = nextLevel.elementSprites[0];
-        }
-        else
-        {
-            nextLevel.elementImage.sprite = nextLevel.elementSprites[1];
-            nextLevel.elementButton.onClick.AddListener(() => lvlMan.ChangeLevel(currLevel.lvl + 1));
+            nextLevelButton.interactable = false;
         }
     }
 
+//------------------------------------------------ACTUALIZACION-DATOS-------------------------------------------------//
     /// <summary>
     /// Cambia el texto que muestra las pistas en función de las pistas que queden
     /// </summary>
-    public void UpdateHintText(int numHints)
+    private void UpdateHintText()
     {
-        currHints = numHints;
         hints.elementText.text = currHints + "x";
-        if (currHints == 0)
-        {
-            hints.elementImage.sprite = hints.elementSprites[0];
-        }
-        else
-        {
-            hints.elementImage.sprite = hints.elementSprites[1];
-        }
+        hints.elementButton.interactable = currHints != 0;
     }
 
     /// <summary>
-    /// Lógica que procesa el comportamiento al completar un nivel
+    /// Comportamiento del hud al completar el nivel
     /// </summary>
     /// <param name="perfect">Determina si el nivel es perfecto o no</param>
     public void LevelCompleted(bool perfect)
@@ -244,6 +198,7 @@ public class HUDManager : MonoBehaviour
             winStar.texture = winSprites[1];
             winTitle.text = "¡Completado!";
         }
+
         finalMovsText.text = "Completaste el nivel\n" + "con " + currentMovs + " pasos";
 
         // El último nivel
@@ -253,12 +208,50 @@ public class HUDManager : MonoBehaviour
             finalMovsText.text = "Has llegado al final del\n" + levelPack.name;
 
             // Nos lleva al mainMenu
-            nextLevelWin.elementButton.onClick.RemoveAllListeners();
-            nextLevelWin.elementButton.onClick.AddListener(() => lvlMan.LoadScene(GameManager.SceneOrder.MAIN_MENU));
-            nextLevelWin.elementText.text = "elige el próximo paquete";
+            nextLevelWinText.text = "elige el próximo paquete";
         }
 
+        DisableElements();
         InvokeRepeating(nameof(WinAnimation), 0.0f, 0.05f);
+    }
+
+    /// <summary>
+    /// Muestra la parte entera del porcentaje que hay resuelto del tablero
+    /// </summary>
+    public void ShowPercentage(int percentage)
+    {
+        percentageText.text = "tubería: " + (percentage).ToString() + "%";
+    }
+
+    /// <summary>
+    /// Añade o quita un flujo al contador de flujos completos
+    /// </summary>
+    public void UpdateFlows(int flows)
+    {
+        currentFlows = flows;
+        numFlowsText.text = "flujos: " + currentFlows + "/" + currLevel.numFlow;
+    }
+
+    /// <summary>
+    /// Añade un nuevo movimiento al contador de pasos del canvas
+    /// </summary>
+    public void UpdateMovements(int movs)
+    {
+        currentMovs = movs;
+        numPasosText.text = "pasos: " + currentMovs;
+    }
+
+    /// <summary>
+    /// Activa el botón de deshacer movimientos
+    /// </summary>
+    public void ActivateUndoButton()
+    {
+        undoButton.interactable = true;
+    }
+
+    private void DisableElements()
+    {
+        undoButton.interactable = false;
     }
 
     /// <summary>
@@ -286,49 +279,61 @@ public class HUDManager : MonoBehaviour
             CancelInvoke();
         }
     }
+//---------------------------------------------BUTTON-CALLBACKS-------------------------------------------------------//
 
     /// <summary>
-    /// Muestra la parte entera del porcentaje que hay resuelto del tablero
+    /// Callback para añadir Pistas mediante el vídeo de los anuncios
     /// </summary>
-    public void ShowPercentage(int percentage)
+    /// <param name="numHints"></param>
+    public void PlayVideo(int numHints)
     {
-        percentageText.text = "tubería: " + (percentage).ToString() + "%";
+        lvlMan.AddHints(numHints);
+        currHints += numHints;
+        UpdateHintText();
     }
 
     /// <summary>
-    /// Añade o quita un flujo al contador de flujos completos
+    /// Callback para los botones de cambiar de nivel
     /// </summary>
-    public void ShowFlows(int flows)
+    /// <param name="next">Determina si es el siguiente nivel o el anterior</param>
+    public void ChangeLevel(bool next)
     {
-        currentFlows = flows;
-        numFlowsText.text = "flujos: " + currentFlows + "/" + currLevel.numFlow;
+        var n = 1;
+
+        // El botón de próximo nivel del pop-up cuando se gana
+        // no se desactiva y puede seguir llamando a este método. 
+        // Si es el último nivel, entonces vuelve al menú principal
+        if (next && currLevel.lvl + 1 == levelPack.levelsInfo.Length)
+            lvlMan.LoadScene(GameManager.SceneOrder.MAIN_MENU);
+        else if (!next) n = -1;
+
+        lvlMan.ChangeLevel(currLevel.lvl + n);
     }
 
     /// <summary>
-    /// Añade un nuevo movimiento al contador de pasos del canvas
+    /// Callback para el botón de reiniciar el nivel
     /// </summary>
-    public void ShowMovements(int movs)
+    public void RestartLevel()
     {
-        currentMovs = movs;
-        numPasosText.text = "pasos: " + currentMovs;
+        lvlMan.LoadScene(GameManager.SceneOrder.GAME_SCENE);
     }
 
     /// <summary>
-    /// Aplica el comportamiento del botón de deshacer en función de si está activo o no
+    /// Callback para el botón de deshacer movimientos
     /// </summary>
-    /// <param name="active">Determina si el elemento está activo o no</param>
-    /// <param name="action">Callback del comportamiento del boton undo</param>
-    public void UndoButtonBehaviour(bool active, UnityAction action = null)
+    public void UndoMovement()
     {
-        undoElement.elementButton.onClick.RemoveAllListeners();
+        lvlMan.UndoMovement();
+        undoButton.interactable = false;
+    }
 
-        // Si está activo se ve blanco, sino, gris
-        var color = active ? Color.white : Color.grey;
-        undoElement.elementImage.color = color;
-
-        if (active)
-        {
-            undoElement.elementButton.onClick.AddListener(action);
-        }
+    /// <summary>
+    /// Callback para el botón de usar pistas
+    /// </summary>
+    public void UseHint()
+    {
+        currHints--;
+        UpdateHintText();
+        lvlMan.UseHint();
     }
 }
