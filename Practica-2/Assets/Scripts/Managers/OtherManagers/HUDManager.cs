@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,29 +26,29 @@ public class HUDManager : MonoBehaviour
     [Header("Elementos del hud - Textos")]
     [Tooltip("Referencia al texto que muestra el nivel actual")]
     [SerializeField]
-    private Text numLevelText;
+    private TextMeshProUGUI numLevelText;
     
     [Tooltip("Referencia al titulo del texto que se muestra al ganar")] [SerializeField]
-    private Text winTitle;
+    private TextMeshProUGUI winTitle;
     
     [Tooltip("Referencia al botón del próximo nivel cuando se gana")] [SerializeField]
-    private Text nextLevelWinText;
+    private TextMeshProUGUI nextLevelWinText;
     
     [Header("Board Info")]
     [Tooltip("Referencia al texto que el número de flujos conectados")] [SerializeField]
-    private Text numFlowsText;
+    private TextMeshProUGUI numFlowsText;
 
     [Tooltip("Referencia al texto que muestra el número de movimientos")] [SerializeField]
-    private Text numPasosText;
+    private TextMeshProUGUI numPasosText;
 
     [Tooltip("Referencia al texto que muestra el récord actual")] [SerializeField]
-    private Text recordText;
+    private TextMeshProUGUI recordText;
 
     [Tooltip("Referencia al texto que muestra el porcentaje completado")] [SerializeField]
-    private Text percentageText;
+    private TextMeshProUGUI percentageText;
 
     [Tooltip("Referencia al texto final que muestra el número de movimientos")] [SerializeField]
-    private Text finalMovsText;
+    private TextMeshProUGUI finalMovsText;
 
     [Header("Elementos del hud - Botones")]
     [Tooltip("Referencia al botón del proximo nivel")]

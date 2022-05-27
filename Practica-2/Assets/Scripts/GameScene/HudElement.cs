@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,7 +11,7 @@ public class HudElement : MonoBehaviour
     public Image elementImage;
 
     [Tooltip("Referencia al componente Text del elemento del HUD")]
-    public Text elementText;
+    public TextMeshProUGUI elementText;
 
     [Tooltip("Referencia al componente Button del elemento del HUD")]
     public Button elementButton;
