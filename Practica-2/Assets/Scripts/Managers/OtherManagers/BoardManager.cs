@@ -482,7 +482,7 @@ public class BoardManager : MonoBehaviour
                         {
                             BackFlowPath(dragedTile, c);
                         }
-                        // Corte de tubería
+                        // Corte de tubería - siempre que no se haya completado el recorrido actual
                         else if (dragedTile.Key.GetTileColor() != (int)Tile.TILE_COLOR.NONE && !(currTile.CircleActive() && cMovements[c].GetCurrentMoves().Count > 1))
                         {
                             CutFlow(dragedTile);
@@ -490,6 +490,7 @@ public class BoardManager : MonoBehaviour
                             // Se actualiza el porcentaje
                             percentage += plusPercentage;
                         }
+                        //Si la tubería ya está completa y no se corta a si misma no hace nada
                         else if (currTile.CircleActive() && cMovements[c].GetCurrentMoves().Count > 1)
                         {
                             return;
