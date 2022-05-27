@@ -110,6 +110,8 @@ public class MainMenuManager : MonoBehaviour
         pos.y = 0;
         contentScroll.position = pos;
 
+        var tam = categorySection.rect.width / 10;
+        Debug.Log(categorySection.rect.width);
         for (var i = 0; i < numCategories; i++)
         {
             var titleGo = Instantiate(catTitlePrefab, categorySection.transform);
@@ -117,8 +119,9 @@ public class MainMenuManager : MonoBehaviour
             // Nombre y color de cada paquete
             titleGo.SetText(categories[i].name);
             titleGo.SetCategoryColor(categories[i].color);
+            titleGo.SetSizeText(tam);
 
-            InitLevels(i);
+            InitLevels(i, tam);
         }
 
         baseRect.gameObject.SetActive(false);
@@ -140,7 +143,7 @@ public class MainMenuManager : MonoBehaviour
     /// Inicializa la información de los paquetes de niveles de cada una de las categorías
     /// </summary>
     /// <param name="iCat">Índice de la categoría dentro de la lista de categorías</param>
-    private void InitLevels(int iCat)
+    private void InitLevels(int iCat, float tamFont)
     {
         int numLevels = categoryData[iCat].levels.Length;
         // Inicializaci�n de cada nivel dentro de la categor�a
@@ -153,6 +156,8 @@ public class MainMenuManager : MonoBehaviour
 
             // Nombre del nivel
             levelPack.SetPackName(categories[iCat].levels[j].levelName);
+
+            levelPack.SetSizeText(tamFont);
 
             // Niveles completados
             var newText = categoryData[iCat].levels[j].completedLevels +

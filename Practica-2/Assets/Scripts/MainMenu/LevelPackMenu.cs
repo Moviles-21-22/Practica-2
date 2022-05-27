@@ -43,4 +43,10 @@ public class LevelPackMenu : MonoBehaviour
     {
         levelRect.localPosition = newPos;
     }
+
+    public void SetSizeText(float tam)
+    {
+        packName.fontSizeMax = tam;
+        levels.fontSizeMax = tam;
+    }
 }

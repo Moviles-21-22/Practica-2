@@ -23,6 +23,11 @@ public class CategoryTitle : MonoBehaviour
         titleSprite.color = newColor;
     }
 
+    public void SetSizeText(float tam)
+    {
+        titleText.fontSizeMax = tam;
+    }
+
     public Vector2 GetSizeDelta() 
     {
         return titleRect.sizeDelta;
