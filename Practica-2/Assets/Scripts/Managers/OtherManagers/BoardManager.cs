@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
-    [Tooltip("Referencia al objeto padre donde se van a instanciar los tiles")] [SerializeField]
+    [Tooltip("Referencia al objeto padre donde se van a instanciar los tiles")]
+    [SerializeField]
     private Transform pool;
 
-    [Tooltip("Referencia al prefab de los tiles que se van a crear")] [SerializeField]
+    [Tooltip("Referencia al prefab de los tiles que se van a crear")]
+    [SerializeField]
     private Tile tilePrefab;
 
     //Pistas
@@ -165,7 +166,7 @@ public class BoardManager : MonoBehaviour
     /// </summary>
     private void InitData()
     {
-        lastColorMove = (int) Tile.TILE_COLOR.NONE;
+        lastColorMove = (int)Tile.TILE_COLOR.NONE;
 
         // Calculos para el porcentaje del nivel
         plusPercentage = 100.0f / ((tabSize.x * tabSize.y) - currLevel.numFlow - currLevel.gaps.Count);
@@ -185,8 +186,8 @@ public class BoardManager : MonoBehaviour
         {
             //Cabeza de la tuberia
             float firstElemt = currLevel.solutions[i][0];
-            int filaA = (int) ((firstElemt + 1) / currLevel.numBoardX);
-            int colA = (int) ((firstElemt + 1) % currLevel.numBoardX) - 1;
+            int filaA = (int)((firstElemt + 1) / currLevel.numBoardX);
+            int colA = (int)((firstElemt + 1) % currLevel.numBoardX) - 1;
             if (colA < 0)
             {
                 colA = currLevel.numBoardX - 1;
@@ -203,8 +204,8 @@ public class BoardManager : MonoBehaviour
 
             //Final de la tuberia
             float secElement = currLevel.solutions[i][currLevel.solutions[i].Count - 1];
-            int filaB = (int) ((secElement + 1) / currLevel.numBoardX);
-            int colB = (int) ((secElement + 1) % currLevel.numBoardX) - 1;
+            int filaB = (int)((secElement + 1) / currLevel.numBoardX);
+            int colB = (int)((secElement + 1) % currLevel.numBoardX) - 1;
             if (colB < 0)
             {
                 colB = currLevel.numBoardX - 1;
@@ -227,8 +228,8 @@ public class BoardManager : MonoBehaviour
             int firstElemt = currLevel.walls[i][0];
             int secElemt = currLevel.walls[i][1];
 
-            int fila = (int) ((firstElemt + 1) / currLevel.numBoardX);
-            int colm = (int) ((firstElemt + 1) % currLevel.numBoardX) - 1;
+            int fila = (int)((firstElemt + 1) / currLevel.numBoardX);
+            int colm = (int)((firstElemt + 1) % currLevel.numBoardX) - 1;
             if (colm < 0)
             {
                 colm = currLevel.numBoardX - 1;
@@ -393,7 +394,7 @@ public class BoardManager : MonoBehaviour
 
                 //Solo hacemos algo si hemos tocado un tile que no esté vacío
                 int c = currTile.GetTileColor();
-                if (c != (int) Tile.TILE_COLOR.NONE)
+                if (c != (int)Tile.TILE_COLOR.NONE)
                 {
                     ProcessTileDown(c);
                 }
@@ -418,11 +419,41 @@ public class BoardManager : MonoBehaviour
                 //  Buscamos el tile entre todas las tiles
                 var dragedTile = GetTileOnCollision(touchRect); // Tile actual recibido por el input
                 int c = currTile.GetTileColor(); // Anterior tile pulsado
-                if (c == (int) Tile.TILE_COLOR.NONE || !AreNeighbour(c, dragedTile.Value.x, dragedTile.Value.y) ||
-                    (currTile.CircleActive() && cMovements[(int)currTile.GetTileColor()].GetCurrentMoves().Count > 1))
+
+                //Comprobamos que mueva alguna tubería y que la tubería no esté ya conectada
+                if (c == (int)Tile.TILE_COLOR.NONE || (currTile.CircleActive() && cMovements[c].GetCurrentMoves().Count > 1))
                 {
                     return;
                 }
+
+                //Si las casillas no son vecinas no hacemos nada, a no ser que sea para cortar la tubería
+                if (!AreNeighbour(c, dragedTile.Value.x, dragedTile.Value.y))
+                {
+                    //Comprobamos si se corta la tubería y se protege de reiniciar la tubería al tocar el círculo final de la cadena
+                    if (dragedTile.Key.GetColor() == currTile.GetColor() && !(dragedTile.Key.CircleActive() && cMovements[c].GetCurrentMoves()[0] != dragedTile.Key))
+                    {
+                        BackFlowPath(dragedTile, c);
+
+                        // Actualización del dragedTile
+                        dragedTile.Key.SetX(dragedTile.Value.x);
+                        dragedTile.Key.SetY(dragedTile.Value.y);
+                        dragedTile.Key.SetTileColor(c);
+
+                        // Si solo hay un elemento, se añade el nuevo mov
+                        // Si hay más de uno, entonces interesa añadir solo cuando el último no sea un círculo
+                        // Esto evita arrastrar la tubería más allá de la conexión del flujo
+                        int count = cMovements[c].GetCurrentMoves().Count;
+                        if (count <= 1 || !cMovements[c].GetCurrentMoves()[count - 1].CircleActive())
+                            cMovements[c].AddCurrentMov(dragedTile.Key);
+
+                        currTile = dragedTile.Key;
+
+                        levelManager.UpdatePercentage((int)Math.Round(percentage));
+                        cMovements[c].DrawPath(FlowMovements.PathType.CURR_PATH);
+                    }
+                    else return;
+                }
+
                 // Que haya tile y que sea distinto al anterior
                 else if (dragedTile.Key != null && dragedTile.Key != currTile)
                 {
@@ -431,8 +462,11 @@ public class BoardManager : MonoBehaviour
                         .normalized;
 
                     //Comprobamos si hace colisión con un muro, en cuyo caso salimos sin hacer nada
+                    //Comprobamos si hace colisión con un muro, en cuyo caso salimos sin hacer nada
                     if (dragedTile.Key.WallCollision(-dir) || currTile.WallCollision(dir))
+                    {
                         return;
+                    }
 
                     // Hemos llegado al tile que le corresponde (solución)
                     // Condiciones: Sea un círculo y sea del mismo color que mi tubería
@@ -449,7 +483,7 @@ public class BoardManager : MonoBehaviour
                             BackFlowPath(dragedTile, c);
                         }
                         // Corte de tubería
-                        else if (dragedTile.Key.GetTileColor() != (int) Tile.TILE_COLOR.NONE)
+                        else if (dragedTile.Key.GetTileColor() != (int)Tile.TILE_COLOR.NONE)
                         {
                             CutFlow(dragedTile);
 
@@ -477,7 +511,7 @@ public class BoardManager : MonoBehaviour
                         currTile = dragedTile.Key;
                     }
 
-                    levelManager.UpdatePercentage((int) Math.Round(percentage));
+                    levelManager.UpdatePercentage((int)Math.Round(percentage));
                     cMovements[c].DrawPath(FlowMovements.PathType.CURR_PATH);
                 }
             }
@@ -492,7 +526,7 @@ public class BoardManager : MonoBehaviour
         if (currTile != null)
         {
             int c = currTile.GetTileColor();
-            if (c == (int) Tile.TILE_COLOR.NONE)
+            if (c == (int)Tile.TILE_COLOR.NONE)
             {
                 currTile = null;
                 return;
@@ -572,7 +606,7 @@ public class BoardManager : MonoBehaviour
 
         // Se actualiza el porcentaje
         percentage -= p > 0 ? plusPercentage * p : 0;
-        levelManager.UpdatePercentage((int) Mathf.Round(percentage));
+        levelManager.UpdatePercentage((int)Mathf.Round(percentage));
 
         // Se actualiza el tile actual pulsado
         currTile.SetTileColor(tileColor);
@@ -854,7 +888,7 @@ public class BoardManager : MonoBehaviour
 
         // Elegimos aleatoriamente uno
         if (movs.Count <= 0) return;
-        
+
         int elc = UnityEngine.Random.Range(0, movs.Count - 1);
         int choice = movs[elc];
         var d = cMovements[choice];
@@ -891,7 +925,7 @@ public class BoardManager : MonoBehaviour
     /// </summary>
     private void DrawCirclePointer(Vector2 inputPos)
     {
-        if (currTile != null && currTile.GetTileColor() != (int) Tile.TILE_COLOR.NONE)
+        if (currTile != null && currTile.GetTileColor() != (int)Tile.TILE_COLOR.NONE)
         {
             inputTile.GetCircleRender().enabled = true;
             Vector2 pos = Camera.main.ScreenToWorldPoint(inputPos);
@@ -944,7 +978,7 @@ public class BoardManager : MonoBehaviour
         }
 
         cMovements[c].UndoMovements(ref percentage, plusPercentage);
-        levelManager.UpdatePercentage((int) Math.Round(percentage));
+        levelManager.UpdatePercentage((int)Math.Round(percentage));
     }
 
     #endregion
