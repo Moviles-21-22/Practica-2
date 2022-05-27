@@ -418,7 +418,8 @@ public class BoardManager : MonoBehaviour
                 //  Buscamos el tile entre todas las tiles
                 var dragedTile = GetTileOnCollision(touchRect); // Tile actual recibido por el input
                 int c = currTile.GetTileColor(); // Anterior tile pulsado
-                if (c == (int) Tile.TILE_COLOR.NONE || !AreNeighbour(c, dragedTile.Value.x, dragedTile.Value.y))
+                if (c == (int) Tile.TILE_COLOR.NONE || !AreNeighbour(c, dragedTile.Value.x, dragedTile.Value.y) ||
+                    (currTile.CircleActive() && cMovements[(int)currTile.GetTileColor()].GetCurrentMoves().Count > 1))
                 {
                     return;
                 }
@@ -733,7 +734,7 @@ public class BoardManager : MonoBehaviour
     #region Getters
 
     /// <summary>
-    /// Determina si la casilla que se está pulsando y la vecina son "juagbles"
+    /// Determina si la casilla que se está pulsando y la vecina son "jugables"
     /// </summary>
     private bool AreNeighbour(int tileColor, int x1, int y1)
     {
