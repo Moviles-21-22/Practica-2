@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,7 +16,7 @@ public class ShopManager : MonoBehaviour
     private GameObject premiumBox;
 
     [Tooltip("GameObject que muestras las pistas que quedan")] [SerializeField]
-    private Text hintsText;
+    private TextMeshProUGUI hintsText;
 
     [Header("Atributos relacionados con los temas")]
     [Tooltip("Lista de los atributos de cada tema de la tienda")]
