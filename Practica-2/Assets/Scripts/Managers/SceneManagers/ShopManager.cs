@@ -4,33 +4,48 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-[SuppressMessage("ReSharper", "CheckNamespace")]
-[SuppressMessage("ReSharper", "StringLiteralTypo")]
-[SuppressMessage("ReSharper", "Unity.InefficientPropertyAccess")]
 public class ShopManager : MonoBehaviour
 {
     [Tooltip("Referencia a AdsManager")] [SerializeField]
     private AdsManager ads;
 
-    [Tooltip("GameObject que muestra la oferta para comprar el premium")] [SerializeField]
-    private GameObject premiumBox;
-
     [Tooltip("GameObject que muestras las pistas que quedan")] [SerializeField]
     private TextMeshProUGUI hintsText;
-
-    [Header("Atributos relacionados con los temas")]
-    [Tooltip("Lista de los atributos de cada tema de la tienda")]
-    [SerializeField]
-    private List<ThemeFeatures> themesFeatures;
-
-    [Tooltip("Lista de las imágenes del menú que se ven cambiadas por el tema")] [SerializeField]
-    private List<Image> menu;
 
     [Tooltip("Sprite del candado")] [SerializeField]
     private Sprite lockSprite;
 
-    [Tooltip("Sprite del tick")] [SerializeField]
-    private Sprite unlockSprite;
+    [Header("Átributos para generar temas de forma dinámica")]
+    [Tooltip("Referencia al contenido del scroll")]
+    [SerializeField]
+    private RectTransform contentScroll;
+
+    [Tooltip("Referencia RectTransform de la parte superior del UI")] [SerializeField]
+    private RectTransform topSection;
+
+    [Tooltip("Referencia RectTransform de la parte del premium")] [SerializeField]
+    private RectTransform premiumSection;
+
+    [Tooltip("Referencia RectTransform de la parte de las pistas")] [SerializeField]
+    private RectTransform hintsSection;
+
+    [Tooltip("Referencia RectTransform de la parte de las pistas")] [SerializeField]
+    private RectTransform themesSection;
+
+    [Tooltip("Referencia RectTransform del marco de los temas")] [SerializeField]
+    private RectTransform themesBound;
+    
+    [Tooltip("GameObject padre de los temas que se van a instanciar")] [SerializeField]
+    private RectTransform themesLayout;
+
+    [Tooltip("RectTransform usado como base para el tamaño de los temas")] [SerializeField]
+    private RectTransform baseRect;
+
+    [Tooltip("Prefab para crear la informaicón de los temas")] [SerializeField]
+    private ThemeFeatures themeFeaturesGo;
+
+    [Header("__")] [Tooltip("Lista de las imágenes del menú que se ven cambiadas por el tema")] [SerializeField]
+    private List<Image> menu;
 
     [Tooltip("Lista de los paquetes de temas del juego")] [SerializeField]
     private List<ColorPack> colorThemes;
@@ -39,7 +54,6 @@ public class ShopManager : MonoBehaviour
     private int currHints;
     private List<GameManager.ThemeData> themesList;
     private GameManager.ThemeData currTheme;
-    private Image currThemeShop;
     private GameManager gm;
 
     /// <summary>
@@ -88,11 +102,6 @@ public class ShopManager : MonoBehaviour
 
     private void InitElements()
     {
-        if (isPremium)
-        {
-            premiumBox.SetActive(false);
-        }
-
         hintsText.text = "¡Te quedan " + currHints + " pistas!";
 
         InitThemes();
@@ -111,9 +120,9 @@ public class ShopManager : MonoBehaviour
     public void UnlockPremium()
     {
         gm.UnLockPremium();
-        premiumBox.SetActive(false);
+        premiumSection.gameObject.SetActive(false);
+        gm.LoadScene((int)GameManager.SceneOrder.SHOP);
     }
-
 
     /// <summary>
     /// Añade pistas
@@ -131,38 +140,29 @@ public class ShopManager : MonoBehaviour
         gm.LoadScene((int) GameManager.SceneOrder.MAIN_MENU);
     }
 
-    [System.Serializable]
-    public struct ThemeFeatures
-    {
-        public Image selectedImage;
-        public TextMeshProUGUI themeName;
-        public ColorPack theme;
-        public List<Image> samples;
-    }
-
     /// <summary>
     /// Cambia el tema viejo por el escogido
     /// </summary>
     /// <param name="index">Tema que se escocge</param>
     public void ChangeTheme(int index)
     {
-        currTheme = themesList[index];
-        var selectedImage = themesFeatures[index].selectedImage;
-
-        if (currTheme.unlocked)
-        {
-            gm.SetTheme(index);
-        }
-        else
-        {
-            gm.UnlockTheme(index);
-        }
-
-        currThemeShop.enabled = false;
-        currThemeShop = selectedImage;
-        currThemeShop.sprite = unlockSprite;
-        currThemeShop.enabled = true;
-        ChangeShopColor();
+        // currTheme = themesList[index];
+        // var selectedImage = themesFeatures[index].selectedImage;
+        //
+        // if (currTheme.unlocked)
+        // {
+        //     gm.SetTheme(index);
+        // }
+        // else
+        // {
+        //     gm.UnlockTheme(index);
+        // }
+        //
+        // currThemeShop.enabled = false;
+        // currThemeShop = selectedImage;
+        // currThemeShop.sprite = unlockSprite;
+        // currThemeShop.enabled = true;
+        // ChangeShopColor();
     }
 
     /// <summary>
@@ -176,32 +176,88 @@ public class ShopManager : MonoBehaviour
         }
     }
 
+    private float CalculateHeightThemes()
+    {
+        int numElems = themesList.Count;
+        if (numElems == 0)
+        {
+            Debug.LogError("No se han encontrado temas registrados");
+        }
+
+        float height = numElems * baseRect.rect.height;
+        baseRect.gameObject.SetActive(false);
+        return height;
+    }
+
     /// <summary>
-    /// Inicializa la lista de temas de la tienda
+    /// Redimensiona los elementos de la UI de forma dinámica
+    /// </summary>
+    private void ResizeUI()
+    {
+        // 1. Calculo del tamaño que van a ocupar sólo los temas
+        var themesHeight = CalculateHeightThemes();
+        
+        //2. Cálculo del offset que se la aplicará al contentScroll
+        var scrollH = contentScroll.rect.height;
+        var offset = themesHeight / scrollH;
+        var contentAnchor = Vector2.down * offset;
+
+        // 3. Si es premium, se resta el tamaño de premiumSection al
+        // contentScroll y se reposicionan los objetos.
+        if (isPremium)
+        {
+            var premiumAnchor = premiumSection.anchorMin;
+            //contentAnchor += premiumAnchor;
+            
+            var premiumPos = premiumSection.localPosition;
+            var hintsPos = hintsSection.localPosition;
+            hintsSection.localPosition = premiumPos;
+            themesSection.localPosition = hintsPos;
+            
+            premiumSection.gameObject.SetActive(false);
+        }
+        
+        // 4. Asignación nueva
+        contentScroll.anchorMin = contentAnchor;
+        topSection.SetParent(contentScroll);
+        premiumSection.SetParent(contentScroll);
+        hintsSection.SetParent(contentScroll);
+        themesSection.SetParent(contentScroll);
+        themesLayout.sizeDelta = Vector2.up * themesHeight;
+        themesBound.sizeDelta = Vector2.up * themesHeight;
+    }
+
+    /// <summary>
+    /// Inicializa la lista de temas de la tienda deforma dinámica
     /// </summary>
     private void InitThemes()
     {
-        for (var i = 0; i < themesFeatures.Count; i++)
+        ResizeUI();
+        var numThemes = themesList.Count;
+
+        for (var i = 0; i < numThemes; i++)
         {
+            // Instatiate del GO de los temas
+            var themeGo = Instantiate(themeFeaturesGo, themesLayout);
+            
             // Si es el tema actual, entonces se activa la imagen del tick
             if (themesList[i] == currTheme)
             {
-                themesFeatures[i].selectedImage.enabled = true;
-                currThemeShop = themesFeatures[i].selectedImage;
+                themeGo.selectedImage.enabled = true;
             }
 
             if (!themesList[i].unlocked)
             {
-                themesFeatures[i].selectedImage.enabled = true;
-                themesFeatures[i].selectedImage.sprite = lockSprite;
-                themesFeatures[i].selectedImage.rectTransform.sizeDelta.Set(50.0f, 50.0f);
+                themeGo.selectedImage.enabled = true;
+                themeGo.selectedImage.sprite = lockSprite;
+                themeGo.selectedImage.rectTransform.sizeDelta.Set(50.0f, 50.0f);
             }
 
-            themesFeatures[i].themeName.text = themesList[i].name;
+            themeGo.themeName.text = themesList[i].name;
 
-            for (var j = 0; j < themesFeatures[i].samples.Count; j++)
+            for (var j = 0; j < themeGo.samples.Count; j++)
             {
-                themesFeatures[i].samples[j].color = themesList[i].colors[j];
+                themeGo.samples[j].color = themesList[i].colors[j];
             }
         }
     }
