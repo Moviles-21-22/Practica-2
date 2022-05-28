@@ -2542,7 +2542,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 79.8
+  m_fontSize: 65.7
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3196,6 +3196,9 @@ MonoBehaviour:
   mainMenu: {fileID: 1712218495}
   selecLevelMenu: {fileID: 1787757261}
   adsManager: {fileID: 1478636024}
+  textMeshPro: {fileID: 204282310}
+  textTittle: NIVELES
+  nivelesTime: 1
 --- !u!1 &1787757261
 GameObject:
   m_ObjectHideFlags: 0
