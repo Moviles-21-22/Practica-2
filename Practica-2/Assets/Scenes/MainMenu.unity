@@ -3198,7 +3198,7 @@ MonoBehaviour:
   adsManager: {fileID: 1478636024}
   textMeshPro: {fileID: 204282310}
   textTittle: NIVELES
-  nivelesTime: 1
+  nivelesTime: 0.2
 --- !u!1 &1787757261
 GameObject:
   m_ObjectHideFlags: 0

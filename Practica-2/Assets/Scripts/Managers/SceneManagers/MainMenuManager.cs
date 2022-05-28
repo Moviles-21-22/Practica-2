@@ -62,7 +62,7 @@ public class MainMenuManager : MonoBehaviour
 
 
     [Tooltip("Tiempo de refresco del rótulo niveles")]
-    [SerializeField] [Min(1.0f)]
+    [SerializeField] [Min(0.2f)]
     private float nivelesTime;
 
     /// <summary>
@@ -89,7 +89,7 @@ public class MainMenuManager : MonoBehaviour
         LoadPackage(0, 0);
         ChangeCanvas();
 
-        InvokeRepeating("TitleColor", 0, 1.5f);
+        InvokeRepeating("TitleColor", 0, nivelesTime);
     }
 
     /// <summary>
@@ -240,6 +240,9 @@ public class MainMenuManager : MonoBehaviour
         gm.LoadLevel(lvl, lvlPack);
     }
 
+    /// <summary>
+    /// Muestra el titulo animado
+    /// </summary>
     public void TitleColor()
     {
         List<Color> currColors = GameManager.instance.GetCurrentColorPack();
@@ -248,9 +251,7 @@ public class MainMenuManager : MonoBehaviour
         for (int i = 0; i < textTittle.Length; i++)
         {
             textMeshPro.text += "<color=#" + ColorUtility.ToHtmlStringRGBA(currColors[i + (int)indexNiveles]) + ">" + textTittle[i] + "</color>";
-            indexNiveles = indexNiveles >= textTittle.Length ? 0 : indexNiveles + 1;
-
-            print(indexNiveles + " / " + textTittle.Length + " / " + textMeshPro.text + " / " + currColors.Count);
         }
+        indexNiveles = indexNiveles >= textTittle.Length ? 0 : indexNiveles + 1;
     }
 }
