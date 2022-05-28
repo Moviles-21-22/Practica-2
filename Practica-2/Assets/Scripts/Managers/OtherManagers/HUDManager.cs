@@ -60,7 +60,11 @@ public class HUDManager : MonoBehaviour
 
     [Tooltip("Referencia al botón del anterior nivel")] [SerializeField]
     private Button prevLevelButton;
-//--------------------------------------------------ATRIBUTOS-PRIVADO-------------------------------------------------//
+
+    [Tooltip("Referencia al panel de ver video")]
+    [SerializeField]
+    private GameObject videoPanel;
+    //--------------------------------------------------ATRIBUTOS-PRIVADO-------------------------------------------------//
 
     // Referencia al LevelManager
     private LevelManager lvlMan;
@@ -177,7 +181,7 @@ public class HUDManager : MonoBehaviour
     private void UpdateHintText()
     {
         hints.elementText.text = currHints + "x";
-        hints.elementButton.interactable = currHints != 0;
+        //hints.elementButton.interactable = currHints != 0;
     }
 
     /// <summary>
@@ -334,8 +338,15 @@ public class HUDManager : MonoBehaviour
     /// </summary>
     public void UseHint()
     {
-        currHints--;
-        UpdateHintText();
-        lvlMan.UseHint();
+        if (currHints >= 1) 
+        {
+            currHints--;
+            UpdateHintText();
+            lvlMan.UseHint();
+        }
+        else
+        {
+            videoPanel.SetActive(true);
+        }
     }
 }

@@ -402,4 +402,13 @@ public class GameManager : MonoBehaviour
     {
         return currLevel;
     }
+
+    /// <summary>
+    /// Devuelve los colores del actual theme usado
+    /// </summary>
+    /// <returns></returns>
+    public List<Color> GetCurrentColorPack()
+    {
+        return currTheme.colors;
+    }
 }

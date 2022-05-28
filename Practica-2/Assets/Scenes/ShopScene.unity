@@ -1093,6 +1093,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 56572ea752a3c6243b69b2b34fa26c0a, type: 2}
   - {fileID: 11400000, guid: f0e602a3e3b1b774bad0246bc9bb9aeb, type: 2}
   - {fileID: 11400000, guid: bd9e5ab2158bd3042870837e7c3f82ef, type: 2}
+  textMeshPro: {fileID: 1618555996}
+  textTittle: TIENDA
+  tiendaTitleFR: 0.5
 --- !u!1 &528700404
 GameObject:
   m_ObjectHideFlags: 0

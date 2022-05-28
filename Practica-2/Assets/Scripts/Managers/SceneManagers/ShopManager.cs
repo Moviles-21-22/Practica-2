@@ -50,6 +50,24 @@ public class ShopManager : MonoBehaviour
     [Tooltip("Lista de los paquetes de temas del juego")] [SerializeField]
     private List<ColorPack> colorThemes;
 
+    [Tooltip("Referencia al textMeshPro del rótulo")]
+    [SerializeField]
+    private TextMeshProUGUI textMeshPro;
+
+    [Tooltip("Texto a escribir como titulo")]
+    [SerializeField]
+    private string textTittle = "TIENDA";
+
+    [Tooltip("Tiempo de refresco del rótulo niveles")]
+    [SerializeField]
+    [Min(0.2f)]
+    private float tiendaTitleFR;
+
+    /// <summary>
+    /// Index para saber en qúé letra estamos
+    /// </summary>
+    private int tiendaIndex = 0;
+
     private bool isPremium;
     private int currHints;
     private List<GameManager.ThemeData> themesList;
@@ -82,6 +100,8 @@ public class ShopManager : MonoBehaviour
         ads.Init();
 
         InitElements();
+
+        InvokeRepeating(nameof(TitleColor), 0, tiendaTitleFR);
     }
 
     private void GenerateDefaultData()
@@ -260,5 +280,19 @@ public class ShopManager : MonoBehaviour
                 themeGo.samples[j].color = themesList[i].colors[j];
             }
         }
+    }
+
+        /// <summary>
+    /// Muestra el titulo animado
+    /// </summary>
+    public void TitleColor()
+    {
+        var currColors = currTheme.colors;
+        textMeshPro.text = "";
+        for (int i = 0; i < textTittle.Length; i++)
+        {
+            textMeshPro.text += "<color=#" + ColorUtility.ToHtmlStringRGBA(currColors[i + (int)tiendaIndex]) + ">" + textTittle[i] + "</color>";
+        }
+        tiendaIndex = tiendaIndex >= textTittle.Length ? 0 : tiendaIndex + 1;
     }
 }

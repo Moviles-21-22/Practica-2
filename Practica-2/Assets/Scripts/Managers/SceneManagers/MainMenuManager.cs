@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class MainMenuManager : MonoBehaviour
@@ -51,6 +52,24 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField]
     private AdsManager adsManager;
 
+    [Tooltip("Referencia al rótulo de colores de niveles")]
+    [SerializeField]
+    private TextMeshProUGUI textMeshPro;
+
+    [Tooltip("Texto a escribir como titulo")]
+    [SerializeField]
+    private string textTittle = "NIVELES";
+
+
+    [Tooltip("Tiempo de refresco del rótulo niveles")]
+    [SerializeField] [Min(0.2f)]
+    private float nivelesTime;
+
+    /// <summary>
+    /// Index para determinar en qué letra del rótulo estamos
+    /// </summary>
+    private uint indexNiveles = 0;
+
     private GameManager gm;
     private List<GameManager.CategoryData> categoryData;
 
@@ -69,6 +88,8 @@ public class MainMenuManager : MonoBehaviour
 
         LoadPackage(0, 0);
         ChangeCanvas();
+
+        InvokeRepeating(nameof(TitleColor), 0, nivelesTime);
     }
 
     /// <summary>
@@ -217,5 +238,20 @@ public class MainMenuManager : MonoBehaviour
     public void LoadLevel(int lvl, LevelPack lvlPack)
     {
         gm.LoadLevel(lvl, lvlPack);
+    }
+
+    /// <summary>
+    /// Muestra el titulo animado
+    /// </summary>
+    public void TitleColor()
+    {
+        var currColors = gm.GetCurrentColorPack();
+        textMeshPro.text = "";
+
+        for (int i = 0; i < textTittle.Length; i++)
+        {
+            textMeshPro.text += "<color=#" + ColorUtility.ToHtmlStringRGBA(currColors[i + (int)indexNiveles]) + ">" + textTittle[i] + "</color>";
+        }
+        indexNiveles = indexNiveles >= textTittle.Length ? 0 : indexNiveles + 1;
     }
 }
