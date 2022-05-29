@@ -64,6 +64,8 @@ public class SelectLevelManager : MonoBehaviour
             ChangeGridInfo();
         }
     }
+    
+//-------------------------------------------------INICIALIZACION-----------------------------------------------------//
 
     private void InitGridData()
     {
@@ -164,6 +166,7 @@ public class SelectLevelManager : MonoBehaviour
                 if (!lockPack || (lockPack && (index * boxes.Length) + j <= completedLevels))
                     // Desbloquea los niveles hasta dejar el primero sin desbloquear
                 {
+                    boxes[j].SetCallBack((index * boxes.Length) + j);
                     if ((index * boxes.Length) + j == completedLevels)
                     {
                         boxes[j].CurrentLevel();
@@ -179,6 +182,7 @@ public class SelectLevelManager : MonoBehaviour
         }
     }
 
+//----------------------------------------------------CALLBACKS-------------------------------------------------------//
     public void BackToMainMenu()
     {
         mainMenu.ChangeCanvas();

@@ -106,6 +106,7 @@ public class CellLevel : MonoBehaviour
         colorAux = Color.gray;
         numText.color = colorAux;
         lockImage.enabled = true;
+        numText.enabled = false;
     }
 
     /// <summary>
@@ -149,10 +150,12 @@ public class CellLevel : MonoBehaviour
     {
         background.color = initBgColor;
         frame.color = initFrameColor;
+        numText.enabled = true;
         numText.color = initTextColor;
         lockImage.enabled = false;
         completedImage.enabled = false;
         starImage.enabled = false;
+        button.onClick.RemoveAllListeners();
         
         if (!currentLevel) return;
         

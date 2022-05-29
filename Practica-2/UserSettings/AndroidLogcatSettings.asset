@@ -3,7 +3,7 @@
     "m_SelectedPackage": {
         "deviceId": "ec5bb8b3",
         "name": "com.RandomPlayerStudio.FlowFree",
-        "processId": 16712,
+        "processId": 20610,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -78,6 +78,12 @@
             "deviceId": "ec5bb8b3",
             "name": "com.RandomPlayerStudio.FlowFree",
             "processId": 16712,
+            "exited": false
+        },
+        {
+            "deviceId": "ec5bb8b3",
+            "name": "com.RandomPlayerStudio.FlowFree",
+            "processId": 20610,
             "exited": false
         },
         {
