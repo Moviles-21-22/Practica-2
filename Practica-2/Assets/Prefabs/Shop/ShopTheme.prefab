@@ -92,7 +92,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 69.85
+  m_fontSize: 72
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -266,7 +266,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 30dba30081967904396b3de7d3f130b5, type: 3}
+  m_Sprite: {fileID: 21300000, guid: bff0354a8b3460147a489d6df17042ea, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -743,19 +743,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 0}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: ShopManager, Assembly-CSharp
-        m_MethodName: ChangeTheme
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &844168058005260440
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -770,7 +758,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selectedImage: {fileID: 844168057465573893}
   themeName: {fileID: 844168057192513218}
-  themeButton: {fileID: 0}
+  themeButton: {fileID: 844168058706590938}
   samples:
   - {fileID: 844168057586543135}
   - {fileID: 844168058643825571}

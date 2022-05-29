@@ -13,8 +13,8 @@ public class ShopManager : MonoBehaviour
     private TextMeshProUGUI hintsText;
 
     [Tooltip("Sprite del candado")] [SerializeField]
-    private Sprite lockSprite;
-
+    private Sprite selectedSprite;
+    
     [Header("Átributos para generar temas de forma dinámica")]
     [Tooltip("Referencia al contenido del scroll")]
     [SerializeField]
@@ -61,17 +61,18 @@ public class ShopManager : MonoBehaviour
     [Tooltip("Tiempo de refresco del rótulo niveles")]
     [SerializeField]
     [Min(0.2f)]
-    private float tiendaTitleFR;
+    private float tiendaTitleFr;
 
     /// <summary>
     /// Index para saber en qúé letra estamos
     /// </summary>
-    private int tiendaIndex = 0;
+    private int tiendaIndex;
 
     private bool isPremium;
     private int currHints;
     private List<GameManager.ThemeData> themesList;
     private GameManager.ThemeData currTheme;
+    private ThemeFeatures currThemeGo;
     private GameManager gm;
 
     /// <summary>
@@ -101,9 +102,14 @@ public class ShopManager : MonoBehaviour
 
         InitElements();
 
-        InvokeRepeating(nameof(TitleColor), 0, tiendaTitleFR);
+        InvokeRepeating(nameof(TitleColor), 0, tiendaTitleFr);
     }
+//-------------------------------------------------INICIALIZACION-----------------------------------------------------//
 
+    /// <summary>
+    /// Genera datos por defecto para que la escena
+    /// se pueda lanzar de forma independiente
+    /// </summary>
     private void GenerateDefaultData()
     {
         int numThemes = colorThemes.Count;
@@ -120,82 +126,63 @@ public class ShopManager : MonoBehaviour
         currTheme = themesList[0];
     }
 
+    /// <summary>
+    /// Inicializa todos los elementos de la UI de la tienda
+    /// en funión de los datos generados u obtenidos
+    /// </summary>
     private void InitElements()
     {
         hintsText.text = "¡Te quedan " + currHints + " pistas!";
 
         InitThemes();
-        ChangeShopColor();
-    }
-
-    public void HideBanner()
-    {
-        ads.HideBanner();
-    }
-
-
-    /// <summary>
-    /// Desbloquea el premiun y desactiva el marco
-    /// </summary>
-    public void UnlockPremium()
-    {
-        gm.UnLockPremium();
-        premiumSection.gameObject.SetActive(false);
-        gm.LoadScene((int)GameManager.SceneOrder.SHOP);
+        UpdateShopColor();
     }
 
     /// <summary>
-    /// Añade pistas
+    /// Inicializa la lista de temas de la tienda deforma dinámica
     /// </summary>
-    /// <param name="numHints">Numero de pistas a añadir</param>
-    public void AddHints(int numHints)
+    private void InitThemes()
     {
-        currHints += numHints;
-        gm.AddHints(currHints);
-        hintsText.text = "¡Te quedan " + currHints + " pistas!";
-    }
+        ResizeUI();
+        var numThemes = themesList.Count;
 
-    public void BackToMainMenu()
-    {
-        gm.LoadScene((int) GameManager.SceneOrder.MAIN_MENU);
-    }
-
-    /// <summary>
-    /// Cambia el tema viejo por el escogido
-    /// </summary>
-    /// <param name="index">Tema que se escocge</param>
-    public void ChangeTheme(int index)
-    {
-        // currTheme = themesList[index];
-        // var selectedImage = themesFeatures[index].selectedImage;
-        //
-        // if (currTheme.unlocked)
-        // {
-        //     gm.SetTheme(index);
-        // }
-        // else
-        // {
-        //     gm.UnlockTheme(index);
-        // }
-        //
-        // currThemeShop.enabled = false;
-        // currThemeShop = selectedImage;
-        // currThemeShop.sprite = unlockSprite;
-        // currThemeShop.enabled = true;
-        // ChangeShopColor();
-    }
-
-    /// <summary>
-    /// Cambia el color de la tienda
-    /// </summary>
-    private void ChangeShopColor()
-    {
-        for (var i = 0; i < menu.Count; i++)
+        for (var i = 0; i < numThemes; i++)
         {
-            menu[i].color = currTheme.colors[i];
+            // Instatiate del GO de los temas
+            var themeGo = Instantiate(themeFeaturesGo, themesLayout);
+
+            var aux = i;
+            themeGo.themeButton.onClick.AddListener(() => ChangeTheme(aux, themeGo));
+            
+             // Si es el tema actual, entonces se activa la imagen del tick
+             if (themesList[i] == currTheme)
+             {
+                 themeGo.selectedImage.sprite = selectedSprite;
+                 currThemeGo = themeGo;
+             }
+             // Si simplemente está desbloqueado, se desactiva el sprite
+             else if (themesList[i].unlocked)
+             {
+                 themeGo.selectedImage.enabled = false;
+             }
+
+            themeGo.themeName.text = themesList[i].name;
+
+            for (var j = 0; j < themeGo.samples.Count; j++)
+            {
+                themeGo.samples[j].color = themesList[i].colors[j];
+            }
         }
     }
 
+//--------------------------------------------------------------------------------------------------------------------//
+
+    /// <summary>
+    /// A partir del tema base del editor, se calcula
+    /// la altura que tendrán los botones para los temas
+    /// del juego
+    /// </summary>
+    /// <returns></returns>
     private float CalculateHeightThemes()
     {
         int numElems = themesList.Count;
@@ -208,7 +195,7 @@ public class ShopManager : MonoBehaviour
         baseRect.gameObject.SetActive(false);
         return height;
     }
-
+    
     /// <summary>
     /// Redimensiona los elementos de la UI de forma dinámica
     /// </summary>
@@ -226,9 +213,6 @@ public class ShopManager : MonoBehaviour
         // contentScroll y se reposicionan los objetos.
         if (isPremium)
         {
-            var premiumAnchor = premiumSection.anchorMin;
-            //contentAnchor += premiumAnchor;
-            
             var premiumPos = premiumSection.localPosition;
             var hintsPos = hintsSection.localPosition;
             hintsSection.localPosition = premiumPos;
@@ -246,44 +230,21 @@ public class ShopManager : MonoBehaviour
         themesLayout.sizeDelta = Vector2.up * themesHeight;
         themesBound.sizeDelta = Vector2.up * themesHeight;
     }
-
+    
     /// <summary>
-    /// Inicializa la lista de temas de la tienda deforma dinámica
+    /// Actualiza el color de la tienda en función
+    /// del tema actual escogido
     /// </summary>
-    private void InitThemes()
+    private void UpdateShopColor()
     {
-        ResizeUI();
-        var numThemes = themesList.Count;
-
-        for (var i = 0; i < numThemes; i++)
+        for (var i = 0; i < menu.Count; i++)
         {
-            // Instatiate del GO de los temas
-            var themeGo = Instantiate(themeFeaturesGo, themesLayout);
-            
-            // Si es el tema actual, entonces se activa la imagen del tick
-            if (themesList[i] == currTheme)
-            {
-                themeGo.selectedImage.enabled = true;
-            }
-
-            if (!themesList[i].unlocked)
-            {
-                themeGo.selectedImage.enabled = true;
-                themeGo.selectedImage.sprite = lockSprite;
-                themeGo.selectedImage.rectTransform.sizeDelta.Set(50.0f, 50.0f);
-            }
-
-            themeGo.themeName.text = themesList[i].name;
-
-            for (var j = 0; j < themeGo.samples.Count; j++)
-            {
-                themeGo.samples[j].color = themesList[i].colors[j];
-            }
+            menu[i].color = currTheme.colors[i];
         }
     }
 
-        /// <summary>
-    /// Muestra el titulo animado
+    /// <summary>
+    /// Animación del rótulo colorido
     /// </summary>
     public void TitleColor()
     {
@@ -291,8 +252,71 @@ public class ShopManager : MonoBehaviour
         textMeshPro.text = "";
         for (int i = 0; i < textTittle.Length; i++)
         {
-            textMeshPro.text += "<color=#" + ColorUtility.ToHtmlStringRGBA(currColors[i + (int)tiendaIndex]) + ">" + textTittle[i] + "</color>";
+            textMeshPro.text += "<color=#" + ColorUtility.ToHtmlStringRGBA(currColors[i + tiendaIndex])
+             + ">" + textTittle[i] + "</color>";
         }
         tiendaIndex = tiendaIndex >= textTittle.Length ? 0 : tiendaIndex + 1;
+    }
+    
+    /// <summary>
+    /// Oculta el banner de los anuncios
+    /// </summary>
+    public void HideBanner()
+    {
+        ads.HideBanner();
+    }
+    
+//--------------------------------------------------------------------------------------------------------------------//
+
+//---------------------------------------------BUTTON-CALLBACKS-------------------------------------------------------//
+    public void BackToMainMenu()
+    {
+        gm.LoadScene((int) GameManager.SceneOrder.MAIN_MENU);
+    }
+    
+    /// <summary>
+    /// Añade pistas
+    /// </summary>
+    /// <param name="numHints">Numero de pistas a añadir</param>
+    public void AddHints(int numHints)
+    {
+        currHints += numHints;
+        gm.AddHints(currHints);
+        hintsText.text = "¡Te quedan " + currHints + " pistas!";
+    }
+
+    /// <summary>
+    /// Cambia el tema viejo por el escogido
+    /// </summary>
+    /// <param name="index">Tema que se escocge</param>
+    /// <param name="selectedTheme">GameObject del tema actual seleccionado</param>
+    private void ChangeTheme(int index, ThemeFeatures selectedTheme)
+    {
+        currTheme = themesList[index];
+        if (currTheme.unlocked)
+        {
+            gm.SetTheme(index);
+        }
+        else
+        {
+            gm.UnlockTheme(index);
+        }
+        
+        currThemeGo.selectedImage.enabled = false;
+        selectedTheme.selectedImage.enabled = true;
+        selectedTheme.selectedImage.sprite = selectedSprite;
+        currThemeGo = selectedTheme;
+        UpdateShopColor();
+    }
+    
+    
+    /// <summary>
+    /// Desbloquea el premiun y desactiva el marco
+    /// </summary>
+    public void UnlockPremium()
+    {
+        gm.UnLockPremium();
+        premiumSection.gameObject.SetActive(false);
+        gm.LoadScene((int)GameManager.SceneOrder.SHOP);
     }
 }
