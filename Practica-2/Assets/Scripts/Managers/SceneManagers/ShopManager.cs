@@ -15,6 +15,16 @@ public class ShopManager : MonoBehaviour
     [Tooltip("Sprite del candado")] [SerializeField]
     private Sprite selectedSprite;
     
+    [Header("Efectos")]
+    [Tooltip("Texto a escribir como titulo")]
+    [SerializeField]
+    private string textTittle = "TIENDA";
+
+    [Tooltip("Tiempo de refresco del rótulo niveles")]
+    [SerializeField]
+    [Min(0.2f)]
+    private float tiendaTitleFr;
+
     [Header("Átributos para generar temas de forma dinámica")]
     [Tooltip("Referencia al contenido del scroll")]
     [SerializeField]
@@ -53,15 +63,6 @@ public class ShopManager : MonoBehaviour
     [Tooltip("Referencia al textMeshPro del rótulo")]
     [SerializeField]
     private TextMeshProUGUI textMeshPro;
-
-    [Tooltip("Texto a escribir como titulo")]
-    [SerializeField]
-    private string textTittle = "TIENDA";
-
-    [Tooltip("Tiempo de refresco del rótulo niveles")]
-    [SerializeField]
-    [Min(0.2f)]
-    private float tiendaTitleFr;
 
     /// <summary>
     /// Index para saber en qúé letra estamos

@@ -1066,7 +1066,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ads: {fileID: 7869540305992442476}
   hintsText: {fileID: 1641436538}
-  lockSprite: {fileID: 21300000, guid: bff0354a8b3460147a489d6df17042ea, type: 3}
+  selectedSprite: {fileID: 21300000, guid: 30dba30081967904396b3de7d3f130b5, type: 3}
   contentScroll: {fileID: 2003686209}
   topSection: {fileID: 842892316}
   premiumSection: {fileID: 1733139960}
@@ -1095,7 +1095,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: bd9e5ab2158bd3042870837e7c3f82ef, type: 2}
   textMeshPro: {fileID: 1618555996}
   textTittle: TIENDA
-  tiendaTitleFR: 0.5
+  tiendaTitleFr: 0.5
 --- !u!1 &528700404
 GameObject:
   m_ObjectHideFlags: 0
@@ -4400,10 +4400,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1409262234}
     m_Modifications:
-    - target: {fileID: 844168057465573893, guid: db2afc642790b5142b1f9685583080c2, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: bff0354a8b3460147a489d6df17042ea, type: 3}
     - target: {fileID: 844168057586543134, guid: db2afc642790b5142b1f9685583080c2, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
