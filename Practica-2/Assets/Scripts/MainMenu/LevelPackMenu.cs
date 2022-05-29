@@ -5,16 +5,16 @@ using UnityEngine.UI;
 public class LevelPackMenu : MonoBehaviour
 {
     [Tooltip("Referencia al boton para elegir un nivel")]
-    [SerializeField] private Button button;
+    public Button button;
 
     [Tooltip("Referencia al texto del nombre del nivel")]
-    [SerializeField] private TextMeshProUGUI packName;
+    public TextMeshProUGUI packName;
 
     [Tooltip("Referencia al texto que muestra los niveles completados")]
-    [SerializeField] private TextMeshProUGUI levels;
+    public TextMeshProUGUI levels;
 
     [Tooltip("Referencia al RectTransform del objeto correspondiente")]
-    [SerializeField] private RectTransform levelRect;
+    public RectTransform levelRect;
 
     public void AddCallBack(int indexPack, int indexCat, AudioSource audioSource, AudioClip forward, MainMenuManager menu)
     {
@@ -22,31 +22,5 @@ public class LevelPackMenu : MonoBehaviour
         // de manera que sea el mainMenu quien se lo diga al GameManager
         button.onClick.AddListener(() => menu.LoadPackage(indexPack, indexCat));
         audioSource.PlayOneShot(forward);
-    }
-
-    public void SetPackColor(Color newColor)
-    {
-        packName.color = newColor;
-    }
-
-    public void SetPackName(string newName)
-    {
-        packName.text = newName;
-    }
-
-    public void SetCompletedLevels(string newText)
-    {
-        levels.text = newText;
-    }
-
-    public void SetPos(Vector2 newPos)
-    {
-        levelRect.localPosition = newPos;
-    }
-
-    public void SetSizeText(float tam)
-    {
-        packName.fontSizeMax = tam;
-        levels.fontSizeMax = tam;
     }
 }

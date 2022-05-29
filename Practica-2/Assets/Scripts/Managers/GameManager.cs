@@ -305,6 +305,9 @@ public class GameManager : MonoBehaviour
     /// <param name="t">El tema a desbloquear</param>
     public void UnlockTheme(int t)
     {
+        if (themesData.Count == 0)
+            return;
+        
         var theme = themesData[t];
         theme.unlocked = true;
         SetTheme(t);
