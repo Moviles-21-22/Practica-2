@@ -1,9 +1,7 @@
-using System.Diagnostics.CodeAnalysis;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-[SuppressMessage("ReSharper", "StringLiteralTypo")]
 public class HUDManager : MonoBehaviour
 {
     [Tooltip("Referencia al objeto que muestra si el nivel se ha completado")] [SerializeField]
@@ -23,19 +21,16 @@ public class HUDManager : MonoBehaviour
     [Tooltip("Referencia al objeto que muestra las pistas")] [SerializeField]
     private HudElement hints;
 
-    [Header("Elementos del hud - Textos")]
-    [Tooltip("Referencia al texto que muestra el nivel actual")]
-    [SerializeField]
+    [Header("Elementos del hud - Textos")] [Tooltip("Referencia al texto que muestra el nivel actual")] [SerializeField]
     private TextMeshProUGUI numLevelText;
-    
+
     [Tooltip("Referencia al titulo del texto que se muestra al ganar")] [SerializeField]
     private TextMeshProUGUI winTitle;
-    
+
     [Tooltip("Referencia al botón del próximo nivel cuando se gana")] [SerializeField]
     private TextMeshProUGUI nextLevelWinText;
-    
-    [Header("Board Info")]
-    [Tooltip("Referencia al texto que el número de flujos conectados")] [SerializeField]
+
+    [Header("Board Info")] [Tooltip("Referencia al texto que el número de flujos conectados")] [SerializeField]
     private TextMeshProUGUI numFlowsText;
 
     [Tooltip("Referencia al texto que muestra el número de movimientos")] [SerializeField]
@@ -50,9 +45,7 @@ public class HUDManager : MonoBehaviour
     [Tooltip("Referencia al texto final que muestra el número de movimientos")] [SerializeField]
     private TextMeshProUGUI finalMovsText;
 
-    [Header("Elementos del hud - Botones")]
-    [Tooltip("Referencia al botón del proximo nivel")]
-    [SerializeField]
+    [Header("Elementos del hud - Botones")] [Tooltip("Referencia al botón del proximo nivel")] [SerializeField]
     private Button undoButton;
 
     [Tooltip("Referencia al botón del proximo nivel")] [SerializeField]
@@ -61,10 +54,10 @@ public class HUDManager : MonoBehaviour
     [Tooltip("Referencia al botón del anterior nivel")] [SerializeField]
     private Button prevLevelButton;
 
-    [Tooltip("Referencia al panel de ver video")]
-    [SerializeField]
+    [Tooltip("Referencia al panel de ver video")] [SerializeField]
     private GameObject videoPanel;
-    //--------------------------------------------------ATRIBUTOS-PRIVADO-------------------------------------------------//
+    
+//--------------------------------------------------ATRIBUTOS-PRIVADOS-------------------------------------------------//
 
     // Referencia al LevelManager
     private LevelManager lvlMan;
@@ -96,7 +89,7 @@ public class HUDManager : MonoBehaviour
         InitTopElements();
         InitBotElements();
     }
-    
+
 //-------------------------------------------------INICIALIZACION-----------------------------------------------------//
 
     /// <summary>
@@ -110,7 +103,7 @@ public class HUDManager : MonoBehaviour
         levelPack = package;
         numLevelText.text = "Nivel " + (currLevel.lvl + 1);
     }
-    
+
     /// <summary>
     /// Inicializa la parte superior del hud
     /// </summary>
@@ -258,6 +251,7 @@ public class HUDManager : MonoBehaviour
     private void DisableElements()
     {
         undoButton.interactable = false;
+        hints.elementButton.interactable = false;
     }
 
     /// <summary>
@@ -338,7 +332,7 @@ public class HUDManager : MonoBehaviour
     /// </summary>
     public void UseHint()
     {
-        if (currHints >= 1) 
+        if (currHints >= 1)
         {
             currHints--;
             UpdateHintText();

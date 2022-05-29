@@ -111,12 +111,10 @@ public class AdsManager : MonoBehaviour, IUnityAdsInitializationListener, IUnity
         ShowBanner();
     }
 
-
     public void ShowInterstitial()
     {
         Advertisement.Show(interstitialAndroidUnit, this);
     }
-
 
     /// <summary>
     /// Para eliminar los banners del juego

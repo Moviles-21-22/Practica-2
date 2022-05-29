@@ -91,47 +91,8 @@ public class MainMenuManager : MonoBehaviour
         InvokeRepeating(nameof(TitleColor), 0, nivelesTime);
     }
 
-    /// <summary>
-    /// Calcula la altura de la UI del MainMenu que corresponde
-    /// al espacio que muestra las diferentes categorías y niveles
-    /// </summary>
-    /// <returns>Devuelve la altura</returns>
-    private float CalculateHeightCategories()
-    {
-        int numElems = categoryData.Count;
-        if (numElems == 0)
-        {
-            Debug.LogError("No se han encontrado objetos asignados al componente");
-        }
-
-        foreach (var cat in categoryData)
-        {
-            numElems += cat.levels.Length;
-        }
-
-        var height = numElems * baseRect.rect.height;
-        baseRect.gameObject.SetActive(false);
-        return height;
-    }
-
-    private void ResizeUI()
-    {
-        // 1. Calculo del tamaño que van a ocupar sólo las categorías
-        var catHeight = CalculateHeightCategories();
-
-        //2. Cálculo del offset que se la aplicará al contentScroll
-        var scrollH = contentScroll.rect.height;
-        var finalH = topMenu.rect.height + catHeight;
-        var offset = (finalH - scrollH) / scrollH;
-        var contentAnchor = Vector2.down * offset;
-
-        // 3. Asignación nueva
-        contentScroll.anchorMin = Vector2.up * contentAnchor;
-        topMenu.SetParent(contentScroll);
-        categorySection.SetParent(contentScroll);
-        categorySection.sizeDelta = Vector2.up * catHeight;
-    }
-
+//-------------------------------------------------INICIALIZACION-----------------------------------------------------//
+    
     /// <summary>
     /// Inicializa la información de cada una de las categorías de forma dinámica
     /// en función de los paquetes quue haya cargados en el GameManager
@@ -174,6 +135,7 @@ public class MainMenuManager : MonoBehaviour
         }
     }
 
+        
     /// <summary>
     /// Inicializa la información de los paquetes de niveles de cada una de las categorías
     /// </summary>
@@ -203,16 +165,7 @@ public class MainMenuManager : MonoBehaviour
             packList.Add(levelPack);
         }
     }
-
-    /// <summary>
-    /// Le comunica al GameManager que se quiere cambiar de escena
-    /// </summary>
-    /// <param name="scene"></param>
-    public void ChangeScene(int scene)
-    {
-        gm.LoadScene(scene);
-    }
-
+    
     /// <summary>
     /// Le comunica al GameManager que se quiere cargar un paquete de niveles
     /// </summary>
@@ -230,6 +183,58 @@ public class MainMenuManager : MonoBehaviour
         var catData = categoryData[indexCat];
         var lvlPackData = catData.levels[indexPack];
         selectLevel.Init(lvlPackData, lvlPack, catColor, this);
+    }
+    
+    /// <summary>
+    /// Calcula la altura de la UI del MainMenu que corresponde
+    /// al espacio que muestra las diferentes categorías y niveles
+    /// </summary>
+    /// <returns>Devuelve la altura</returns>
+    private float CalculateHeightCategories()
+    {
+        int numElems = categoryData.Count;
+        if (numElems == 0)
+        {
+            Debug.LogError("No se han encontrado objetos asignados al componente");
+        }
+
+        foreach (var cat in categoryData)
+        {
+            numElems += cat.levels.Length;
+        }
+
+        var height = numElems * baseRect.rect.height;
+        baseRect.gameObject.SetActive(false);
+        return height;
+    }
+
+    private void ResizeUI()
+    {
+        // 1. Calculo del tamaño que van a ocupar sólo las categorías
+        var catHeight = CalculateHeightCategories();
+
+        //2. Cálculo del offset que se la aplicará al contentScroll
+        var scrollH = contentScroll.rect.height;
+        var finalH = topMenu.rect.height + catHeight;
+        var offset = (finalH - scrollH) / scrollH;
+        var contentAnchor = Vector2.down * offset;
+
+        // 3. Asignación nueva
+        contentScroll.anchorMin = Vector2.up * contentAnchor;
+        topMenu.SetParent(contentScroll);
+        categorySection.SetParent(contentScroll);
+        categorySection.sizeDelta = Vector2.up * catHeight;
+    }
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+    /// <summary>
+    /// Le comunica al GameManager que se quiere cambiar de escena
+    /// </summary>
+    /// <param name="scene"></param>
+    public void ChangeScene(int scene)
+    {
+        gm.LoadScene(scene);
     }
 
     /// <summary>
@@ -249,6 +254,11 @@ public class MainMenuManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Carga un nivel del juego
+    /// </summary>
+    /// <param name="lvl">Índice del nivel que se quiere cargar</param>
+    /// <param name="lvlPack">Información del paquete que se quiere cargar</param>
     public void LoadLevel(int lvl, LevelPack lvlPack)
     {
         gm.LoadLevel(lvl, lvlPack);
@@ -269,5 +279,13 @@ public class MainMenuManager : MonoBehaviour
         }
 
         indexNiveles = indexNiveles >= textTittle.Length ? 0 : indexNiveles + 1;
+    }
+
+    /// <summary>
+    /// Le avisa al GameManager para que cierre la aplicación
+    /// </summary>
+    public void CloseApp()
+    {
+        gm.CloseApp();
     }
 }

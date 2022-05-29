@@ -89,7 +89,7 @@ public class LevelManager : MonoBehaviour
     {
         gm.AddSolutionLevel(movements, numFlows);
         bool perfect = movements == numFlows;
-        LevelCompleted(perfect);
+        hud.LevelCompleted(perfect);
     }
 
 //-------------------------------------------------UPDATE-HUD---------------------------------------------------------//
@@ -145,14 +145,5 @@ public class LevelManager : MonoBehaviour
     {
         gm.UseHint();
         board.ApplyHint();
-    }
-
-    /// <summary>
-    /// Genera el pop-up del nivel completado en el hud
-    /// </summary>
-    /// <param name="isPerfect">Para saber si el nivel es perfecto</param>
-    private void LevelCompleted(bool isPerfect)
-    {
-        hud.LevelCompleted(isPerfect);
     }
 }

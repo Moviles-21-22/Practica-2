@@ -69,11 +69,12 @@ public class GameManager : MonoBehaviour
     /// Actual paquete de niveles
     /// </summary>
     private LevelPackData currPack;
+
     private int indexCurrPack;
 
     private CategoryData currCat;
     private int indexCurrCat;
-    
+
     /// <summary>
     /// Actual tema escogido
     /// </summary>
@@ -154,21 +155,6 @@ public class GameManager : MonoBehaviour
 
             DontDestroyOnLoad(gameObject);
         }
-    }
-
-    /// <summary>
-    /// Cierra la app
-    /// </summary>
-    public void CloseApp()
-    {
-        DataManager.DebugLogs("App cerrada");
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#elif UNITY_ANDROID
-    System.Diagnostics.Process.GetCurrentProcess().Kill();
-#else
-        Application.Quit();
-#endif
     }
 
 //--------------------------------------------GESTION-LOAD-SAVE-------------------------------------------------------//
@@ -255,17 +241,54 @@ public class GameManager : MonoBehaviour
         indexCurrPack = levelPack;
     }
 
-//--------------------------------------------------------------------------------------------------------------------//
+//-------------------------------------------------GET-SET------------------------------------------------------------//
+    /// <summary>
+    /// Devuelve la lista de los datos de las categorías
+    /// </summary>
+    public List<CategoryData> GetCategories()
+    {
+        return categoriesData;
+    }
 
     /// <summary>
-    /// Carga una escena
+    /// Devuelve el status de premium
     /// </summary>
-    /// <param name="scene">Escena a la que se quiere cambiar</param>
-    public void LoadScene(int scene)
+    public bool IsPlayerPremium()
     {
-        SceneManager.LoadScene(scene);
-        DataManager.DebugLogs("Escena: " + scene + " cargada");
+        return isPremium;
     }
+
+    /// <summary>
+    /// Devuelve el nivel actual
+    /// </summary>
+    public Level GetCurrLevel()
+    {
+        return currLevel;
+    }
+
+    /// <summary>
+    /// Devuelve los colores del actual theme usado
+    /// </summary>
+    public List<Color> GetCurrentColorPack()
+    {
+        return currTheme.colors;
+    }
+
+    /// <summary>
+    /// Cambia el tema
+    /// </summary>
+    /// <param name="t">El tema a cambiar</param>
+    public void SetTheme(int t)
+    {
+        // El anterior se suelta
+        currTheme.isCurrTheme = false;
+        // Se pone el nuevo
+        currTheme = themesData[t];
+        currTheme.isCurrTheme = true;
+        SaveGame();
+    }
+    
+//------------------------------------------------ACTUALIZACIÓN-DATOS-------------------------------------------------//
 
     /// <summary>
     /// Añade una solución de nivel del paquete actual
@@ -307,7 +330,7 @@ public class GameManager : MonoBehaviour
     {
         if (themesData.Count == 0)
             return;
-        
+
         var theme = themesData[t];
         theme.unlocked = true;
         SetTheme(t);
@@ -349,21 +372,9 @@ public class GameManager : MonoBehaviour
 
         SaveGame();
     }
-
-    /// <summary>
-    /// Cambia el tema
-    /// </summary>
-    /// <param name="t">El tema a cambiar</param>
-    public void SetTheme(int t)
-    {
-        // El anterior se suelta
-        currTheme.isCurrTheme = false;
-        // Se pone el nuevo
-        currTheme = themesData[t];
-        currTheme.isCurrTheme = true;
-        SaveGame();
-    }
-
+    
+//--------------------------------------------------------------------------------------------------------------------//
+    
     /// <summary>
     /// Cambia a un nivel en concreto
     /// </summary>
@@ -374,41 +385,26 @@ public class GameManager : MonoBehaviour
         LoadScene((int) SceneOrder.GAME_SCENE);
     }
 
-    public List<CategoryData> GetCategories()
+    /// <summary>
+    /// Cierra la app
+    /// </summary>
+    public void CloseApp()
     {
-        return categoriesData;
+        DataManager.DebugLogs("App cerrada");
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#elif UNITY_ANDROID
+        Application.Quit();
+#endif
     }
 
     /// <summary>
-    /// Devuelve el status de premium
+    /// Carga una escena
     /// </summary>
-    /// <returns></returns>
-    public bool IsPlayerPremium()
+    /// <param name="scene">Escena a la que se quiere cambiar</param>
+    public void LoadScene(int scene)
     {
-        return isPremium;
-    }
-
-    public int GetHints()
-    {
-        return numHints;
-    }
-
-    public Map GetCurrMap()
-    {
-        return currMap;
-    }
-
-    public Level GetCurrLevel()
-    {
-        return currLevel;
-    }
-
-    /// <summary>
-    /// Devuelve los colores del actual theme usado
-    /// </summary>
-    /// <returns></returns>
-    public List<Color> GetCurrentColorPack()
-    {
-        return currTheme.colors;
+        SceneManager.LoadScene(scene);
+        DataManager.DebugLogs("Escena: " + scene + " cargada");
     }
 }
