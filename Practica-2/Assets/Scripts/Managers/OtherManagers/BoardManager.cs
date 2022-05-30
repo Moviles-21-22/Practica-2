@@ -71,11 +71,19 @@ public class BoardManager : MonoBehaviour
     // Struct auxiliar con la información del nivel actual
     private Level currLevel;
 
+    //  Referencia al level manager
     private LevelManager levelManager;
 
-//-------------------------------------------------INICIALIZACION-----------------------------------------------------//
+    //-------------------------------------------------INICIALIZACION-----------------------------------------------------//
 
-    //  Setea al board y activa el puntero
+    /// <summary>
+    /// Setea al board y activa el puntero
+    /// </summary>
+    /// <param name="level">Nivel que va a ser cargado</param>
+    /// <param name="theme">Tema que va a ser cargado</param>
+    /// <param name="numHints">Numero de pistas</param>
+    /// <param name="hudRegion">Posiciones del hud</param>
+    /// <param name="lvlMan">Referecia al level manager</param>
     public void Init(Level level, List<Color> theme, int numHints, RectTransform[] hudRegion, LevelManager lvlMan)
     {
         currLevel = level;
@@ -928,9 +936,9 @@ public class BoardManager : MonoBehaviour
     {
         if (currTile != null && currTile.GetTileColor() != (int) Tile.TILE_COLOR.NONE)
         {
-            inputTile.GetCircleRender().enabled = true;
             Vector2 pos = mainCamera.ScreenToWorldPoint(inputPos);
             inputTile.transform.position = new Vector3(pos.x, pos.y, 10.0f);
+            inputTile.GetCircleRender().enabled = true;
         }
         else
         {

@@ -340,7 +340,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 150
+  m_fontSize: 128.25
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -455,7 +455,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 125.1
+  m_fontSize: 113.4
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -731,7 +731,7 @@ RectTransform:
   m_Father: {fileID: 697200272}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.875, y: 0.5}
+  m_AnchorMin: {x: 0.83300006, y: 0.5}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
@@ -2325,7 +2325,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8370638751146021702, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0.93
+      value: 0.9407813
       objectReference: {fileID: 0}
     - target: {fileID: 8370638751146021702, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
       propertyPath: m_SizeDelta.x
@@ -2490,7 +2490,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 119.95
+  m_fontSize: 109.6
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2661,7 +2661,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8370638751146021702, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.125
+      value: 0.124000005
       objectReference: {fileID: 0}
     - target: {fileID: 8370638751146021702, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
       propertyPath: m_AnchorMax.y
@@ -2673,7 +2673,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8370638751146021702, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0.5
+      value: 0.60400003
       objectReference: {fileID: 0}
     - target: {fileID: 8370638751146021702, guid: 6d7981516ac03ac4d92f7a4811c2dd72, type: 3}
       propertyPath: m_SizeDelta.x
