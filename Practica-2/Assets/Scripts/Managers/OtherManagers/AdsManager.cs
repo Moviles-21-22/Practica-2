@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.Advertisements;
 
+//check Amaro
+
+//  Se encarga de gestionar todos los anuncios
 public class AdsManager : MonoBehaviour, IUnityAdsInitializationListener, IUnityAdsLoadListener, IUnityAdsShowListener
 {
     [Tooltip("Posición del banner")] [SerializeField]
@@ -20,16 +23,6 @@ public class AdsManager : MonoBehaviour, IUnityAdsInitializationListener, IUnity
 
     [Tooltip("Test selectedImage")] [SerializeField]
     public bool testMode;
-
-    ///// <summary>
-    ///// Determina si el jugador es premium
-    ///// </summary>
-    //private bool isPremium;
-
-    ///// <summary>
-    ///// Determina si entregar el premio al jugador
-    ///// </summary>
-    //private bool rewarded = false;
 
     [Tooltip("Numero de pistas que se dan al ver un video reward")] [SerializeField]
     private uint numRewardVideoHints = 1;
@@ -111,13 +104,16 @@ public class AdsManager : MonoBehaviour, IUnityAdsInitializationListener, IUnity
         ShowBanner();
     }
 
+    /// <summary>
+    /// Muestra un anuncio del tipo interstitial
+    /// </summary>
     public void ShowInterstitial()
     {
         Advertisement.Show(interstitialAndroidUnit, this);
     }
 
     /// <summary>
-    /// Para eliminar los banners del juego
+    /// Para eliminar los banners del juego si el jugador es premium
     /// </summary>
     public void HideBanner()
     {
@@ -203,7 +199,7 @@ public class AdsManager : MonoBehaviour, IUnityAdsInitializationListener, IUnity
     }
 
     /// <summary>
-    /// Cuando se termina de ver un ads
+    /// Cuando se termina de interactuar con un ad
     /// </summary>
     /// <param name="placementId"></param>
     /// <param name="showCompletionState"></param>

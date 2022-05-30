@@ -2,6 +2,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+//  Check Amaro
+
+//  Gestiona el HUD
 public class HUDManager : MonoBehaviour
 {
     [Tooltip("Referencia al objeto que muestra si el nivel se ha completado")] [SerializeField]
@@ -295,7 +298,7 @@ public class HUDManager : MonoBehaviour
     /// <param name="numHints"></param>
     public void PlayVideo(int numHints)
     {
-        lvlMan.AddHints(numHints);
+        lvlMan.AddHints();
         currHints += numHints;
         UpdateHintText();
     }

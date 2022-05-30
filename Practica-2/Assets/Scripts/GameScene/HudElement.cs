@@ -2,6 +2,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+//Check Amaro
+
 public class HudElement : MonoBehaviour
 {
     [Tooltip("Diferentes sprites del elemento de HUD")]

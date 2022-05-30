@@ -1,11 +1,22 @@
 using TMPro;
 using UnityEngine;
 
+// Check Amaro
+
+/// <summary>
+/// Clase para representar una "caja" con todos los niveles de un pack
+/// </summary>
 public class GridPack : MonoBehaviour
 {
+    /// <summary>
+    /// Array con las celdas
+    /// </summary>
     [SerializeField]
     public CellLevel[] boxs;
 
+    /// <summary>
+    /// Texto del titulo
+    /// </summary>
     [SerializeField]
     private TextMeshProUGUI title;
 

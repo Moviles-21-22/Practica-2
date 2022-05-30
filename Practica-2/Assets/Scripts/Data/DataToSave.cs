@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Check Amaro
+
 /// <summary>
 /// Clase para guardar datos serializables
 /// </summary>
@@ -291,6 +293,13 @@ public class DataToSave
         hash = newHash;
     }
 
+    /// <summary>
+    /// Asigna nueva información a los datos
+    /// </summary>
+    /// <param name="numHints">numero de pistas</param>
+    /// <param name="premium">estado de premium</param>
+    /// <param name="categoriesData">categorias</param>
+    /// <param name="themesData">tema</param>
     public void SetNewData(int numHints, bool premium, List<GameManager.CategoryData> categoriesData,
         List<GameManager.ThemeData> themesData)
     {

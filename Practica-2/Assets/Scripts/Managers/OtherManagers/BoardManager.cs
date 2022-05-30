@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+//Check Amaro
+
+/* Clase que se encarga de gestionar toda la lógica del tablero*/
 public class BoardManager : MonoBehaviour
 {
     [Tooltip("Referencia al objeto padre donde se van a instanciar los tiles")] [SerializeField]
@@ -200,7 +203,6 @@ public class BoardManager : MonoBehaviour
                 filaA -= 1;
             }
 
-            //print("colA: " + colA + " filaA: " + filaA);
             tiles[filaA, colA].InitTile(i, currTheme[i], colA, filaA);
             circleTiles.Add(tiles[filaA, colA]);
 
@@ -667,17 +669,10 @@ public class BoardManager : MonoBehaviour
     {
         int p = cMovements[tileColor].ClearUntilTile(dragedTile.Key) - 1;
         percentage -= plusPercentage * p;
-
         dragedTile.Key.SetTileColor(tileColor);
         cMovements[tileColor].AddCurrentMov(dragedTile.Key);
-
         int count = cMovements[tileColor].GetCurrentMoves().Count;
         currTile = cMovements[tileColor].GetCurrentMoves()[count - 1];
-
-        // Al limpiar los tiles, habría que comprobar a quién pertenecían esos tiles (buscando
-        // entre todos los demás flujos para saber su el tile del flujo actual está solapando algún otro.
-        // Entonces, cuando se esté volviendo hacía atrás, los tiles cortados del flujo actual, serán añadidos a sus
-        // anteriores flujos
         ResetCutMoves(tileColor);
     }
 
@@ -841,7 +836,6 @@ public class BoardManager : MonoBehaviour
         int y = 0;
         Tile tile = null;
         Rect tileRect;
-        //bool limit = false;
         while (!collisionDetected && y < tabSize.y)
         {
             tileRect = tiles[y, x].GetLogicRect();
@@ -851,7 +845,6 @@ public class BoardManager : MonoBehaviour
 
                 if (!tiles[y, x].GetEmpty())
                     tile = tiles[y, x];
-                //limit = ((x == size.x - 1 || x == 0) && (y == size.y - 1 || y == 0));
             }
             else
             {

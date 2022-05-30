@@ -2,6 +2,11 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+//  Check Amaro
+
+/// <summary>
+/// Clase para representar las celdas del grid de niveles
+/// </summary>
 public class CellLevel : MonoBehaviour
 {
     [Tooltip("Referencia al componente Button de la celda")] [SerializeField]
@@ -13,6 +18,9 @@ public class CellLevel : MonoBehaviour
     [Tooltip("Referencia al sprite del fondo de la celda")] [SerializeField]
     private RawImage background;
 
+    /// <summary>
+    /// Imagen para represetar la casilla
+    /// </summary>
     [SerializeField] private RawImage frame;
 
     [Tooltip("Referencia al sprite del nivel completado")] [SerializeField]
@@ -29,8 +37,19 @@ public class CellLevel : MonoBehaviour
     /// </summary>
     private Color color;
 
+    /// <summary>
+    /// Color del texto de la casilla
+    /// </summary>
     private Color initTextColor;
+
+    /// <summary>
+    /// Color del marco
+    /// </summary>
     private Color initFrameColor;
+
+    /// <summary>
+    /// Color del fondo
+    /// </summary>
     private Color initBgColor;
     
     /// <summary>
@@ -38,8 +57,14 @@ public class CellLevel : MonoBehaviour
     /// </summary>
     private float offsetAlpha = -0.1f;
 
+    /// <summary>
+    /// Actual nivel
+    /// </summary>
     private bool currentLevel;
 
+    /// <summary>
+    /// Referencia al selectLevelManager
+    /// </summary>
     private SelectLevelManager selectLevelManager;
 
 
@@ -146,6 +171,9 @@ public class CellLevel : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Reset a una celda
+    /// </summary>
     public void Reset()
     {
         background.color = initBgColor;

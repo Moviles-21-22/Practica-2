@@ -2,25 +2,33 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
+//  Check Amaro
+
+/// <summary>
+/// Clase que representa un tile
+/// </summary>
 public class Tile : MonoBehaviour
 {
     //  Enum que representa el color del tile
     private TILE_COLOR tileColor = TILE_COLOR.NONE;
+
     //  Color del tile
     private Color color = Color.clear;
+
     //  index x del tile
     private int x;
+
     //  Index y del tile
     private int y;
 
     [Tooltip("Valor del alpha del color del fondo del tile")]
     [SerializeField]
-    //  Alpha del backgroud
     private float backgroundAlpha = 0.5f;
-    //Variable que define si el tile es hueco o no
+
+    //  Variable que define si el tile es hueco o no
     private bool empty = false;
+
     [Tooltip("Sprite tail del tile")]
     [SerializeField]
     private SpriteRenderer bridgeTail;
@@ -72,19 +80,12 @@ public class Tile : MonoBehaviour
     //  Rect en coordenadas de cámara del tile
     private Rect logicRect;
 
-    private void OnEnable()
-    {
-        //var a = transform;
-        //var b = transform.position;
-        //var c = transform.localPosition;
-        //var d = transform.rect.position;
-        //worldPos = transform.TransformPoint(transform.rect.position);
-        //logicRect = new Rect(worldPos.x, worldPos.y, transform.rect.width, transform.rect.height);
-    }
-
+    /// <summary>
+    /// Enum para los diferentes colores base
+    /// </summary>
     public enum TILE_COLOR : int
     {
-        RED, BLUE, GREEN, MAGENTA, CYAN, YELLOW, GREY, WHITE, ORANGE, PURPLE, BROWN, NONE   //Este enum no es necesario, se puede cambiar tileColor por un int
+        RED, BLUE, GREEN, MAGENTA, CYAN, YELLOW, GREY, WHITE, ORANGE, PURPLE, BROWN, NONE
     };
 
     /// <summary>
@@ -138,6 +139,79 @@ public class Tile : MonoBehaviour
         logicRect = new Rect(origin.x, origin.y, size.x, size.y);
     }
 
+    //--------------------------------LOGIC-------------------------------
+    #region Logic
+
+    /// <summary>
+    /// Primer contacto con un tile
+    /// </summary>
+    public void Touched()
+    {
+        bgColor.enabled = true;
+        bgColor.color = new Color(color.r, color.g, color.b, backgroundAlpha);
+    }
+
+    /// <summary>
+    /// Comprueba si hay un muro en la dirección dir
+    /// </summary>
+    public bool WallCollision(Vector2 _dir)
+    {
+        //izq->der
+        if (_dir.x == 1.0f)
+            if (wallRight.enabled)
+                return true;
+            else
+                return false;
+        // der->izq
+        else if (_dir.x == -1.0f)
+            if (wallLeft.enabled)
+                return true;
+            else
+                return false;
+        // bot->top
+        else if (_dir.y == -1.0f)
+            if (wallDown.enabled)
+                return true;
+            else
+                return false;
+        // top->bot
+        else if (_dir.y == 1.0f)
+            if (wallUp.enabled)
+                return true;
+            else
+                return false;
+        else
+            return false;
+    }
+
+    /// <summary>
+    /// Reproduce las particulas de un tile
+    /// </summary>
+    public void PlayParticle()
+    {
+        particleSystem.Play();
+    }
+
+    /// <summary>
+    /// Limpia colores y desactiva los sprites del tile
+    /// </summary>
+    public void ClearTile()
+    {
+        if (!CircleActive())
+        {
+            tileColor = TILE_COLOR.NONE;
+            color = Color.clear;
+        }
+        DesactiveAll();
+    }
+
+    #endregion
+
+
+
+    //------------------------------ACTIVE--CMP----------------------------
+    #region Active
+
     /// <summary>
     /// Devuelve true si el tile tiene el circulo activo
     /// </summary>
@@ -169,17 +243,44 @@ public class Tile : MonoBehaviour
     }
 
     /// <summary>
+    /// Desactiva las lineas del tile
+    /// </summary>
+    public void DesactiveLines()
+    {
+        lines.enabled = false;
+    }
+
+    /// <summary>
+    /// Desactiva los elementos del tile no incluido el circulo
+    /// </summary>
+    public void DesactiveAll()
+    {
+        bgColor.enabled = false;
+        bridgeTail.enabled = false;
+        bridge.enabled = false;
+        elbow.enabled = false;
+    }
+
+    /// <summary>
+    /// Desactiva la cola del tile
+    /// </summary>
+    public void RemoveTail()
+    {
+        if (bridgeTail.enabled && !circle.enabled)
+        {
+            bridgeTail.enabled = false;
+            bridge.enabled = true;
+            bridge.color = bridgeTail.color;
+            bridge.transform.rotation = bridgeTail.transform.rotation;
+        }
+    }
+
+    /// <summary>
     /// Activa la estrella de un tile
     /// </summary>
     /// <param name="status">selectedImage de la estrella</param>
     public void ActiveStar(bool status)
     {
-        //if (!selectedImage)
-        //    return;
-
-        //star.color = Color.white;
-        //star.enabled = selectedImage;
-
         if (status)
         {
             star.enabled = true;
@@ -188,7 +289,6 @@ public class Tile : MonoBehaviour
         else
             star.enabled = false;
     }
-
 
     //dir == 0 → muro encima
     //dir == 1 → muro a la derecha
@@ -225,22 +325,22 @@ public class Tile : MonoBehaviour
         //izq->der
         if (_dir.x == 1.0f)
         {
-            bridgeTail.transform.Rotate(Vector3.forward, -90/* * factor*/);
+            bridgeTail.transform.Rotate(Vector3.forward, -90);
         }
         // der->izq
         else if (_dir.x == -1.0f)
         {
-            bridgeTail.transform.Rotate(Vector3.forward, 90/* * factor*/);
+            bridgeTail.transform.Rotate(Vector3.forward, 90);
         }
         // bot->top
         else if (_dir.y == -1.0f)
         {
-            bridgeTail.transform.Rotate(Vector3.forward, 0.0f/*factor == 1.0f ? 0.0f : 180.0f*/);
+            bridgeTail.transform.Rotate(Vector3.forward, 0.0f);
         }
         // top->bot
         else if (_dir.y == 1.0f)
         {
-            bridgeTail.transform.Rotate(Vector3.forward, 180.0f/*factor == 1.0f ? 180.0f : 0.0f*/);
+            bridgeTail.transform.Rotate(Vector3.forward, 180.0f);
         }
     }
 
@@ -316,51 +416,11 @@ public class Tile : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Desactiva las lineas del tile
-    /// </summary>
-    public void DesactiveLines()
-    {
-        lines.enabled = false;
-    }
+    #endregion
 
-    /// <summary>
-    /// Desactiva los elementos del tile no incluido el circulo
-    /// </summary>
-    public void DesactiveAll()
-    {
-        bgColor.enabled = false;
-        bridgeTail.enabled = false;
-        bridge.enabled = false;
-        elbow.enabled = false;
-    }
 
-    /// <summary>
-    /// Limpia colores y desactiva los sprites del tile
-    /// </summary>
-    public void ClearTile()
-    {
-        if (!CircleActive())
-        {
-            tileColor = TILE_COLOR.NONE;
-            color = Color.clear;
-        }
-        DesactiveAll();
-    }
-
-    /// <summary>
-    /// Desactiva la cola del tile
-    /// </summary>
-    public void RemoveTail()
-    {
-        if (bridgeTail.enabled && !circle.enabled)
-        {
-            bridgeTail.enabled = false;
-            bridge.enabled = true;
-            bridge.color = bridgeTail.color;
-            bridge.transform.rotation = bridgeTail.transform.rotation;
-        }
-    }
+    //----------------------------------SETS--------------------------------
+    #region Sets
 
     /// <summary>
     /// Cambio del index
@@ -388,6 +448,12 @@ public class Tile : MonoBehaviour
     {
         tileColor = (TILE_COLOR)c;
     }
+
+    #endregion
+
+
+    //----------------------------------GETS---------------------------------
+    #region Gets
 
     /// <summary>
     /// Devuelve el index x del tile
@@ -452,53 +518,5 @@ public class Tile : MonoBehaviour
         return circle;
     }
 
-    /// <summary>
-    /// Primer contacto con un tile
-    /// </summary>
-    public void Touched()
-    {
-        bgColor.enabled = true;
-        bgColor.color = new Color(color.r, color.g, color.b, backgroundAlpha);
-    }
-
-    /// <summary>
-    /// Comprueba si hay un muro en la dirección dir
-    /// </summary>
-    public bool WallCollision(Vector2 _dir)
-    {
-        //izq->der
-        if (_dir.x == 1.0f)
-            if (wallRight.enabled)
-                return true;
-            else
-                return false;
-        // der->izq
-        else if (_dir.x == -1.0f)
-            if (wallLeft.enabled)
-                return true;
-            else
-                return false;
-        // bot->top
-        else if (_dir.y == -1.0f)
-            if (wallDown.enabled)
-                return true;
-            else
-                return false;
-        // top->bot
-        else if (_dir.y == 1.0f)
-            if (wallUp.enabled)
-                return true;
-            else
-                return false;
-        else
-            return false;
-    }
-
-    /// <summary>
-    /// Reproduce las particulas de un tile
-    /// </summary>
-    public void PlayParticle()
-    {
-        particleSystem.Play();
-    }
+    #endregion
 }

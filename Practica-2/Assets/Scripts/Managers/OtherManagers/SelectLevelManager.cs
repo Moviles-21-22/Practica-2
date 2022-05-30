@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
+//Check Amaro
+
+//  Se encarga de gestionar la selección de niveles
 public class SelectLevelManager : MonoBehaviour
 {
     [Tooltip("Referencia al título del paquete")] [SerializeField]
@@ -29,18 +31,23 @@ public class SelectLevelManager : MonoBehaviour
     //  Niveles completados del bloque
     private int completedLevels;
 
+    //  Offset original del content scroll
     private Vector2 originalOffset;
 
+    //  Referencia al mainMenu
     private MainMenuManager mainMenu;
 
+    //  Para determinar si se ha inicializado la menu
     private bool initialized;
 
+    //  Lista de gridPacks
     private List<GridPack> gridList;
 
+    //  Actual pack en uso
     private LevelPack currPack;
 
     /// <summary>
-    /// Inicializa el gestor del SelectLevelScene
+    /// Inicializa el gestor del SelectLevel
     /// </summary>
     /// <param name="lvlPackData">Datos del paquete de niveles que se ha cargado</param>
     /// <param name="lvlPack">Paquete de niveles ScriptableObject</param>
@@ -67,6 +74,9 @@ public class SelectLevelManager : MonoBehaviour
     
 //-------------------------------------------------INICIALIZACION-----------------------------------------------------//
 
+    /// <summary>
+    /// Inicializa los datos del grid
+    /// </summary>
     private void InitGridData()
     {
         packTitle.text = currPack.levelName;
@@ -75,6 +85,9 @@ public class SelectLevelManager : MonoBehaviour
         completedLevels = currLevelPack.completedLevels;
     }
 
+    /// <summary>
+    /// Genera los packs para los niveles
+    /// </summary>
     private void GeneratePackageLevels()
     {
         // Número de niveles dentro del paquete
@@ -141,6 +154,9 @@ public class SelectLevelManager : MonoBehaviour
         return gridPack;
     }
 
+    /// <summary>
+    /// Modifica la información del menú
+    /// </summary>
     private void ChangeGridInfo()
     {
         int index = 0;
@@ -183,11 +199,18 @@ public class SelectLevelManager : MonoBehaviour
     }
 
 //----------------------------------------------------CALLBACKS-------------------------------------------------------//
+    /// <summary>
+    /// Callback para volver al mainMenu
+    /// </summary>
     public void BackToMainMenu()
     {
         mainMenu.ChangeCanvas();
     }
 
+    /// <summary>
+    /// Carga una nivel
+    /// </summary>
+    /// <param name="lvl">nivel a cargar</param>
     public void LoadLevel(int lvl)
     {
         mainMenu.LoadLevel(lvl, currPack);

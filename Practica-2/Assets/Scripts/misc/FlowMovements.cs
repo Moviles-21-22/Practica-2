@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
+//  Check Amaro
 
 /// <summary>
 /// Clase auxiliar para controlar el color del tile en función de los movimientos
@@ -20,30 +21,38 @@ class FlowMovements
         LAST_PATH = 1,
         CURR_PATH = 2
     }
+
     /// <summary>
     /// Para colocar la estrella en caso de que se rompa un camino hecho con pistas
     /// </summary>
+    /// 
     public bool isHint = false;
+
     /// <summary>
     /// Color lógico de la tubería
     /// </summary>
     private readonly int flowColor;
+
     /// <summary>
     /// Color gráfico de la tubería
     /// </summary>
     private readonly Color color;
+
     /// <summary>
     /// Lista de tiles ordenada con el camino del flujo tras soltar el dedo
     /// </summary>
     private List<Tile> flowPath;
+
     /// <summary>
     /// Lista de tiles que se están usando durante el InputMoving
     /// </summary>
     List<Tile> currentPath;
+
     /// <summary>
     /// Lista del último movimiento que se puede deshacer
     /// </summary>
     List<Tile> lastPath;
+
     /// <summary>
     /// Lista de los tiles que han sido borrados en un corte junto con su
     /// correspondiente color lógico antes de ser cortado
@@ -313,6 +322,10 @@ class FlowMovements
         return flowPath;
     }
 
+    /// <summary>
+    /// Activa una estrella en el tile
+    /// </summary>
+    /// <param name="status">true si está activa la estrella</param>
     public void ActiveStars(bool status)
     {
         currentPath[0].ActiveStar(status);

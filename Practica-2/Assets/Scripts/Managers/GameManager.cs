@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+//  Check Amaro
+
 public class GameManager : MonoBehaviour
 {
     /// <summary>
@@ -16,7 +18,9 @@ public class GameManager : MonoBehaviour
         SHOP = 2,
         GAME_SCENE = 3
     }
-
+    /// <summary>
+    /// Estructura de los pack
+    /// </summary>
     [Serializable]
     public struct LevelPackData
     {
@@ -25,6 +29,9 @@ public class GameManager : MonoBehaviour
         public Levels[] levelsInfo;
     }
 
+    /// <summary>
+    /// Estructura con la lista de packs
+    /// </summary>
     [Serializable]
     public class CategoryData
     {
@@ -32,6 +39,9 @@ public class GameManager : MonoBehaviour
         public LevelPackData[] levels;
     }
 
+    /// <summary>
+    /// Estructura para las skins
+    /// </summary>
     [Serializable]
     public class ThemeData
     {
@@ -43,6 +53,9 @@ public class GameManager : MonoBehaviour
 
 //------------------------------------------------MANAGERS------------------------------------------------------------//
 
+    /// <summary>
+    /// Referencia estática del gameManager
+    /// </summary>
     public static GameManager instance;
 
     [Header("Seccion de Managers")] [Tooltip("Referencia al MainMenuManager")]
@@ -70,9 +83,19 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private LevelPackData currPack;
 
+    /// <summary>
+    /// Indice del pack que se está usando actualmente
+    /// </summary>
     private int indexCurrPack;
 
+    /// <summary>
+    /// Categoría que se está usando actualmente
+    /// </summary>
     private CategoryData currCat;
+
+    /// <summary>
+    /// Indice de la actual categoría
+    /// </summary>
     private int indexCurrCat;
 
     /// <summary>
@@ -85,7 +108,6 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private Level currLevel;
 
-    //  Actual pack cargado
     /// <summary>
     /// Actual pack cargado
     /// </summary>

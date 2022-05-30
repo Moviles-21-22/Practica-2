@@ -3,6 +3,9 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
+//Check Amaro
+
+//  Se encarga de gestionar las serializaciones
 public static class DataManager
 {
     /// <summary>
@@ -35,6 +38,7 @@ public static class DataManager
     /// </summary>
     private static List<ColorPack> _colorThemes = new List<ColorPack>();
 
+    //  Referencia estática de dataToSave
     private static DataToSave _currData;
 //--------------------------------------------------------------------------------------------------------------------//
 

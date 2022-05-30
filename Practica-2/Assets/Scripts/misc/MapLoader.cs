@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 
+//  Check Amaro
+
 //  struct para cada nivel cargado
 [Serializable]
 [SuppressMessage("ReSharper", "CheckNamespace")]
@@ -11,19 +13,25 @@ public struct Level
     //  tamaño del tablero
     public int numBoardX;
     public int numBoardY;
+
     //  nivel que le corresponede
     public int lvl;
+
     //  numero de flujos
     public int numFlow;
+
     //  Determina si hay que poner o no muros rodeando el tablero
     public bool closed;
+
     //  Vector con las soluciones
     public List<List<int>> solutions;
-    //public Vector<Vector<int>> solutions;
+
     //  Vector con casillas con muros -- cada muro es una lista de dos elementos (casillas adyacentes al muro)
     public List<List<int>> walls;
+
     //  Vector con huecos
     public List<int> gaps;
+
     public Level(int tamX, int newLevel, int newNumFlows, int tamY, bool wallsAround = false)
     {
         numBoardX = tamX;
@@ -142,6 +150,10 @@ public class Map
         return levels[lvl];
     }
 
+    /// <summary>
+    /// Devuelve el numero de niveles que tiene este nivel
+    /// </summary>
+    /// <returns></returns>
     public int NumLevels()
     {
         return levels.Count;

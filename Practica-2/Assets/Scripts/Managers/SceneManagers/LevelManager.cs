@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
-using UnityEngine.Events;
+
+// Check Amaro
 
 /// <summary>
 /// Clase encargada de inicializar y gestionar el nivel en la GameScene
@@ -64,32 +65,55 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Carga una escena
+    /// </summary>
+    /// <param name="scene">Escena a cargar</param>
     public void LoadScene(GameManager.SceneOrder scene)
     {
         gm.LoadScene((int) scene);
     }
 
+    /// <summary>
+    /// Devuelve al main Menu
+    /// </summary>
     public void BackToSelectLevelScene()
     {
         gm.LoadScene((int) GameManager.SceneOrder.MAIN_MENU);
     }
 
-    public void AddHints(int numOfHints)
+    /// <summary>
+    /// Reproduce un video reward
+    /// </summary>
+    public void AddHints()
     {
         AdsManager.PlayAd();
     }
 
+    /// <summary>
+    /// Actualiza el numero local de pistas
+    /// </summary>
+    /// <param name="numHints">Numero de pistas globales</param>
     public void UpdateHints(int numHints)
     {
         hud.UpdateHint(numHints);
         board.UpdateHint(numHints);
     }
 
+    /// <summary>
+    /// Cambia el nivel
+    /// </summary>
+    /// <param name="level">Nuevo nivel</param>
     public void ChangeLevel(int level)
     {
         gm.ChangeLevel(level);
     }
 
+    /// <summary>
+    /// Agrega una solución al nivel
+    /// </summary>
+    /// <param name="movements">numero de movimientos</param>
+    /// <param name="numFlows">numero de flujos</param>
     public void AddSolutionLevel(int movements, int numFlows)
     {
         gm.AddSolutionLevel(movements, numFlows);

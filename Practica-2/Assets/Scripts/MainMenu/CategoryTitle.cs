@@ -2,6 +2,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+//Check Amaro
+
 public class CategoryTitle : MonoBehaviour
 {
     [Tooltip("Referencia al texto del titulo")]

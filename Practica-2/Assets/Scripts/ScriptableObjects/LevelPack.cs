@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//  Check Amaro
+
 /// <summary>
 /// Clase scripteable usada para representar los packs con los niveles
 /// </summary>
@@ -9,6 +11,7 @@ using UnityEngine;
 public class LevelPack : ScriptableObject
 {
     [Tooltip("Nombre del nivel")] public string levelName;
+
     [Tooltip("fichero del lote")] public TextAsset txt;
 
     [Tooltip("Nombre de cada grid de niveles")]
@@ -39,6 +42,9 @@ public class LevelPack : ScriptableObject
     }
 }
 
+/// <summary>
+/// Clase para representar los diferentes estados de un nivel
+/// </summary>
 [System.Serializable]
 public class Levels
 {
