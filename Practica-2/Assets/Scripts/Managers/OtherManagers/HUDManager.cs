@@ -169,12 +169,20 @@ public class HUDManager : MonoBehaviour
 
 //------------------------------------------------ACTUALIZACION-DATOS-------------------------------------------------//
     /// <summary>
+    /// Actualiza el número de pistas locales y actualiza el text correspondiente a las pistas en el hud
+    /// </summary>
+    public void UpdateHint(int numHint)
+    {
+        currHints = numHint;
+        UpdateHintText();
+    }
+
+    /// <summary>
     /// Cambia el texto que muestra las pistas en función de las pistas que queden
     /// </summary>
     private void UpdateHintText()
     {
         hints.elementText.text = currHints + "x";
-        //hints.elementButton.interactable = currHints != 0;
     }
 
     /// <summary>

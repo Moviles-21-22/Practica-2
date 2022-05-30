@@ -1,9 +1,9 @@
 {
-    "m_SelectedDeviceId": "ec5bb8b3",
+    "m_SelectedDeviceId": "abaaf4a6",
     "m_SelectedPackage": {
-        "deviceId": "ec5bb8b3",
-        "name": "com.RandomPlayerStudio.FlowFree",
-        "processId": 20610,
+        "deviceId": "",
+        "name": "",
+        "processId": 0,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -96,6 +96,18 @@
             "deviceId": "emulator-5554",
             "name": "com.RandomPlayerStudio.FlowFree",
             "processId": 5582,
+            "exited": false
+        },
+        {
+            "deviceId": "abaaf4a6",
+            "name": "com.RandomPlayerStudio.FlowFree",
+            "processId": 32583,
+            "exited": true
+        },
+        {
+            "deviceId": "abaaf4a6",
+            "name": "com.oneplus.deskclock",
+            "processId": 10972,
             "exited": false
         }
     ],

@@ -77,7 +77,12 @@ public class LevelManager : MonoBehaviour
     public void AddHints(int numOfHints)
     {
         AdsManager.PlayAd();
-        gm.AddHints(numOfHints);
+    }
+
+    public void UpdateHints(int numHints)
+    {
+        hud.UpdateHint(numHints);
+        board.UpdateHint(numHints);
     }
 
     public void ChangeLevel(int level)

@@ -982,5 +982,14 @@ public class BoardManager : MonoBehaviour
         levelManager.UpdatePercentage((int) Math.Round(percentage));
     }
 
+    /// <summary>
+    /// Actualiza el numero de pistas locales por las globales
+    /// </summary>
+    /// <param name="numHints">numero de pistas globales</param>
+    public void UpdateHint(int numHints)
+    {
+        currHints = numHints;
+    }
+
 //--------------------------------------------------------------------------------------------------------------------//
 }

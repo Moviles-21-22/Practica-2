@@ -347,12 +347,13 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Añade una/s pista y guarda el estado del juego
+    /// Añade una/s pista, actualiza y guarda el estado del juego
     /// </summary>
     /// <param name="numOfHints"></param>
     public void AddHints(int numOfHints)
     {
         numHints += numOfHints;
+        if (levelManager) levelManager.UpdateHints(numHints);
         SaveGame();
     }
 
